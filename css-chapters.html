@@ -1,0 +1,1889 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>T1131 Quest - CSS</title>
+    
+    <!-- CodeMirror 5 - Éditeur professionnel style VS Code -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material-darker.min.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/selection/active-line.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/css-hint.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.css">
+    
+    <style>
+        /* ========== PREMIUM CSS - T1131 QUEST ========== */
+        @import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #09090b;
+            --bg-secondary: #18181b;
+            --bg-tertiary: #27272a;
+            --bg-card: rgba(39, 39, 42, 0.6);
+            --border: rgba(63, 63, 70, 0.5);
+            --border-hover: rgba(113, 113, 122, 0.6);
+            --text-primary: #fafafa;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            --accent-1: #3b82f6;
+            --accent-2: #8b5cf6;
+            --accent-3: #06b6d4;
+            --success: #22c55e;
+            --success-dark: #16a34a;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --gradient-primary: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            --shadow-glow: 0 0 60px -15px rgba(139, 92, 246, 0.3);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+        }
+
+        body {
+            font-family: 'Sora', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Animated Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: 
+                radial-gradient(ellipse 80% 50% at 50% -20%, rgba(59, 130, 246, 0.12), transparent),
+                radial-gradient(ellipse 60% 50% at 100% 50%, rgba(139, 92, 246, 0.08), transparent),
+                radial-gradient(ellipse 60% 50% at 0% 100%, rgba(6, 182, 212, 0.06), transparent);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Noise overlay */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            opacity: 0.02;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 28px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ========== HEADER ========== */
+        .header {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            padding: 24px 32px;
+            margin-bottom: 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 1.3rem;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: var(--bg-tertiary);
+            border-color: var(--border-hover);
+            color: var(--text-primary);
+            transform: translateX(-3px);
+        }
+
+        .header-title h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-title p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .header-stats {
+            display: flex;
+            gap: 24px;
+        }
+
+        .stat-box {
+            text-align: center;
+            padding: 8px 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+        }
+
+        .stat-value {
+            font-size: 1.4rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* ========== MAIN VIEW - CHAPTERS GRID ========== */
+        .main-view { display: block; }
+        .hidden { display: none !important; }
+
+        .chapters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .chapter-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chapter-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--gradient-primary);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .chapter-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-hover);
+            box-shadow: 0 12px 40px -10px rgba(0, 0, 0, 0.5);
+        }
+
+        .chapter-card:hover::before {
+            opacity: 1;
+        }
+
+        .chapter-card.locked {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .chapter-card.locked:hover {
+            transform: none;
+        }
+
+        .chapter-card.completed {
+            border-color: var(--success);
+        }
+
+        .chapter-card.completed::before {
+            background: linear-gradient(90deg, var(--success), var(--accent-3));
+            opacity: 1;
+        }
+
+        .chapter-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .chapter-number {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--accent-1);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .chapter-status {
+            font-size: 1.2rem;
+        }
+
+        .chapter-card h3 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .chapter-card p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .chapter-xp {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 16px;
+            padding: 6px 12px;
+            background: var(--bg-secondary);
+            border-radius: 100px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--accent-2);
+        }
+
+        /* ========== CHAPTER VIEW ========== */
+        .chapter-view { display: block; }
+
+        .chapter-nav {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .nav-btn {
+            flex: 1;
+            padding: 14px 20px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            color: var(--text-secondary);
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .nav-btn:hover {
+            background: var(--bg-tertiary);
+            border-color: var(--border-hover);
+            color: var(--text-primary);
+        }
+
+        .nav-btn.active {
+            background: var(--gradient-primary);
+            border-color: transparent;
+            color: white;
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        /* ========== THEORY SECTION ========== */
+        .theory-content {
+            background: var(--bg-card);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            margin-bottom: 24px;
+        }
+
+        .theory-content h2 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+        }
+
+        .theory-content h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 24px 0 12px;
+            color: var(--accent-1);
+        }
+
+        .theory-content p {
+            margin-bottom: 16px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .theory-content ul, .theory-content ol {
+            margin: 16px 0;
+            padding-left: 24px;
+            color: var(--text-secondary);
+        }
+
+        .theory-content li {
+            margin-bottom: 8px;
+        }
+
+        .theory-content code {
+            background: var(--bg-secondary);
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 0.9em;
+            color: var(--accent-3);
+            border: 1px solid var(--border);
+        }
+
+        .theory-content pre {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            overflow-x: auto;
+            margin: 16px 0;
+        }
+
+        .theory-content pre code {
+            background: none;
+            padding: 0;
+            border: none;
+            color: var(--text-primary);
+        }
+
+        /* ========== QUIZ SECTION ========== */
+        .quiz-container {
+            background: var(--bg-card);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+        }
+
+        .quiz-progress {
+            margin-bottom: 24px;
+        }
+
+        .quiz-progress-bar {
+            height: 6px;
+            background: var(--bg-secondary);
+            border-radius: 100px;
+            overflow: hidden;
+        }
+
+        .quiz-progress-fill {
+            height: 100%;
+            background: var(--gradient-primary);
+            border-radius: 100px;
+            transition: width 0.4s ease;
+        }
+
+        .quiz-question {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+            color: var(--text-primary);
+        }
+
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .quiz-option {
+            padding: 16px 20px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+
+        .quiz-option:hover {
+            background: var(--bg-tertiary);
+            border-color: var(--border-hover);
+            color: var(--text-primary);
+        }
+
+        .quiz-option.selected {
+            border-color: var(--accent-1);
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--text-primary);
+        }
+
+        .quiz-option.correct {
+            border-color: var(--success);
+            background: rgba(34, 197, 94, 0.15);
+            color: var(--success);
+        }
+
+        .quiz-option.incorrect {
+            border-color: var(--danger);
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--danger);
+        }
+
+        /* ========== EXERCISES SECTION ========== */
+        .exercise-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            margin-bottom: 20px;
+        }
+
+        .exercise-card h3 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .exercise-desc {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .exercise-desc code {
+            background: var(--bg-secondary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85em;
+            color: var(--accent-3);
+        }
+
+        /* ========== CODE EDITOR ========== */
+        .code-editor {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .editor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .editor-header span {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .run-btn {
+            padding: 8px 16px;
+            background: var(--gradient-primary);
+            border: none;
+            border-radius: var(--radius-sm);
+            color: white;
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .run-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+        }
+
+        .cm-editor-wrapper {
+            min-height: 200px;
+        }
+
+        .CodeMirror {
+            height: 300px;
+            border-radius: 0 0 8px 8px;
+            font-family: 'Fira Code', 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .CodeMirror-scroll {
+            min-height: 300px;
+        }
+
+        /* ========== OUTPUT SECTION ========== */
+        .output-section {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .output-header {
+            padding: 10px 16px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border);
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .code-output {
+            padding: 16px;
+            min-height: 80px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: var(--success);
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .code-output.error {
+            color: var(--danger);
+        }
+
+        /* ========== VALIDATION MESSAGES ========== */
+        .validation {
+            padding: 16px 20px;
+            border-radius: var(--radius-md);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .validation.success {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            color: var(--success);
+        }
+
+        .validation.error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+        }
+
+        .validation code {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85em;
+            color: var(--accent-3);
+        }
+
+        /* ========== BUTTONS ========== */
+        .btn-primary {
+            padding: 14px 28px;
+            background: var(--gradient-primary);
+            border: none;
+            border-radius: var(--radius-md);
+            color: white;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-success {
+            padding: 14px 28px;
+            background: linear-gradient(135deg, var(--success), var(--success-dark));
+            border: none;
+            border-radius: var(--radius-md);
+            color: white;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(34, 197, 94, 0.4);
+        }
+
+        .btn-secondary {
+            padding: 12px 24px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            color: var(--text-secondary);
+            font-family: inherit;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-tertiary);
+            border-color: var(--border-hover);
+            color: var(--text-primary);
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 768px) {
+            .container { padding: 16px; }
+            .header { flex-direction: column; align-items: flex-start; }
+            .header-stats { width: 100%; justify-content: space-around; }
+            .chapters-grid { grid-template-columns: 1fr; }
+            .chapter-nav { flex-direction: column; }
+        }
+    </style>
+
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style id="theme-system">
+/* ════════════════════════════════════════════
+   SHARED DESIGN SYSTEM — light & dark
+   ════════════════════════════════════════════ */
+:root {
+  /* ── Light (default) ── */
+  --bg:          #f5f6fa;
+  --surface:     #ffffff;
+  --surface2:    #f0f1f7;
+  --border:      #e2e4ef;
+  --border2:     #c8cbdc;
+  --text:        #111827;
+  --text2:       #374151;
+  --muted:       #6b7280;
+  --dim:         #9ca3af;
+
+  /* ── Accents ── */
+  --blue:        #2563eb;
+  --blue-bg:     #eff6ff;
+  --blue-bd:     #bfdbfe;
+  --purple:      #7c3aed;
+  --purple-bg:   #f5f3ff;
+  --teal:        #0891b2;
+  --teal-bg:     #ecfeff;
+  --teal-bd:     #a5f3fc;
+  --green:       #16a34a;
+  --green-bg:    #f0fdf4;
+  --green-bd:    #bbf7d0;
+  --orange:      #d97706;
+  --orange-bg:   #fffbeb;
+  --orange-bd:   #fde68a;
+  --red:         #dc2626;
+  --red-bg:      #fef2f2;
+  --red-bd:      #fecaca;
+  --yellow:      #ca8a04;
+  --yellow-bg:   #fefce8;
+
+  /* ── Shadows ── */
+  --shadow-sm:   0 1px 3px rgba(0,0,0,.08);
+  --shadow:      0 4px 16px rgba(0,0,0,.08);
+  --shadow-lg:   0 8px 32px rgba(0,0,0,.1);
+
+  /* ── Radius ── */
+  --r-sm: 8px;
+  --r:    12px;
+  --r-lg: 18px;
+  --r-xl: 24px;
+}
+
+[data-theme="dark"] {
+  /* ── Navy/slate blue-night palette ── */
+  --bg:          #0d1117;   /* deep navy-black, like GitHub dark */
+  --surface:     #161b22;   /* card surface — slate navy */
+  --surface2:    #1c2333;   /* elevated elements */
+  --border:      #2d3748;   /* slate border, visible but subtle */
+  --border2:     #4a5568;   /* stronger border for hover/focus */
+  --text:        #e2e8f0;   /* soft white, easy on eyes */
+  --text2:       #a0aec0;   /* secondary text — slate-400 */
+  --muted:       #718096;   /* muted — slate-500 */
+  --dim:         #2d3748;   /* very dim — slate-700 */
+
+  /* ── Accents tuned for navy backgrounds ── */
+  --blue:        #63b3ed;   /* sky blue — readable on navy */
+  --blue-bg:     #1a2744;   /* navy-tinted blue bg */
+  --blue-bd:     #2c4a7c;   /* blue border */
+  --purple:      #b794f4;   /* soft purple */
+  --purple-bg:   #1e1a3a;
+  --teal:        #4fd1c5;   /* teal — pops on navy */
+  --teal-bg:     #0e2a2e;
+  --teal-bd:     #1a4a50;
+  --green:       #68d391;   /* mint green */
+  --green-bg:    #0e2a1a;
+  --green-bd:    #1a4a2e;
+  --orange:      #f6ad55;   /* warm amber */
+  --orange-bg:   #2a1e0e;
+  --orange-bd:   #4a3418;
+  --red:         #fc8181;   /* soft red */
+  --red-bg:      #2a1414;
+  --red-bd:      #4a2020;
+  --yellow:      #f6e05e;
+  --yellow-bg:   #2a2400;
+
+  --shadow-sm:   0 1px 4px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.03);
+  --shadow:      0 4px 20px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.04);
+  --shadow-lg:   0 12px 48px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.05);
+}
+
+/* ── Base reset ── */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: 'Bricolage Grotesque', 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+/* ── Toggle button ── */
+#theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 100px;
+  padding: 7px 14px 7px 10px;
+  cursor: pointer;
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s;
+  user-select: none;
+}
+#theme-toggle:hover {
+  color: var(--text);
+  border-color: var(--border2);
+  box-shadow: var(--shadow);
+}
+#theme-toggle .t-icon { font-size: 15px; transition: transform 0.3s; }
+[data-theme="dark"] #theme-toggle .t-icon { transform: rotate(180deg); }
+</style>
+
+<style id="theme-override">
+[data-theme="light"] {
+  --bg-primary: #f5f6fa; --bg-secondary: #ffffff; --bg-tertiary: #f0f1f7;
+  --bg-card: #ffffff;
+  --border: #e2e4ef; --border-hover: #c8cbdc;
+  --text-primary: #111827; --text-secondary: #374151; --text-muted: #6b7280;
+  --accent-1: #2563eb; --accent-2: #7c3aed; --accent-3: #0891b2;
+  --success: #16a34a; --success-dark: #15803d; --warning: #d97706; --danger: #dc2626;
+  --gradient-primary: linear-gradient(135deg, #2563eb, #7c3aed);
+  --shadow-glow: 0 0 40px -10px rgba(124,58,237,0.15);
+}
+[data-theme="dark"] {
+  --bg-primary: #0d1117; --bg-secondary: #161b22; --bg-tertiary: #1c2333;
+  --bg-card: #161b22;
+  --border: #2d3748; --border-hover: #4a5568;
+  --text-primary: #e2e8f0; --text-secondary: #a0aec0; --text-muted: #718096;
+  --accent-1: #63b3ed; --accent-2: #b794f4; --accent-3: #4fd1c5;
+  --success: #68d391; --success-dark: #48bb78; --warning: #f6ad55; --danger: #fc8181;
+  --gradient-primary: linear-gradient(135deg, #63b3ed, #b794f4);
+  --shadow-glow: 0 0 40px -10px rgba(99,179,237,0.2);
+}
+body { background: var(--bg-primary) !important; color: var(--text-primary) !important; }
+.bg-gradient, .noise { opacity: 0 !important; }
+.container { background: transparent !important; }
+.header, .stat-box, .stat-card, .chapter-card, .section-content,
+.progress-section, .theory-card, .challenge-card, .result-card, .modal-content {
+  background: var(--bg-card) !important;
+  border-color: var(--border) !important;
+}
+.header { box-shadow: var(--shadow-sm) !important; }
+h1, h2, h3 { color: var(--text-primary) !important; }
+p, label, span:not(.badge):not(.tag) { color: var(--text-secondary) !important; }
+.code-editor, pre, code, .code-block { background: var(--bg-tertiary) !important; border-color: var(--border) !important; color: var(--text-primary) !important; }
+</style>
+
+<style id="back-btn-style">
+.hub-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 100px;
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: all .2s;
+  position: relative;
+  z-index: 200;
+}
+.hub-back:hover { color: var(--text); border-color: var(--border2); box-shadow: var(--shadow); transform: translateX(-2px); }
+.hub-back-bar {
+  position: sticky;
+  top: 0;
+  z-index: 500;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.hub-back-bar .breadcrumb {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.hub-back-bar .breadcrumb a {
+  color: var(--muted);
+  text-decoration: none;
+  transition: color .15s;
+}
+.hub-back-bar .breadcrumb a:hover { color: var(--text); }
+.hub-back-bar .breadcrumb span { color: var(--dim); }
+</style>
+
+</head>
+<body>
+
+<div class="hub-back-bar">
+  <a href="index.html" class="hub-back">← Retour</a>
+  <div class="breadcrumb">
+    <a href="index.html">Hub</a>
+    <span>›</span>
+    <span>Développement Web</span>
+    <span>›</span>
+    <span>CSS3</span>
+  </div>
+</div>
+
+<button id="theme-toggle" onclick="toggleTheme()" aria-label="Changer le thème">
+  <span class="t-icon">☀️</span>
+  <span class="t-label">Thème</span>
+</button>
+<script>
+(function(){
+  const saved = localStorage.getItem('theme') || 'light';
+  document.documentElement.setAttribute('data-theme', saved);
+  document.addEventListener('DOMContentLoaded', function(){
+    const lbl = document.querySelector('#theme-toggle .t-label');
+    const icon = document.querySelector('#theme-toggle .t-icon');
+    const t = document.documentElement.getAttribute('data-theme');
+    if(lbl) lbl.textContent = t === 'dark' ? 'Clair' : 'Sombre';
+    if(icon) icon.textContent = t === 'dark' ? '🌙' : '☀️';
+  });
+})();
+function toggleTheme(){
+  const html = document.documentElement;
+  const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+  const lbl = document.querySelector('#theme-toggle .t-label');
+  const icon = document.querySelector('#theme-toggle .t-icon');
+  if(lbl) lbl.textContent = next === 'dark' ? 'Clair' : 'Sombre';
+  if(icon) icon.textContent = next === 'dark' ? '🌙' : '☀️';
+}
+</script>
+
+    <div class="container">
+        <header class="header">
+            <div class="header-left">
+                
+                <div class="header-title">
+                    <h1>🎨 CSS3</h1>
+                    <p>Style et Design</p>
+                </div>
+            </div>
+            <div class="header-stats">
+                <div class="stat-box">
+                    <div class="stat-value" id="total-xp">0</div>
+                    <div class="stat-label">XP</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value"><span id="completed-count">0</span>/4</div>
+                    <div class="stat-label">Chapitres</div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Barre de progression -->
+        <div class="progress-section" style="background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; margin-bottom: 28px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <span style="font-weight: 600; color: var(--text-primary);">🎨 Progression CSS</span>
+                <span style="color: var(--accent-1); font-weight: 600;"><span id="css-progress-text">0</span>%</span>
+            </div>
+            <div style="background: var(--bg-secondary); border-radius: 100px; height: 8px; overflow: hidden;">
+                <div id="css-progress-bar" style="background: var(--gradient-primary); height: 100%; width: 0%; transition: width 0.5s ease; border-radius: 100px;"></div>
+            </div>
+            <div style="display: flex; justify-content: space-around; margin-top: 20px; flex-wrap: wrap; gap: 12px;">
+                <div style="background: var(--bg-secondary); border: 1px solid var(--border); padding: 12px 24px; border-radius: var(--radius-md); text-align: center;">
+                    <div style="font-size: 1.4rem; font-weight: 700; color: var(--success);" id="stat-exercises">0</div>
+                    <div style="color: var(--text-muted); font-size: 0.8rem;">Exercices</div>
+                </div>
+                <div style="background: var(--bg-secondary); border: 1px solid var(--border); padding: 12px 24px; border-radius: var(--radius-md); text-align: center;">
+                    <div style="font-size: 1.4rem; font-weight: 700; color: var(--warning);" id="stat-quizzes">0</div>
+                    <div style="color: var(--text-muted); font-size: 0.8rem;">Quiz</div>
+                </div>
+                <div style="background: var(--bg-secondary); border: 1px solid var(--border); padding: 12px 24px; border-radius: var(--radius-md); text-align: center;">
+                    <div style="font-size: 1.4rem; font-weight: 700; color: var(--accent-1);" id="stat-projects">0</div>
+                    <div style="color: var(--text-muted); font-size: 0.8rem;">Projets</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="main-view">
+            <h2 style="font-size: 1.5rem; margin-bottom: 25px; text-align: center; color: var(--text-primary);">
+                🎨 CSS - Les 4 Chapitres Essentiels
+            </h2>
+
+            <div class="chapters-grid" id="chapters-container"></div>
+        </div>
+
+        <div id="chapter-view" class="chapter-view hidden"></div>
+    </div>
+
+    <script>
+        "use strict";
+
+        const CHAPTERS = {
+            'css01': {
+                id: 'css01', icon: '🎨', title: 'CSS01 - Base CSS',
+                subtitle: 'Sélecteurs, propriétés, valeurs', xp: 100,
+                theory: [
+                    { title: '📐 Syntaxe CSS', content: [
+                        '<code>sélecteur { propriété: valeur; }</code>',
+                        'Sélecteur cible élément HTML',
+                        'Propriété = caractéristique',
+                        'Valeur = nouvelle valeur'
+                    ]},
+                    { title: '🎯 Sélecteurs', content: [
+                        'Élément: <code>p { ... }</code>',
+                        'Classe: <code>.maClasse { ... }</code>',
+                        'ID: <code>#monId { ... }</code>',
+                        'Universel: <code>* { ... }</code>'
+                    ]},
+                    { title: '🔗 Lier CSS', content: [
+                        '<code>&lt;link rel=stylesheet href=style.css&gt;</code>',
+                        'Dans le <code>&lt;head&gt;</code>',
+                        'Chemin relatif recommandé'
+                    ]}
+                ],
+                quiz: [
+                    { question: 'Syntaxe CSS correcte ?',
+                      options: ['p { color: red; }', 'p (color: red)', 'p: color=red', 'p [color: red]'], correct: 0 },
+                    { question: 'Sélectionner tous les éléments ?',
+                      options: ['all { }', '* { }', 'everything { }', 'global { }'], correct: 1 },
+                    { question: 'Lier un fichier CSS ?',
+                      options: ['&lt;style src=...&gt;', '&lt;link rel=stylesheet href=...&gt;', '&lt;css file=...&gt;'], correct: 1 }
+                ],
+                exercises: [
+                    { title: 'Règle CSS', 
+                      desc: `Écris une règle CSS pour styliser les paragraphes :<br><br>- Sélectionne les éléments <code>p</code><br>- Change la couleur du texte en bleu<br><br>Syntaxe : sélecteur { propriété: valeur; }<br><br><b>Requis :</b> sélecteur <code>p</code>, propriété <code>color</code>, valeur <code>blue</code>`,
+                      validate: (code) => code.includes('p') && code.includes('color') && code.includes('blue') }
+                ],
+                project: {
+                    title: 'Style Page',
+                    desc: `<p>Crée des règles CSS pour styliser une page :</p><ul><li>Titre h1 avec couleur rouge</li><li>Paragraphes avec taille de police personnalisée</li><li>Body avec couleur de fond</li></ul><br><b>Requis :</b> <code>h1</code>, <code>color</code>, <code>background</code>`,
+                    validate: (code) => code.includes('h1') && code.includes('color') && code.includes('background')
+                }
+            },
+            'css02': {
+                id: 'css02', icon: '📦', title: 'CSS02 - Box Model',
+                subtitle: 'Margin, padding, border', xp: 125,
+                theory: [
+                    { title: '📦 Box Model', content: [
+                        'Content = contenu',
+                        'Padding = marge intérieure',
+                        'Border = bordure',
+                        'Margin = marge extérieure'
+                    ]},
+                    { title: '📏 Propriétés', content: [
+                        '<code>margin: 10px;</code>',
+                        '<code>padding: 5px 10px;</code>',
+                        '<code>border: 1px solid red;</code>',
+                        '<code>width</code>, <code>height</code>'
+                    ]}
+                ],
+                quiz: [
+                    { question: 'Marge intérieure ?',
+                      options: ['margin', 'padding', 'border', 'spacing'], correct: 1 },
+                    { question: 'Bordure rouge 2px ?',
+                      options: ['border: 2px red;', 'border: 2px solid red;', 'border-color: red 2px;'], correct: 1 }
+                ],
+                exercises: [
+                    { title: 'Marges', 
+                      desc: `Style un élément div avec les marges :<br><br>- <code>margin</code> : marge extérieure (en pixels)<br>- <code>padding</code> : marge intérieure (en pixels)<br><br><b>Requis :</b> <code>margin</code> et <code>padding</code>`,
+                      validate: (code) => code.includes('margin') && code.includes('padding') }
+                ],
+                project: {
+                    title: 'Carte',
+                    desc: `<p>Style une carte avec le box model complet :</p><ul><li>Padding pour l'espacement intérieur</li><li>Border pour une bordure visible</li><li>Margin pour l'espacement extérieur</li></ul><br><b>Requis :</b> <code>padding</code>, <code>border</code>, <code>margin</code>`,
+                    validate: (code) => code.includes('padding') && code.includes('border') && code.includes('margin')
+                }
+            },
+            'css03': {
+                id: 'css03', icon: '✨', title: 'CSS03 - Couleurs & Polices',
+                subtitle: 'color, background, font', xp: 100,
+                theory: [
+                    { title: '🎨 Couleurs', content: [
+                        '<code>color: red;</code> - Nom',
+                        '<code>color: #ff0000;</code> - Hex',
+                        '<code>color: rgb(255,0,0);</code> - RGB',
+                        '<code>background-color: blue;</code>'
+                    ]},
+                    { title: '✍️ Polices', content: [
+                        '<code>font-family: Arial;</code>',
+                        '<code>font-size: 16px;</code>',
+                        '<code>font-weight: bold;</code>',
+                        '<code>font-style: italic;</code>'
+                    ]}
+                ],
+                quiz: [
+                    { question: 'Couleur du texte ?',
+                      options: ['text-color', 'color', 'font-color'], correct: 1 },
+                    { question: 'Mettre en gras ?',
+                      options: ['font-weight: bold;', 'text-weight: bold;', 'bold: true;'], correct: 0 }
+                ],
+                exercises: [
+                    { title: 'Couleurs', 
+                      desc: `Style un paragraphe avec des couleurs :<br><br>- <code>color</code> pour la couleur du texte<br>- <code>background-color</code> pour la couleur de fond<br><br><b>Requis :</b> <code>color</code> et <code>background</code>`,
+                      validate: (code) => code.includes('color') && code.includes('background') }
+                ],
+                project: {
+                    title: 'Style Texte',
+                    desc: `<p>Style un titre h1 complet avec :</p><ul><li>Couleur du texte</li><li>Couleur de fond</li><li>Police (font-family et/ou font-size)</li></ul><br><b>Requis :</b> <code>color</code>, <code>background</code>, <code>font</code>`,
+                    validate: (code) => code.includes('color') && code.includes('background') && code.includes('font')
+                }
+            },
+            'css04': {
+                id: 'css04', icon: '📐', title: 'CSS04 - Positionnement',
+                subtitle: 'position, display, float', xp: 125,
+                theory: [
+                    { title: '📍 Position', content: [
+                        '<code>position: static;</code> - Normal',
+                        '<code>position: relative;</code> - Relatif',
+                        '<code>position: absolute;</code> - Absolu',
+                        '<code>position: fixed;</code> - Fixe'
+                    ]},
+                    { title: '📊 Display', content: [
+                        '<code>display: block;</code>',
+                        '<code>display: inline;</code>',
+                        '<code>display: none;</code>',
+                        '<code>display: flex;</code>'
+                    ]}
+                ],
+                quiz: [
+                    { question: 'Cacher un élément ?',
+                      options: ['visibility: hidden;', 'display: none;', 'hide: true;'], correct: 1 },
+                    { question: 'Position par défaut ?',
+                      options: ['static', 'relative', 'absolute', 'fixed'], correct: 0 }
+                ],
+                exercises: [
+                    { title: 'Display', 
+                      desc: `Style un conteneur avec flexbox :<br><br>- Sélectionne un élément (classe ou id)<br>- Utilise <code>display: flex;</code> pour activer le mode flexbox<br><br><b>Requis :</b> <code>display</code> et <code>flex</code>`,
+                      validate: (code) => code.includes('display') && code.includes('flex') }
+                ],
+                project: {
+                    title: 'Layout',
+                    desc: `<p>Crée un layout avec plusieurs règles :</p><ul><li>Un conteneur avec display flex</li><li>Un élément avec position (relative ou autre)</li></ul><br><b>Requis :</b> <code>display</code> et <code>position</code>`,
+                    validate: (code) => code.includes('display') && code.includes('position')
+                }
+            }
+        };
+
+        let globalState = {
+            totalXP: 0,
+            completedChapters: [],
+            validatedExercises: {},
+            quizXP: {},
+            currentChapter: null,
+            currentSection: 'theory',
+            quizScore: 0,
+            quizAnswered: 0
+        };
+
+        function init() {
+            loadProgress();
+            renderChaptersGrid();
+            updateHeader();
+        }
+
+        function loadProgress() {
+            const allProgress = JSON.parse(localStorage.getItem('t1131-quest-progress') || '{}');
+            globalState.totalXP = 0;
+            globalState.completedChapters = [];
+            globalState.validatedExercises = allProgress.validatedExercises || {};
+            globalState.quizXP = allProgress.quizXP || {};
+            
+            for (let id in allProgress) {
+                if (id.startsWith('css') && allProgress[id].completed) {
+                    globalState.completedChapters.push(id);
+                    globalState.totalXP += allProgress[id].xp || 0;
+                }
+            }
+            
+            // Ajouter les XP des exercices validés
+            for (let chapterId in globalState.validatedExercises) {
+                if (chapterId.startsWith('css')) {
+                    globalState.totalXP += globalState.validatedExercises[chapterId].length * 15;
+                }
+            }
+            
+            // Ajouter les XP des quiz
+            for (let chapterId in globalState.quizXP) {
+                if (chapterId.startsWith('css')) {
+                    globalState.totalXP += globalState.quizXP[chapterId] || 0;
+                }
+            }
+        }
+
+        function saveProgress() {
+            const allProgress = JSON.parse(localStorage.getItem('t1131-quest-progress') || '{}');
+            
+            for (let id of globalState.completedChapters) {
+                allProgress[id] = {
+                    completed: true,
+                    xp: CHAPTERS[id].xp
+                };
+            }
+            
+            allProgress.validatedExercises = globalState.validatedExercises;
+            allProgress.quizXP = globalState.quizXP;
+            
+            localStorage.setItem('t1131-quest-progress', JSON.stringify(allProgress));
+        }
+        
+        /**
+         * Sauvegarde le code d'un exercice dans localStorage
+         */
+        function saveCode(chapterId, exerciseId, code) {
+            const savedCodes = JSON.parse(localStorage.getItem('t1131-saved-codes') || '{}');
+            if (!savedCodes[chapterId]) {
+                savedCodes[chapterId] = {};
+            }
+            savedCodes[chapterId][exerciseId] = code;
+            localStorage.setItem('t1131-saved-codes', JSON.stringify(savedCodes));
+        }
+        
+        /**
+         * Récupère le code sauvegardé d'un exercice
+         */
+        function getSavedCode(chapterId, exerciseId) {
+            const savedCodes = JSON.parse(localStorage.getItem('t1131-saved-codes') || '{}');
+            return savedCodes[chapterId] ? savedCodes[chapterId][exerciseId] : null;
+        }
+
+        function updateHeader() {
+            document.getElementById('total-xp').textContent = globalState.totalXP;
+            document.getElementById('completed-count').textContent = globalState.completedChapters.length;
+            
+            // Calculer les statistiques
+            let totalExercises = 0;
+            let totalQuizzes = 0;
+            let totalProjects = globalState.completedChapters.length;
+            
+            for (let chapterId in globalState.validatedExercises) {
+                if (chapterId.startsWith('css')) {
+                    totalExercises += globalState.validatedExercises[chapterId].length;
+                }
+            }
+            
+            for (let chapterId in globalState.quizXP) {
+                if (chapterId.startsWith('css') && globalState.quizXP[chapterId] > 0) {
+                    totalQuizzes++;
+                }
+            }
+            
+            // Progression totale (4 chapitres)
+            const totalPercent = Math.round((globalState.completedChapters.length / 4) * 100);
+            
+            document.getElementById('stat-exercises').textContent = totalExercises;
+            document.getElementById('stat-quizzes').textContent = totalQuizzes;
+            document.getElementById('stat-projects').textContent = totalProjects;
+            document.getElementById('css-progress-text').textContent = totalPercent;
+            document.getElementById('css-progress-bar').style.width = totalPercent + '%';
+        }
+
+        function renderChaptersGrid() {
+            const container = document.getElementById('chapters-container');
+            container.innerHTML = '';
+
+            for (let id in CHAPTERS) {
+                const ch = CHAPTERS[id];
+                const completed = globalState.completedChapters.includes(id);
+                
+                // Calculer progression du chapitre
+                const exercisesValidated = (globalState.validatedExercises[id] || []).length;
+                const totalExercises = ch.exercises ? ch.exercises.length : 0;
+                const quizDone = globalState.quizXP[id] > 0;
+                const projectDone = completed;
+                
+                let progressPercent = 0;
+                if (quizDone) progressPercent += 33;
+                if (totalExercises > 0) progressPercent += Math.round((exercisesValidated / totalExercises) * 33);
+                if (projectDone) progressPercent += 34;
+                
+                const card = document.createElement('div');
+                card.className = 'chapter-card' + (completed ? ' completed' : '');
+                card.onclick = () => openChapter(id);
+                
+                card.innerHTML = `
+                    <div class="chapter-header">
+                        <span class="chapter-icon">${ch.icon}</span>
+                        <div class="chapter-title">
+                            <h3>${ch.title}</h3>
+                            <p>${ch.subtitle}</p>
+                        </div>
+                        <span class="chapter-status">${completed ? '✅' : (progressPercent > 0 ? '🔓' : '🔒')}</span>
+                    </div>
+                    
+                    <!-- Barre de progression -->
+                    <div style="margin: 15px 0;">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 5px;">
+                            <span style="color: #94a3b8;">Progression</span>
+                            <span style="color: ${progressPercent === 100 ? 'var(--success)' : '#8b5cf6'}; font-weight: 600;">${progressPercent}%</span>
+                        </div>
+                        <div style="background: #1e293b; border-radius: 6px; height: 8px; overflow: hidden;">
+                            <div style="background: ${completed ? 'var(--success)' : 'linear-gradient(90deg, #8b5cf6, #a78bfa)'}; height: 100%; width: ${progressPercent}%; transition: width 0.3s ease;"></div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.75rem; margin-top: 8px; color: #64748b;">
+                            <span>${quizDone ? '✅' : '⬜'} Quiz</span>
+                            <span>${exercisesValidated}/${totalExercises} Ex.</span>
+                            <span>${projectDone ? '✅' : '⬜'} Projet</span>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; margin-top: 10px;">
+                        <span class="chapter-xp">${ch.xp} XP</span>
+                        ${completed ? '<span style="color: var(--success); font-weight: 600;">Terminé !</span>' : (progressPercent > 0 ? '<span style="color: var(--warning); font-weight: 600;">En cours...</span>' : '')}
+                    </div>
+                `;
+                container.appendChild(card);
+            }
+        }
+
+        function openChapter(id) {
+            globalState.currentChapter = id;
+            
+            // Vérifier la progression existante
+            const quizDone = globalState.quizXP[id] > 0;
+            const exercisesValidated = (globalState.validatedExercises[id] || []).length;
+            const chapter = CHAPTERS[id];
+            const totalExercises = chapter.exercises ? chapter.exercises.length : 0;
+            const isCompleted = globalState.completedChapters.includes(id);
+            
+            // Si progression existante, proposer un choix
+            if (quizDone || exercisesValidated > 0) {
+                let message = `📊 Progression détectée pour ${chapter.title} :\n\n`;
+                if (quizDone) message += `✅ Quiz complété\n`;
+                if (exercisesValidated > 0) message += `✅ ${exercisesValidated}/${totalExercises} exercices validés\n`;
+                if (isCompleted) message += `✅ Chapitre terminé\n`;
+                
+                message += `\nQue veux-tu faire ?\n\n`;
+                message += `➡️ OK = Reprendre où tu en étais\n`;
+                message += `❌ Annuler = Recommencer à zéro`;
+                
+                const continueProgress = confirm(message);
+                
+                if (!continueProgress) {
+                    // Recommencer à zéro
+                    delete globalState.quizXP[id];
+                    delete globalState.validatedExercises[id];
+                    saveProgress();
+                    globalState.currentSection = 'theory';
+                    globalState.quizScore = 0;
+                    globalState.quizAnswered = 0;
+                } else {
+                    // Reprendre - aller directement à la bonne section
+                    if (quizDone && exercisesValidated < totalExercises) {
+                        globalState.currentSection = 'exercises';
+                    } else if (quizDone && exercisesValidated >= totalExercises) {
+                        globalState.currentSection = 'project';
+                    } else {
+                        globalState.currentSection = 'theory';
+                    }
+                    globalState.quizScore = 0;
+                    globalState.quizAnswered = 0;
+                }
+            } else {
+                globalState.currentSection = 'theory';
+                globalState.quizScore = 0;
+                globalState.quizAnswered = 0;
+            }
+            
+            document.getElementById('main-view').classList.add('hidden');
+            renderChapterView();
+            document.getElementById('chapter-view').classList.remove('hidden');
+            
+            // Afficher directement la bonne section selon la progression
+            if (globalState.currentSection === 'exercises') {
+                document.getElementById('theory-section').classList.add('hidden');
+                startExercises();
+            } else if (globalState.currentSection === 'project') {
+                document.getElementById('theory-section').classList.add('hidden');
+                startProject();
+            }
+            
+            window.scrollTo(0, 0);
+        }
+
+        function backToGrid() {
+            document.getElementById('chapter-view').classList.add('hidden');
+            document.getElementById('main-view').classList.remove('hidden');
+            renderChaptersGrid();
+            updateHeader();
+        }
+
+        function renderChapterView() {
+            const ch = CHAPTERS[globalState.currentChapter];
+            const view = document.getElementById('chapter-view');
+            
+            view.innerHTML = `
+                <button class="back-btn" onclick="backToGrid()">← Retour</button>
+                <div class="section-title">
+                    <span style="font-size: 3rem;">${ch.icon}</span>
+                    <div><h2>${ch.title}</h2><p style="color: #94a3b8;">${ch.subtitle}</p></div>
+                </div>
+                
+                <div id="theory-section">
+                    <h3 style="font-size: 1.8rem; margin-bottom: 20px;">📚 Théorie</h3>
+                    <div class="theory-cards">
+                        ${ch.theory.map(t => `
+                            <div class="theory-card">
+                                <h3>${t.title}</h3>
+                                <ul>${t.content.map(c => `<li>${c}</li>`).join('')}</ul>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <button class="btn-primary" onclick="startQuiz()">Quiz 🎯</button>
+                </div>
+                
+                <div id="quiz-section" class="hidden">
+                    <h3 style="font-size: 1.8rem; margin-bottom: 20px;">🎯 Quiz</h3>
+                    <div id="quiz-container"></div>
+                    <div id="quiz-score" class="quiz-score hidden"></div>
+                </div>
+                
+                <div id="exercises-section" class="hidden">
+                    <h3 style="font-size: 1.8rem; margin-bottom: 20px;">💻 Exercices</h3>
+                    <div id="exercises-container"></div>
+                    <button class="btn-primary" onclick="startProject()">Projet 🚀</button>
+                </div>
+                
+                <div id="project-section" class="hidden">
+                    <h3 style="font-size: 1.8rem; margin-bottom: 20px;">🚀 Mini-Projet</h3>
+                    <div id="project-container"></div>
+                </div>
+            `;
+        }
+
+        function startQuiz() {
+            document.getElementById('theory-section').classList.add('hidden');
+            document.getElementById('quiz-section').classList.remove('hidden');
+            
+            const ch = CHAPTERS[globalState.currentChapter];
+            const container = document.getElementById('quiz-container');
+            
+            container.innerHTML = ch.quiz.map((q, i) => `
+                <div class="quiz-question ${i === 0 ? '' : 'hidden'}" data-index="${i}">
+                    <div class="question-number">Question ${i+1}/${ch.quiz.length}</div>
+                    <div class="question-text">${q.question}</div>
+                    <div class="quiz-options">
+                        ${q.options.map((opt, j) => `
+                            <button class="quiz-option" onclick="answerQuiz(${i}, ${j}, ${q.correct})">${opt}</button>
+                        `).join('')}
+                    </div>
+                    <div class="quiz-feedback hidden"></div>
+                </div>
+            `).join('');
+            window.scrollTo(0, 0);
+        }
+
+        function answerQuiz(qIndex, answer, correct) {
+            const qDiv = document.querySelector(`[data-index="${qIndex}"]`);
+            const opts = qDiv.querySelectorAll('.quiz-option');
+            const feedback = qDiv.querySelector('.quiz-feedback');
+            
+            opts.forEach(b => b.disabled = true);
+            
+            const isCorrect = answer === correct;
+            if (isCorrect) {
+                opts[answer].classList.add('correct');
+                feedback.textContent = '✅ Correct !';
+                feedback.classList.add('correct');
+                globalState.quizScore++;
+            } else {
+                opts[answer].classList.add('wrong');
+                opts[correct].classList.add('correct');
+                feedback.textContent = '❌ Incorrect';
+                feedback.classList.add('wrong');
+            }
+            
+            feedback.classList.remove('hidden');
+            globalState.quizAnswered++;
+            
+            const ch = CHAPTERS[globalState.currentChapter];
+            setTimeout(() => {
+                if (globalState.quizAnswered < ch.quiz.length) {
+                    qDiv.classList.add('hidden');
+                    document.querySelector(`[data-index="${qIndex+1}"]`).classList.remove('hidden');
+                    window.scrollTo(0, 0);
+                } else {
+                    showQuizResults();
+                }
+            }, 2000);
+        }
+
+        function showQuizResults() {
+            const ch = CHAPTERS[globalState.currentChapter];
+            const chapterId = globalState.currentChapter;
+            
+            // Vérifier si le quiz a déjà été fait
+            const alreadyDone = globalState.quizXP[chapterId] !== undefined;
+            let xpEarned = 0;
+            
+            if (!alreadyDone) {
+                xpEarned = globalState.quizScore * 5;
+                globalState.totalXP += xpEarned;
+                globalState.quizXP[chapterId] = xpEarned;
+                saveProgress();
+            }
+            
+            document.getElementById('quiz-container').classList.add('hidden');
+            const scoreDiv = document.getElementById('quiz-score');
+            scoreDiv.innerHTML = `
+                <h3>Résultat</h3>
+                <p class="score-text">Score : ${globalState.quizScore}/${ch.quiz.length}</p>
+                <p class="xp-earned">${alreadyDone ? '(Quiz déjà fait)' : '+' + xpEarned + ' XP'}</p>
+                <button class="btn-primary" onclick="startExercises()">Exercices 💻</button>
+            `;
+            scoreDiv.classList.remove('hidden');
+            updateHeader();
+            window.scrollTo(0, 0);
+        }
+
+        // Stockage des instances CodeMirror
+        const cmEditors = {};
+        
+        /**
+         * Crée une instance CodeMirror pour CSS
+         * @param {string} textareaId - L'id du textarea
+         * @return {object} L'instance CodeMirror créée
+         */
+        function createCodeMirrorEditor(textareaId) {
+            const textarea = document.getElementById(textareaId);
+            if (!textarea) { return null; }
+            
+            const editor = CodeMirror.fromTextArea(textarea, {
+                mode: 'css',
+                theme: 'material-darker',
+                lineNumbers: true,
+                autoCloseBrackets: true,
+                matchBrackets: true,
+                styleActiveLine: true,
+                indentUnit: 4,
+                tabSize: 4,
+                lineWrapping: false,
+                scrollbarStyle: 'native',
+                extraKeys: {
+                    'Tab': function(cm) { cm.replaceSelection('    ', 'end'); },
+                    'Ctrl-Space': 'autocomplete'
+                }
+            });
+            editor.setSize('100%', 300);
+            return editor;
+        }
+
+        function startExercises() {
+            document.getElementById('quiz-section').classList.add('hidden');
+            document.getElementById('exercises-section').classList.remove('hidden');
+            
+            const ch = CHAPTERS[globalState.currentChapter];
+            const chapterId = globalState.currentChapter;
+            const container = document.getElementById('exercises-container');
+            
+            // Nettoyer les anciens éditeurs
+            for (let key in cmEditors) {
+                if (key.startsWith('code-')) { delete cmEditors[key]; }
+            }
+            
+            // Charger les codes sauvegardés
+            const savedCodes = JSON.parse(localStorage.getItem('t1131-saved-codes') || '{}');
+            const chapterCodes = savedCodes[chapterId] || {};
+            
+            // Code CSS par défaut
+            const defaultCode = `/* Ton code CSS ici */
+
+`;
+            
+            // Calculer la progression actuelle
+            const validatedExercises = globalState.validatedExercises[chapterId] || [];
+            const totalExercises = ch.exercises.length;
+            const progressPercent = Math.round((validatedExercises.length / totalExercises) * 100);
+            
+            // Barre de progression
+            let progressBarHTML = `
+                <div id="exercises-progress" style="background: #1e293b; border-radius: 10px; padding: 20px; margin-bottom: 25px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <span style="font-weight: 600; font-size: 1.1rem;">🎨 Progression des exercices</span>
+                        <span style="color: var(--success); font-weight: 700; font-size: 1.2rem;" id="ex-progress-text">${validatedExercises.length}/${totalExercises}</span>
+                    </div>
+                    <div style="background: #0f172a; border-radius: 8px; height: 12px; overflow: hidden;">
+                        <div id="ex-progress-bar" style="background: linear-gradient(90deg, #8b5cf6, #a78bfa); height: 100%; width: ${progressPercent}%; transition: width 0.5s ease; border-radius: 8px;"></div>
+                    </div>
+                    <div style="display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap;" id="ex-indicators">
+                        ${ch.exercises.map((ex, i) => `
+                            <div style="width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem;
+                                background: ${validatedExercises.includes(i) ? 'var(--success)' : '#334155'}; 
+                                color: ${validatedExercises.includes(i) ? 'white' : '#94a3b8'};"
+                                id="ex-indicator-${i}">
+                                ${validatedExercises.includes(i) ? '✓' : (i + 1)}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            
+            container.innerHTML = progressBarHTML + ch.exercises.map((ex, i) => {
+                const isValidated = validatedExercises.includes(i);
+                const savedCode = chapterCodes[`ex-${i}`] || defaultCode;
+                return `
+                <div class="exercise-card" id="ex-${i}" style="border-left: 4px solid ${isValidated ? 'var(--success)' : '#8b5cf6'};">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h3 style="margin: 0;">Exercice ${i+1} : ${ex.title}</h3>
+                        ${isValidated ? '<span style="background: var(--success); color: white; padding: 5px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 600;">✅ Validé</span>' : ''}
+                    </div>
+                    <p class="exercise-desc">${ex.desc}</p>
+                    <div class="code-editor">
+                        <div class="editor-header">
+                            <span>🎨 Éditeur CSS</span>
+                            <button class="run-btn" onclick="runExercise(${i})">▶ Vérifier</button>
+                        </div>
+                        <div class="cm-editor-wrapper">
+                            <textarea class="code-input" id="code-${i}">${savedCode}</textarea>
+                        </div>
+                    </div>
+                    <div class="output-section">
+                        <div class="output-header">✅ Validation</div>
+                        <pre class="code-output" id="output-${i}"></pre>
+                    </div>
+                    <div class="validation hidden" id="validation-${i}"></div>
+                </div>
+            `}).join('');
+            
+            // Initialiser CodeMirror pour chaque exercice
+            ch.exercises.forEach((ex, i) => {
+                cmEditors[`code-${i}`] = createCodeMirrorEditor(`code-${i}`);
+            });
+            
+            window.scrollTo(0, 0);
+        }
+        
+        function updateExerciseProgress() {
+            const ch = CHAPTERS[globalState.currentChapter];
+            const chapterId = globalState.currentChapter;
+            const validatedExercises = globalState.validatedExercises[chapterId] || [];
+            const totalExercises = ch.exercises.length;
+            const progressPercent = Math.round((validatedExercises.length / totalExercises) * 100);
+            
+            const progressBar = document.getElementById('ex-progress-bar');
+            const progressText = document.getElementById('ex-progress-text');
+            if (progressBar) progressBar.style.width = progressPercent + '%';
+            if (progressText) progressText.textContent = `${validatedExercises.length}/${totalExercises}`;
+            
+            ch.exercises.forEach((ex, i) => {
+                const indicator = document.getElementById(`ex-indicator-${i}`);
+                if (indicator && validatedExercises.includes(i)) {
+                    indicator.style.background = 'var(--success)';
+                    indicator.style.color = 'white';
+                    indicator.textContent = '✓';
+                }
+            });
+        }
+
+        function runExercise(i) {
+            const ch = CHAPTERS[globalState.currentChapter];
+            const chapterId = globalState.currentChapter;
+            const editor = cmEditors[`code-${i}`];
+            const code = editor ? editor.getValue() : document.getElementById(`code-${i}`).value;
+            const output = document.getElementById(`output-${i}`);
+            const validation = document.getElementById(`validation-${i}`);
+            
+            // Sauvegarder le code
+            saveCode(chapterId, `ex-${i}`, code);
+            
+            output.textContent = '';
+            output.classList.remove('error');
+            validation.classList.add('hidden');
+            validation.classList.remove('success', 'error');
+            
+            if (!code.trim() || code.trim() === '/* Ton code CSS ici */') {
+                output.textContent = '❌ Écris du code CSS !';
+                output.classList.add('error');
+                return;
+            }
+            
+            // Validation avec feedback détaillé
+            const exercise = ch.exercises[i];
+            const validationResult = validateCSSWithFeedback(code, exercise);
+            
+            if (validationResult.success) {
+                if (!globalState.validatedExercises[chapterId]) {
+                    globalState.validatedExercises[chapterId] = [];
+                }
+                
+                const alreadyValidated = globalState.validatedExercises[chapterId].includes(i);
+                
+                if (!alreadyValidated) {
+                    globalState.validatedExercises[chapterId].push(i);
+                    globalState.totalXP += 15;
+                    validation.innerHTML = '✅ <strong>Parfait !</strong> (+15 XP)';
+                    saveProgress();
+                    updateExerciseProgress();
+                    
+                    const exCard = document.getElementById(`ex-${i}`);
+                    if (exCard) {
+                        exCard.style.borderLeftColor = 'var(--success)';
+                    }
+                } else {
+                    validation.innerHTML = '✅ <strong>Exercice déjà validé !</strong>';
+                }
+                validation.classList.add('success');
+                updateHeader();
+            } else {
+                validation.innerHTML = validationResult.message;
+                validation.classList.add('error');
+            }
+            validation.classList.remove('hidden');
+            
+            // Afficher un aperçu CSS
+            output.innerHTML = '<em style="color: var(--text-muted)">Aperçu CSS appliqué...</em>';
+        }
+        
+        /**
+         * Valide le CSS avec messages détaillés
+         */
+        function validateCSSWithFeedback(code, exercise) {
+            if (exercise.validate && exercise.validate(code)) {
+                return { success: true, message: '' };
+            }
+            
+            const hints = [];
+            const desc = exercise.desc.toLowerCase();
+            const codeLower = code.toLowerCase();
+            
+            // Vérifications CSS communes
+            if (!code.includes('{') || !code.includes('}')) {
+                hints.push('Tu dois utiliser des accolades <code>{ }</code> pour définir les propriétés');
+            }
+            if (!code.includes(':')) {
+                hints.push('Les propriétés CSS utilisent <code>:</code> pour séparer le nom de la valeur');
+            }
+            if (!code.includes(';') && code.includes(':')) {
+                hints.push('N\'oublie pas le point-virgule <code>;</code> après chaque valeur');
+            }
+            
+            // Vérifications basées sur la description
+            if (desc.includes('color') && !codeLower.includes('color')) {
+                hints.push('Utilise la propriété <code>color</code> pour la couleur du texte');
+            }
+            if (desc.includes('background') && !codeLower.includes('background')) {
+                hints.push('Utilise <code>background</code> ou <code>background-color</code>');
+            }
+            if (desc.includes('font-size') && !codeLower.includes('font-size')) {
+                hints.push('Utilise la propriété <code>font-size</code> pour la taille');
+            }
+            if (desc.includes('margin') && !codeLower.includes('margin')) {
+                hints.push('Utilise la propriété <code>margin</code> pour les marges externes');
+            }
+            if (desc.includes('padding') && !codeLower.includes('padding')) {
+                hints.push('Utilise la propriété <code>padding</code> pour les marges internes');
+            }
+            if (desc.includes('border') && !codeLower.includes('border')) {
+                hints.push('Utilise la propriété <code>border</code> pour les bordures');
+            }
+            if (desc.includes('display') && !codeLower.includes('display')) {
+                hints.push('Utilise la propriété <code>display</code>');
+            }
+            if (desc.includes('flexbox') && !codeLower.includes('flex')) {
+                hints.push('Utilise <code>display: flex</code> pour le Flexbox');
+            }
+            
+            if (hints.length > 0) {
+                const hintList = hints.map(h => `• ${h}`).join('<br>');
+                return {
+                    success: false,
+                    message: `❌ <strong>Pas tout à fait...</strong><br><br>
+                              <span style="color:#fbbf24">💡 Indices :</span><br>${hintList}<br><br>
+                              <em style="color:#94a3b8">Relis bien les consignes.</em>`
+                };
+            }
+            
+            return {
+                success: false,
+                message: `❌ <strong>Résultat incorrect</strong><br><br>
+                          <span style="color:#fbbf24">💡 Indice :</span> Vérifie les propriétés et valeurs demandées.<br>
+                          <em style="color:#94a3b8">Compare ton code avec les consignes.</em>`
+            };
+        }
+
+        function startProject() {
+            document.getElementById('exercises-section').classList.add('hidden');
+            document.getElementById('project-section').classList.remove('hidden');
+            
+            const ch = CHAPTERS[globalState.currentChapter];
+            const container = document.getElementById('project-container');
+            
+            container.innerHTML = `
+                <div class="exercise-card">
+                    <h3>${ch.project.title}</h3>
+                    <div class="exercise-desc">${ch.project.desc}</div>
+                    <div class="code-editor">
+                        <div class="editor-header">
+                            <span>🎨 Éditeur CSS</span>
+                            <button class="run-btn" onclick="runProject()">▶ Vérifier</button>
+                        </div>
+                        <div class="cm-editor-wrapper">
+                            <textarea class="code-input" id="code-project">/* Ton code CSS ici */
+
+</textarea>
+                        </div>
+                    </div>
+                    <div class="output-section">
+                        <div class="output-header">✅ Validation</div>
+                        <pre class="code-output" id="output-project"></pre>
+                    </div>
+                    <div class="validation hidden" id="validation-project"></div>
+                    <button class="btn-success hidden" id="complete-btn" onclick="completeChapter()">
+                        ✅ Terminer (+${ch.xp} XP)
+                    </button>
+                </div>
+            `;
+            
+            // Initialiser CodeMirror pour le projet
+            cmEditors['code-project'] = createCodeMirrorEditor('code-project');
+            
+            window.scrollTo(0, 0);
+        }
+
+        function runProject() {
+            const ch = CHAPTERS[globalState.currentChapter];
+            const editor = cmEditors['code-project'];
+            const code = editor ? editor.getValue() : document.getElementById('code-project').value;
+            const output = document.getElementById('output-project');
+            const validation = document.getElementById('validation-project');
+            const btn = document.getElementById('complete-btn');
+            
+            output.textContent = '';
+            validation.classList.add('hidden');
+            
+            const isValid = ch.project.validate(code);
+            if (isValid && !globalState.completedChapters.includes(globalState.currentChapter)) {
+                validation.textContent = '✅ Projet réussi !';
+                validation.classList.add('success');
+                validation.classList.remove('hidden');
+                btn.classList.remove('hidden');
+                output.textContent = '✓ Code CSS valide !';
+            } else if (isValid) {
+                validation.textContent = '✅ Déjà validé !';
+                validation.classList.add('success');
+                validation.classList.remove('hidden');
+                output.textContent = '✓ Chapitre déjà terminé';
+            } else {
+                validation.textContent = '❌ Vérifie toutes les consignes';
+                validation.classList.add('error');
+                validation.classList.remove('hidden');
+                output.textContent = '✗ Relis les consignes du projet';
+            }
+        }
+
+        function completeChapter() {
+            const ch = CHAPTERS[globalState.currentChapter];
+            
+            if (!globalState.completedChapters.includes(globalState.currentChapter)) {
+                globalState.completedChapters.push(globalState.currentChapter);
+                globalState.totalXP += ch.xp;
+                updateHeader();
+                saveProgress();
+                
+                alert(`🎉 ${ch.title} terminé !\n\n+${ch.xp} XP\n\nXP Total : ${globalState.totalXP}`);
+            }
+            
+            backToGrid();
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>

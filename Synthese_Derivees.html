@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Synthèse — Logique, Numération & Dérivées</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0f2744;
+    --blue: #1a4a8a;
+    --blue2: #2d6fd4;
+    --accent: #e8a020;
+    --red: #c0392b;
+    --green: #1e7a4a;
+    --purple: #6d28d9;
+    --bg: #f4f6fa;
+    --white: #ffffff;
+    --gray: #64748b;
+    --light: #e8eef7;
+    --tip-bg: #edf7f0;
+    --warn-bg: #fef2f2;
+    --formula-bg: #f0f4ff;
+    --purple-bg: #f5f0ff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--bg);
+    color: #1a2332;
+    line-height: 1.7;
+  }
+
+  .hero {
+    background: linear-gradient(135deg, #1a0533 0%, #3b1078 60%, #6d28d9 100%);
+    color: white;
+    padding: 56px 40px 48px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(45deg, transparent, transparent 40px, rgba(255,255,255,.03) 40px, rgba(255,255,255,.03) 80px);
+  }
+  .hero-badge {
+    display: inline-block;
+    background: var(--accent);
+    color: #1a0533;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 5px 16px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-family: 'Crimson Pro', serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 700;
+    margin-bottom: 10px;
+    position: relative;
+  }
+  .hero p { font-size: 1rem; opacity: .75; font-weight: 300; position: relative; }
+
+  nav {
+    background: var(--white);
+    border-bottom: 2px solid var(--light);
+    padding: 0 40px;
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,.08);
+  }
+  nav a {
+    display: block;
+    padding: 14px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--gray);
+    text-decoration: none;
+    white-space: nowrap;
+    border-bottom: 3px solid transparent;
+    transition: all .2s;
+  }
+  nav a:hover { color: var(--purple); border-color: var(--purple); }
+
+  main { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+  section { margin-bottom: 56px; }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--light);
+  }
+  .section-num {
+    background: var(--purple);
+    color: white;
+    font-weight: 800;
+    font-size: 13px;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .section-header h2 {
+    font-family: 'Crimson Pro', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--navy);
+  }
+
+  h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--purple);
+    margin: 24px 0 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  h3::before {
+    content: '';
+    display: inline-block;
+    width: 4px; height: 18px;
+    background: var(--accent);
+    border-radius: 2px;
+  }
+
+  p { margin-bottom: 10px; font-size: 0.97rem; }
+
+  .formula {
+    background: var(--formula-bg);
+    border-left: 4px solid var(--blue2);
+    border-radius: 0 10px 10px 0;
+    padding: 14px 20px;
+    margin: 10px 0;
+    text-align: center;
+    overflow-x: auto;
+  }
+  .formula.important { border-color: var(--red); background: #fff5f5; }
+  .formula.example { border-color: var(--green); background: #f0faf4; }
+  .formula.purple { border-color: var(--purple); background: var(--purple-bg); }
+
+  .tip, .warn {
+    padding: 11px 16px;
+    border-radius: 10px;
+    margin: 10px 0;
+    font-size: 0.91rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .tip { background: var(--tip-bg); border: 1px solid #b8e2c8; color: #1a5c34; }
+  .warn { background: var(--warn-bg); border: 1px solid #f5c2c2; color: #8b1a1a; }
+  .tip .icon, .warn .icon { flex-shrink: 0; font-size: 1.1rem; }
+
+  /* Truth table */
+  .table-wrap {
+    overflow-x: auto;
+    margin: 14px 0;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,.08);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    font-size: 0.93rem;
+  }
+  thead th {
+    background: var(--purple);
+    color: white;
+    padding: 11px 16px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+  }
+  thead th:first-child { border-radius: 12px 0 0 0; }
+  thead th:last-child { border-radius: 0 12px 0 0; }
+  tbody td {
+    padding: 10px 16px;
+    text-align: center;
+    border-bottom: 1px solid #e8eef7;
+    font-family: monospace;
+    font-size: 1rem;
+  }
+  tbody tr:nth-child(even) td { background: #f5f0ff; }
+  tbody tr:hover td { background: #ede9fe; }
+  .val-1 { color: var(--green); font-weight: 700; }
+  .val-0 { color: var(--red); font-weight: 700; }
+
+  /* Operator cards */
+  .op-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin: 14px 0;
+  }
+  .op-card {
+    background: white;
+    border: 2px solid var(--light);
+    border-radius: 14px;
+    padding: 16px;
+    text-align: center;
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .op-card:hover { border-color: var(--purple); box-shadow: 0 4px 12px rgba(109,40,217,.1); }
+  .op-name { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gray); margin-bottom: 8px; }
+  .op-symbol { font-size: 1.8rem; font-weight: 800; color: var(--purple); margin-bottom: 6px; }
+  .op-desc { font-size: 0.82rem; color: #555; }
+  .op-card.and { border-top: 3px solid #3b82f6; }
+  .op-card.or  { border-top: 3px solid #22c55e; }
+  .op-card.not { border-top: 3px solid #ef4444; }
+  .op-card.xor { border-top: 3px solid #f59e0b; }
+  .op-card.nand{ border-top: 3px solid #8b5cf6; }
+  .op-card.nor { border-top: 3px solid #ec4899; }
+
+  /* Law cards */
+  .law-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 12px 0;
+  }
+  .law-card {
+    background: white;
+    border: 1px solid var(--light);
+    border-radius: 12px;
+    padding: 14px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.05);
+  }
+  .law-title { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--purple); margin-bottom: 8px; }
+
+  /* Steps */
+  .steps { margin: 12px 0; }
+  .step {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    margin-bottom: 10px;
+    padding: 12px 16px;
+    background: white;
+    border-radius: 10px;
+    border: 1px solid var(--light);
+  }
+  .step-num {
+    background: var(--accent);
+    color: var(--navy);
+    font-weight: 800;
+    font-size: 13px;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .step p { margin: 0; font-size: 0.93rem; }
+
+  /* Gate symbol */
+  .gate-box {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: white;
+    border: 2px solid var(--purple);
+    border-radius: 10px;
+    padding: 8px 16px;
+    font-weight: 700;
+    color: var(--purple);
+    margin: 4px;
+    font-size: 0.9rem;
+  }
+
+  .highlight { background: #fef9c3; padding: 2px 6px; border-radius: 4px; font-weight: 600; }
+
+  @media (max-width: 600px) {
+    main { padding: 20px 14px 60px; }
+    nav { padding: 0 12px; }
+    .law-grid { grid-template-columns: 1fr; }
+    .hero { padding: 36px 20px 30px; }
+  }
+</style>
+
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style id="theme-system">
+/* ════════════════════════════════════════════
+   SHARED DESIGN SYSTEM — light & dark
+   ════════════════════════════════════════════ */
+:root {
+  /* ── Light (default) ── */
+  --bg:          #f5f6fa;
+  --surface:     #ffffff;
+  --surface2:    #f0f1f7;
+  --border:      #e2e4ef;
+  --border2:     #c8cbdc;
+  --text:        #111827;
+  --text2:       #374151;
+  --muted:       #6b7280;
+  --dim:         #9ca3af;
+
+  /* ── Accents ── */
+  --blue:        #2563eb;
+  --blue-bg:     #eff6ff;
+  --blue-bd:     #bfdbfe;
+  --purple:      #7c3aed;
+  --purple-bg:   #f5f3ff;
+  --teal:        #0891b2;
+  --teal-bg:     #ecfeff;
+  --teal-bd:     #a5f3fc;
+  --green:       #16a34a;
+  --green-bg:    #f0fdf4;
+  --green-bd:    #bbf7d0;
+  --orange:      #d97706;
+  --orange-bg:   #fffbeb;
+  --orange-bd:   #fde68a;
+  --red:         #dc2626;
+  --red-bg:      #fef2f2;
+  --red-bd:      #fecaca;
+  --yellow:      #ca8a04;
+  --yellow-bg:   #fefce8;
+
+  /* ── Shadows ── */
+  --shadow-sm:   0 1px 3px rgba(0,0,0,.08);
+  --shadow:      0 4px 16px rgba(0,0,0,.08);
+  --shadow-lg:   0 8px 32px rgba(0,0,0,.1);
+
+  /* ── Radius ── */
+  --r-sm: 8px;
+  --r:    12px;
+  --r-lg: 18px;
+  --r-xl: 24px;
+}
+
+[data-theme="dark"] {
+  /* ── Navy/slate blue-night palette ── */
+  --bg:          #0d1117;   /* deep navy-black, like GitHub dark */
+  --surface:     #161b22;   /* card surface — slate navy */
+  --surface2:    #1c2333;   /* elevated elements */
+  --border:      #2d3748;   /* slate border, visible but subtle */
+  --border2:     #4a5568;   /* stronger border for hover/focus */
+  --text:        #e2e8f0;   /* soft white, easy on eyes */
+  --text2:       #a0aec0;   /* secondary text — slate-400 */
+  --muted:       #718096;   /* muted — slate-500 */
+  --dim:         #2d3748;   /* very dim — slate-700 */
+
+  /* ── Accents tuned for navy backgrounds ── */
+  --blue:        #63b3ed;   /* sky blue — readable on navy */
+  --blue-bg:     #1a2744;   /* navy-tinted blue bg */
+  --blue-bd:     #2c4a7c;   /* blue border */
+  --purple:      #b794f4;   /* soft purple */
+  --purple-bg:   #1e1a3a;
+  --teal:        #4fd1c5;   /* teal — pops on navy */
+  --teal-bg:     #0e2a2e;
+  --teal-bd:     #1a4a50;
+  --green:       #68d391;   /* mint green */
+  --green-bg:    #0e2a1a;
+  --green-bd:    #1a4a2e;
+  --orange:      #f6ad55;   /* warm amber */
+  --orange-bg:   #2a1e0e;
+  --orange-bd:   #4a3418;
+  --red:         #fc8181;   /* soft red */
+  --red-bg:      #2a1414;
+  --red-bd:      #4a2020;
+  --yellow:      #f6e05e;
+  --yellow-bg:   #2a2400;
+
+  --shadow-sm:   0 1px 4px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.03);
+  --shadow:      0 4px 20px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.04);
+  --shadow-lg:   0 12px 48px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.05);
+}
+
+/* ── Base reset ── */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: 'Bricolage Grotesque', 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+/* ── Toggle button ── */
+#theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 100px;
+  padding: 7px 14px 7px 10px;
+  cursor: pointer;
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s;
+  user-select: none;
+}
+#theme-toggle:hover {
+  color: var(--text);
+  border-color: var(--border2);
+  box-shadow: var(--shadow);
+}
+#theme-toggle .t-icon { font-size: 15px; transition: transform 0.3s; }
+[data-theme="dark"] #theme-toggle .t-icon { transform: rotate(180deg); }
+</style>
+
+<style id="theme-override">
+:root, [data-theme="light"] {
+  --navy: #1e3a5f; --teal: #0891b2; --accent: #d97706;
+  --bg: var(--bg); --white: var(--surface); --light: var(--border);
+  --gray: var(--muted); --formula-bg: var(--blue-bg); --tip-bg: var(--green-bg);
+  --warn-bg: var(--red-bg); --teal-bg: var(--teal-bg);
+}
+[data-theme="dark"] {
+  --navy: #93c5fd; --teal: #4fd1c5; --accent: #f6ad55;
+  --white: var(--surface); --light: var(--border);
+  --gray: var(--muted); --formula-bg: var(--blue-bg); --tip-bg: var(--green-bg);
+  --warn-bg: var(--red-bg); --teal-bg: var(--teal-bg);
+}
+body { background: var(--bg) !important; color: var(--text) !important; }
+nav { background: var(--surface) !important; border-color: var(--border) !important; box-shadow: var(--shadow-sm) !important; }
+nav a { color: var(--muted) !important; }
+nav a:hover, nav a.active { color: var(--teal) !important; border-color: var(--teal) !important; }
+main { background: transparent !important; }
+section { background: transparent !important; }
+.section-header { border-color: var(--border) !important; }
+.section-header h2 { color: var(--navy) !important; }
+.section-num { background: var(--teal) !important; color: #fff !important; }
+h3 { color: var(--teal) !important; }
+h3::before { background: var(--accent) !important; }
+p { color: var(--text2) !important; }
+.formula { background: var(--blue-bg) !important; border-color: var(--blue) !important; }
+.formula.important { background: var(--red-bg) !important; border-color: var(--red) !important; }
+.formula.example { background: var(--green-bg) !important; border-color: var(--green) !important; }
+.formula.teal { background: var(--teal-bg) !important; border-color: var(--teal) !important; }
+.tip { background: var(--green-bg) !important; border-color: var(--green-bd) !important; color: var(--green) !important; }
+.warn { background: var(--red-bg) !important; border-color: var(--red-bd) !important; color: var(--red) !important; }
+table { background: var(--surface) !important; }
+th { background: var(--teal) !important; color: #fff !important; }
+td { border-color: var(--border) !important; color: var(--text) !important; }
+tbody tr:nth-child(even) td { background: var(--surface2) !important; }
+tbody tr:hover td { background: var(--teal-bg) !important; }
+.law-card, .step, .form-card { background: var(--surface) !important; border-color: var(--border) !important; color: var(--text) !important; }
+.hero { background: linear-gradient(135deg, #0c2340 0%, #0891b2 60%, #06b6d4 100%) !important; color: #fff !important; }
+.hero h1, .hero p { color: #fff !important; -webkit-text-fill-color: #fff !important; }
+code, pre { background: var(--surface2) !important; color: var(--teal) !important; border-color: var(--border) !important; }
+</style>
+
+<style id="back-btn-style">
+.hub-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 100px;
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: all .2s;
+  position: relative;
+  z-index: 200;
+}
+.hub-back:hover { color: var(--text); border-color: var(--border2); box-shadow: var(--shadow); transform: translateX(-2px); }
+.hub-back-bar {
+  position: sticky;
+  top: 0;
+  z-index: 500;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.hub-back-bar .breadcrumb {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.hub-back-bar .breadcrumb a {
+  color: var(--muted);
+  text-decoration: none;
+  transition: color .15s;
+}
+.hub-back-bar .breadcrumb a:hover { color: var(--text); }
+.hub-back-bar .breadcrumb span { color: var(--dim); }
+</style>
+
+</head>
+<body>
+
+<div class="hub-back-bar">
+  <a href="index.html" class="hub-back">← Retour</a>
+  <div class="breadcrumb">
+    <a href="index.html">Hub</a>
+    <span>›</span>
+    <span>Mathématiques</span>
+    <span>›</span>
+    <span>Dérivées</span>
+  </div>
+</div>
+
+<button id="theme-toggle" onclick="toggleTheme()" aria-label="Changer le thème">
+  <span class="t-icon">☀️</span>
+  <span class="t-label">Thème</span>
+</button>
+<script>
+(function(){
+  const saved = localStorage.getItem('theme') || 'light';
+  document.documentElement.setAttribute('data-theme', saved);
+  document.addEventListener('DOMContentLoaded', function(){
+    const lbl = document.querySelector('#theme-toggle .t-label');
+    const icon = document.querySelector('#theme-toggle .t-icon');
+    const t = document.documentElement.getAttribute('data-theme');
+    if(lbl) lbl.textContent = t === 'dark' ? 'Clair' : 'Sombre';
+    if(icon) icon.textContent = t === 'dark' ? '🌙' : '☀️';
+  });
+})();
+function toggleTheme(){
+  const html = document.documentElement;
+  const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+  const lbl = document.querySelector('#theme-toggle .t-label');
+  const icon = document.querySelector('#theme-toggle .t-icon');
+  if(lbl) lbl.textContent = next === 'dark' ? 'Clair' : 'Sombre';
+  if(icon) icon.textContent = next === 'dark' ? '🌙' : '☀️';
+}
+</script>
+
+
+<div class="hero" style="background:linear-gradient(135deg,#7c2d12,#c0392b,#e67e22)">
+  <div class="hero-badge">Examen de rattrapage</div>
+  <h1>Synthèse — Dérivées &amp; Expo/Log</h1>
+  <p>Dérivées · Tangente · Optimisation · Exponentielles · Logarithmes</p>
+</div>
+
+<nav>
+  <a href="#d1">D1. Formules base</a>
+  <a href="#d2">D2. Règles</a>
+  <a href="#d3">D3. Composées</a>
+  <a href="#d4">D4. Tangente</a>
+  <a href="#d5">D5. Optimisation</a>
+  <a href="#e1">E1. Propriétés exp/log</a>
+  <a href="#e2">E2. Logarithmes</a>
+  <a href="#e3">E3. Équations log</a>
+  <a href="#e4">E4. Équations exp</a>
+  <a href="#e5">E5. Dérivées exp/log</a>
+</nav>
+
+<main>
+<!-- ═══════ SEPARATEUR DERIVEES ═══════ -->
+<div style="text-align:center;margin:48px 0 40px;padding:20px;background:linear-gradient(135deg,#7c2d12,#c0392b);border-radius:16px;color:white;">
+  <div style="font-size:1.8rem;margin-bottom:6px">📐</div>
+  <div style="font-family:'Crimson Pro',serif;font-size:1.6rem;font-weight:700">DÉRIVÉES</div>
+  <div style="opacity:.75;font-size:.9rem;margin-top:4px">Formules · Règles · Fonctions composées · Tangente · Optimisation</div>
+</div>
+
+<!-- ═══════ D1 FORMULES DE BASE ═══════ -->
+<section id="d1">
+  <div class="section-header">
+    <div class="section-num" style="background:#c0392b">D1</div>
+    <h2>Formules de dérivées de base</h2>
+  </div>
+
+  <p>Ces formules doivent être connues par cœur — elles sont la fondation de tout le reste.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Fonction \(f(x)\)</th><th>Dérivée \(f'(x)\)</th><th>Exemple</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>\(C\) (constante)</td>
+          <td>\(0\)</td>
+          <td>\((5)' = 0\)</td>
+        </tr>
+        <tr>
+          <td>\(x\)</td>
+          <td>\(1\)</td>
+          <td>\((x)' = 1\)</td>
+        </tr>
+        <tr>
+          <td>\(x^n\)</td>
+          <td>\(n \cdot x^{n-1}\)</td>
+          <td>\((x^4)' = 4x^3\)</td>
+        </tr>
+        <tr>
+          <td>\(\sqrt{x} = x^{1/2}\)</td>
+          <td>\(\dfrac{1}{2\sqrt{x}}\)</td>
+          <td>\((\sqrt{x})' = \dfrac{1}{2\sqrt{x}}\)</td>
+        </tr>
+        <tr>
+          <td>\(\dfrac{1}{x} = x^{-1}\)</td>
+          <td>\(-\dfrac{1}{x^2}\)</td>
+          <td>\(\left(\dfrac{1}{x}\right)' = -\dfrac{1}{x^2}\)</td>
+        </tr>
+        <tr>
+          <td>\(\sin(x)\)</td>
+          <td>\(\cos(x)\)</td>
+          <td>\((\sin x)' = \cos x\)</td>
+        </tr>
+        <tr>
+          <td>\(\cos(x)\)</td>
+          <td>\(-\sin(x)\)</td>
+          <td>\((\cos x)' = -\sin x\)</td>
+        </tr>
+        <tr>
+          <td>\(\tan(x)\)</td>
+          <td>\(\dfrac{1}{\cos^2(x)}\)</td>
+          <td>\((\tan x)' = \dfrac{1}{\cos^2 x}\)</td>
+        </tr>
+        <tr>
+          <td>\(e^x\)</td>
+          <td>\(e^x\)</td>
+          <td>\((e^x)' = e^x\) (se dérive seul !)</td>
+        </tr>
+        <tr>
+          <td>\(\ln(x)\)</td>
+          <td>\(\dfrac{1}{x}\)</td>
+          <td>\((\ln x)' = \dfrac{1}{x}\)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="tip"><span class="icon">💡</span><span>Rappels utiles : \(\sqrt{x} = x^{1/2}\), \(\dfrac{1}{x} = x^{-1}\), \(\sqrt[3]{x} = x^{1/3}\). Comme ça tu peux toujours utiliser la règle \((x^n)' = nx^{n-1}\).</span></div>
+</section>
+
+<!-- ═══════ D2 REGLES ═══════ -->
+<section id="d2">
+  <div class="section-header">
+    <div class="section-num" style="background:#c0392b">D2</div>
+    <h2>Règles de dérivation</h2>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0;">
+
+    <div class="law-card" style="border-top:3px solid #c0392b">
+      <div class="law-title" style="color:#c0392b">Somme / Différence</div>
+      <div class="formula important" style="margin:6px 0">\[(f + g)' = f' + g'\]</div>
+      <p style="font-size:.85rem">Exemple : \((3x^2 + \sin x)' = 6x + \cos x\)</p>
+    </div>
+
+    <div class="law-card" style="border-top:3px solid #c0392b">
+      <div class="law-title" style="color:#c0392b">Constante multiplicative</div>
+      <div class="formula important" style="margin:6px 0">\[(C \cdot f)' = C \cdot f'\]</div>
+      <p style="font-size:.85rem">Exemple : \((5x^3)' = 5 \cdot 3x^2 = 15x^2\)</p>
+    </div>
+
+    <div class="law-card" style="border-top:3px solid #e67e22">
+      <div class="law-title" style="color:#e67e22">Produit</div>
+      <div class="formula" style="margin:6px 0;border-color:#e67e22;background:#fff8f0">\[(f \cdot g)' = f' \cdot g + f \cdot g'\]</div>
+      <p style="font-size:.85rem">Exemple : \((x^2 \sin x)' = 2x \sin x + x^2 \cos x\)</p>
+    </div>
+
+    <div class="law-card" style="border-top:3px solid #e67e22">
+      <div class="law-title" style="color:#e67e22">Quotient</div>
+      <div class="formula" style="margin:6px 0;border-color:#e67e22;background:#fff8f0">\[\left(\frac{f}{g}\right)' = \frac{f'g - fg'}{g^2}\]</div>
+      <p style="font-size:.85rem">Exemple : \(\left(\dfrac{x^2}{x+1}\right)' = \dfrac{2x(x+1) - x^2}{(x+1)^2}\)</p>
+    </div>
+
+  </div>
+
+  <div class="warn"><span class="icon">⚠️</span><span>Pour le quotient : c'est <strong>f'g − fg'</strong> et non f'g + fg'. L'ordre et le signe moins sont critiques !</span></div>
+</section>
+
+<!-- ═══════ D3 COMPOSEES ═══════ -->
+<section id="d3">
+  <div class="section-header">
+    <div class="section-num" style="background:#c0392b">D3</div>
+    <h2>Règle de la chaîne — Fonctions composées</h2>
+  </div>
+
+  <p>Une fonction composée c'est une "fonction dans une autre fonction" : \(f(g(x))\).</p>
+
+  <div class="formula important" style="font-size:1.1rem">
+    \[\bigl(f(g(x))\bigr)' = f'(g(x)) \cdot g'(x)\]
+  </div>
+
+  <div class="tip"><span class="icon">💡</span><span><strong>En mots :</strong> dériver la fonction extérieure (en gardant l'intérieure intacte), puis multiplier par la dérivée de l'intérieure.</span></div>
+
+  <h3>Cas particuliers courants (à retenir !)</h3>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Fonction</th><th>Dérivée</th><th>Exemple</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>\((u)^n\)</td>
+          <td>\(n \cdot u^{n-1} \cdot u'\)</td>
+          <td>\((3x^2+1)^4\)' \(= 4(3x^2+1)^3 \cdot 6x\)</td>
+        </tr>
+        <tr>
+          <td>\(\sqrt{u}\)</td>
+          <td>\(\dfrac{u'}{2\sqrt{u}}\)</td>
+          <td>\((\sqrt{x^2+1})' = \dfrac{2x}{2\sqrt{x^2+1}}\)</td>
+        </tr>
+        <tr>
+          <td>\(e^{u}\)</td>
+          <td>\(u' \cdot e^{u}\)</td>
+          <td>\((e^{3x})' = 3e^{3x}\)</td>
+        </tr>
+        <tr>
+          <td>\(\ln(u)\)</td>
+          <td>\(\dfrac{u'}{u}\)</td>
+          <td>\((\ln(x^2+1))' = \dfrac{2x}{x^2+1}\)</td>
+        </tr>
+        <tr>
+          <td>\(\sin(u)\)</td>
+          <td>\(u' \cdot \cos(u)\)</td>
+          <td>\((\sin(3x))' = 3\cos(3x)\)</td>
+        </tr>
+        <tr>
+          <td>\(\cos(u)\)</td>
+          <td>\(-u' \cdot \sin(u)\)</td>
+          <td>\((\cos(5x))' = -5\sin(5x)\)</td>
+        </tr>
+        <tr>
+          <td>\(\tan(u)\)</td>
+          <td>\(\dfrac{u'}{\cos^2(u)}\)</td>
+          <td>\((\tan(2x))' = \dfrac{2}{\cos^2(2x)}\)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Exemples détaillés</h3>
+
+  <div class="formula example">
+    <strong>\(f(x) = (x^2 - 3x + 2)^2\)</strong><br><br>
+    \(u = x^2 - 3x + 2 \implies u' = 2x - 3\)<br>
+    \(f'(x) = 2(x^2-3x+2)^1 \cdot (2x-3) = 2(2x-3)(x^2-3x+2)\)
+  </div>
+
+  <div class="formula example">
+    <strong>\(f(x) = \dfrac{3x+2}{2x-3}\)</strong> (règle du quotient)<br><br>
+    \(f' = \dfrac{3(2x-3) - (3x+2) \cdot 2}{(2x-3)^2} = \dfrac{6x - 9 - 6x - 4}{(2x-3)^2} = \dfrac{-13}{(2x-3)^2}\)
+  </div>
+
+  <div class="formula example">
+    <strong>\(f(x) = \sin(3x)\)</strong><br><br>
+    \(u = 3x \implies u' = 3\)<br>
+    \(f'(x) = 3 \cdot \cos(3x)\)
+  </div>
+</section>
+
+<!-- ═══════ D4 TANGENTE ═══════ -->
+<section id="d4">
+  <div class="section-header">
+    <div class="section-num" style="background:#c0392b">D4</div>
+    <h2>Équation de la tangente</h2>
+  </div>
+
+  <p>La tangente à une courbe au point \(x = a\) est la droite qui "touche" la courbe en ce point.</p>
+
+  <div class="formula important" style="font-size:1.1rem">
+    \[y = f'(a) \cdot (x - a) + f(a)\]
+  </div>
+
+  <div class="steps">
+    <div class="step"><div class="step-num">1</div><p>Calculer \(f(a)\) — la valeur de la fonction au point donné (ordonnée du point de tangence)</p></div>
+    <div class="step"><div class="step-num">2</div><p>Calculer \(f'(x)\) — la dérivée de la fonction</p></div>
+    <div class="step"><div class="step-num">3</div><p>Calculer \(f'(a)\) — c'est le <strong>coefficient directeur</strong> (la pente) de la tangente</p></div>
+    <div class="step"><div class="step-num">4</div><p>Substituer dans la formule \(y = f'(a)(x-a) + f(a)\)</p></div>
+  </div>
+
+  <div class="formula example">
+    <strong>Exemple : \(f(x) = 3x^2 - x + 1\) en \(x = 1\)</strong><br><br>
+    \(f(1) = 3 - 1 + 1 = 3\)<br>
+    \(f'(x) = 6x - 1 \implies f'(1) = 5\)<br><br>
+    Tangente : \(y = 5(x-1) + 3 = 5x - 5 + 3 = \mathbf{5x - 2}\)
+  </div>
+
+  <div class="tip"><span class="icon">💡</span><span>La tangente en \(x=a\) donne la droite \(y = mx + b\) où \(m = f'(a)\) est la pente. Si \(f'(a) = 0\), la tangente est horizontale (maximum ou minimum local !).</span></div>
+</section>
+
+<!-- ═══════ D5 OPTIMISATION ═══════ -->
+<section id="d5">
+  <div class="section-header">
+    <div class="section-num" style="background:#c0392b">D5</div>
+    <h2>Optimisation — Trouver un maximum ou minimum</h2>
+  </div>
+
+  <p>La dérivée permet de trouver les <strong>extrema</strong> (maximums et minimums) d'une fonction.</p>
+
+  <div class="steps">
+    <div class="step"><div class="step-num">1</div><p>Définir la fonction à optimiser \(f(x)\) et le domaine (contraintes du problème)</p></div>
+    <div class="step"><div class="step-num">2</div><p>Calculer la dérivée \(f'(x)\)</p></div>
+    <div class="step"><div class="step-num">3</div><p>Résoudre \(f'(x) = 0\) pour trouver les <strong>points critiques</strong></p></div>
+    <div class="step"><div class="step-num">4</div><p>Vérifier si c'est un max ou un min : calculer \(f''(x)\) ou analyser le signe de \(f'(x)\)</p></div>
+    <div class="step"><div class="step-num">5</div><p>Calculer la valeur optimale \(f(x_0)\)</p></div>
+  </div>
+
+  <div class="law-grid" style="margin-top:14px">
+    <div class="law-card">
+      <div class="law-title">Maximum local</div>
+      <div class="formula" style="margin:6px 0">\[f'(x_0) = 0 \text{ et } f''(x_0) < 0\]</div>
+      <p style="font-size:.85rem;color:var(--green)">La courbe est concave vers le bas 🔽</p>
+    </div>
+    <div class="law-card">
+      <div class="law-title">Minimum local</div>
+      <div class="formula" style="margin:6px 0">\[f'(x_0) = 0 \text{ et } f''(x_0) > 0\]</div>
+      <p style="font-size:.85rem;color:var(--red)">La courbe est concave vers le haut 🔼</p>
+    </div>
+  </div>
+
+  <h3>Tableau de signe de f'(x)</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>\(x\)</th><th>\(-\infty\)</th><th>\(\cdots\)</th><th>\(x_0\)</th><th>\(\cdots\)</th><th>\(+\infty\)</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Si minimum</strong></td>
+          <td>—</td><td>\(f' < 0\) (↘)</td><td>\(f' = 0\)</td><td>\(f' > 0\) (↗)</td><td>—</td>
+        </tr>
+        <tr>
+          <td><strong>Si maximum</strong></td>
+          <td>—</td><td>\(f' > 0\) (↗)</td><td>\(f' = 0\)</td><td>\(f' < 0\) (↘)</td><td>—</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="formula example">
+    <strong>Exemple : Trouver le max/min de \(f(x) = x^2 - 4x + 3\)</strong><br><br>
+    \(f'(x) = 2x - 4\)<br>
+    \(f'(x) = 0 \implies 2x - 4 = 0 \implies x = 2\)<br>
+    \(f''(x) = 2 > 0 \implies\) <strong>minimum</strong> en \(x = 2\)<br>
+    Valeur min : \(f(2) = 4 - 8 + 3 = -1\)
+  </div>
+
+  <div style="text-align:center;margin-top:40px;padding:24px;background:linear-gradient(135deg,#7c2d12,#c0392b);border-radius:16px;color:white;">
+    <div style="font-size:2rem;margin-bottom:8px">📐</div>
+    <div style="font-family:'Crimson Pro',serif;font-size:1.4rem;font-weight:600">Bonne chance pour ton examen !</div>
+    <div style="opacity:.7;font-size:.9rem;margin-top:4px">Logique · Numération · Dérivées — tu maîtrises la moitié du programme ! 💪</div>
+  </div>
+</section>
+
+
+
+
+<!-- ═══════ SEPARATEUR EXPO LOG ═══════ -->
+<div style="text-align:center;margin:48px 0 40px;padding:20px;background:linear-gradient(135deg,#1a3a1a,#2e7d32);border-radius:16px;color:white;">
+  <div style="font-size:1.8rem;margin-bottom:6px">📈</div>
+  <div style="font-family:'Crimson Pro',serif;font-size:1.6rem;font-weight:700">EXPONENTIELLES &amp; LOGARITHMES</div>
+  <div style="opacity:.75;font-size:.9rem;margin-top:4px">Propriétés · Calculs · Équations · Dérivées</div>
+</div>
+
+<!-- ═══════ E1 PROPRIETES ═══════ -->
+<section id="e1">
+  <div class="section-header">
+    <div class="section-num" style="background:#2e7d32">E1</div>
+    <h2>Propriétés fondamentales</h2>
+  </div>
+
+  <p>Ces propriétés s'appliquent à toute base \(a > 0, a \neq 1\). Les cas les plus courants sont \(a = 10\) (log) et \(a = e\) (ln).</p>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin:16px 0;">
+
+    <div>
+      <p style="font-weight:700;text-align:center;margin-bottom:8px;color:#2e7d32">Puissances</p>
+      <div class="formula" style="border-color:#2e7d32;background:#f0faf4;margin:6px 0">\[a^1 = a\]</div>
+      <div class="formula" style="border-color:#2e7d32;background:#f0faf4;margin:6px 0">\[a^0 = 1\]</div>
+      <div class="formula" style="border-color:#2e7d32;background:#f0faf4;margin:6px 0">\[\frac{1}{a^n} = a^{-n}\]</div>
+      <div class="formula" style="border-color:#2e7d32;background:#f0faf4;margin:6px 0">\[a^m \cdot a^n = a^{m+n}\]</div>
+      <div class="formula" style="border-color:#2e7d32;background:#f0faf4;margin:6px 0">\[(a^m)^n = a^{mn}\]</div>
+      <div class="formula" style="border-color:#2e7d32;background:#f0faf4;margin:6px 0">\[(ab)^n = a^n b^n\]</div>
+    </div>
+
+    <div>
+      <p style="font-weight:700;text-align:center;margin-bottom:8px;color:#2e7d32">Logarithmes \(\log_a\)</p>
+      <div class="formula" style="border-color:#2e7d32;background:#f0faf4;margin:6px 0">\[\log_a 1 = 0\]</div>
+      <div class="formula" style="border-color:#2e7d32;background:#f0faf4;margin:6px 0">\[\log_a a = 1\]</div>
+      <div class="formula important" style="margin:6px 0">\[\log_a(xy) = \log_a x + \log_a y\]</div>
+      <div class="formula important" style="margin:6px 0">\[\log_a\!\frac{x}{y} = \log_a x - \log_a y\]</div>
+      <div class="formula important" style="margin:6px 0">\[\log_a x^n = n\log_a x\]</div>
+      <div class="formula" style="border-color:#2e7d32;background:#f0faf4;margin:6px 0">\[\log_a b = \frac{\log_c b}{\log_c a}\]</div>
+    </div>
+
+    <div>
+      <p style="font-weight:700;text-align:center;margin-bottom:8px;color:#2e7d32">Liens exp ↔ log</p>
+      <div class="formula important" style="margin:6px 0">\[\log_a a^x = x\]</div>
+      <div class="formula important" style="margin:6px 0">\[a^{\log_a x} = x\]</div>
+      <div class="formula" style="border-color:#2e7d32;background:#f0faf4;margin:6px 0">\[\log_a 0 = \emptyset\]</div>
+      <div class="formula" style="border-color:#c0392b;background:#fff5f5;margin:6px 0">\[\ln(e^x) = x\]</div>
+      <div class="formula" style="border-color:#c0392b;background:#fff5f5;margin:6px 0">\[e^{\ln x} = x\]</div>
+    </div>
+
+  </div>
+
+  <div class="tip"><span class="icon">💡</span><span><strong>Cas particuliers importants :</strong><br>
+  \(\log = \log_{10}\) (logarithme décimal) &nbsp;|&nbsp; \(\ln = \log_e\) (logarithme naturel/népérien)<br>
+  Changement de base : \(\log_a b = \dfrac{\ln b}{\ln a} = \dfrac{\log b}{\log a}\)</span></div>
+
+  <div class="warn"><span class="icon">⚠️</span><span>\(\log(x+y) \neq \log x + \log y\) et \(\log(xy) \neq \log x \cdot \log y\) — ces erreurs sont très fréquentes !</span></div>
+</section>
+
+<!-- ═══════ E2 CALCUL LOGARITHMES ═══════ -->
+<section id="e2">
+  <div class="section-header">
+    <div class="section-num" style="background:#2e7d32">E2</div>
+    <h2>Calcul de logarithmes</h2>
+  </div>
+
+  <h3>Trouver la valeur exacte de \(\log_a b\)</h3>
+  <p>La question est : <em>à quelle puissance faut-il élever \(a\) pour obtenir \(b\) ?</em></p>
+
+  <div class="formula example">
+    \(\log_2 8 = ?\) → \(2^? = 8\) → \(2^3 = 8\) → \(\log_2 8 = \mathbf{3}\)
+  </div>
+  <div class="formula example">
+    \(\log_3 \dfrac{1}{9} = ?\) → \(3^? = \dfrac{1}{9} = 3^{-2}\) → \(\log_3 \dfrac{1}{9} = \mathbf{-2}\)
+  </div>
+  <div class="formula example">
+    \(\log_4 16 = ?\) → \(4^? = 16 = 4^2\) → \(\log_4 16 = \mathbf{2}\)
+  </div>
+
+  <h3>Calcul avec les propriétés (log 2 ≈ 0,3 et log 3 ≈ 0,5)</h3>
+  <div class="formula example">
+    \(\log 8 = \log 2^3 = 3\log 2 \approx 3 \times 0{,}3 = \mathbf{0{,}9}\)
+  </div>
+  <div class="formula example">
+    \(\log 12 = \log(4 \times 3) = \log 4 + \log 3 = 2\log 2 + \log 3 \approx 0{,}6 + 0{,}5 = \mathbf{1{,}1}\)
+  </div>
+  <div class="formula example">
+    \(\log 0{,}2 = \log\!\dfrac{2}{10} = \log 2 - \log 10 = \log 2 - 1 \approx 0{,}3 - 1 = \mathbf{-0{,}7}\)
+  </div>
+  <div class="formula example">
+    \(\log 5 = \log\!\dfrac{10}{2} = \log 10 - \log 2 = 1 - 0{,}3 = \mathbf{0{,}7}\)
+  </div>
+</section>
+
+<!-- ═══════ E3 EQUATIONS LOG ═══════ -->
+<section id="e3">
+  <div class="section-header">
+    <div class="section-num" style="background:#2e7d32">E3</div>
+    <h2>Équations logarithmiques</h2>
+  </div>
+
+  <p>Pour résoudre une équation avec des logarithmes, l'objectif est de <strong>regrouper tous les log d'un côté</strong> en un seul logarithme, puis d'exponentier.</p>
+
+  <div class="steps">
+    <div class="step"><div class="step-num">1</div><p>Utiliser les propriétés pour <strong>regrouper</strong> les log : \(\log a + \log b = \log(ab)\), \(\log a - \log b = \log\frac{a}{b}\), \(n\log a = \log a^n\)</p></div>
+    <div class="step"><div class="step-num">2</div><p>Isoler le logarithme : \(\log_a(\ldots) = c\)</p></div>
+    <div class="step"><div class="step-num">3</div><p><strong>Exponentier</strong> : si \(\log_a f(x) = c\) alors \(f(x) = a^c\)</p></div>
+    <div class="step"><div class="step-num">4</div><p>Vérifier que les arguments des log sont <strong>strictement positifs</strong> (le log d'un nombre ≤ 0 n'existe pas !)</p></div>
+  </div>
+
+  <h3>Exemples</h3>
+
+  <div class="formula example">
+    <strong>\(\log x + \log 3 = \log 7\)</strong><br><br>
+    \(\log(3x) = \log 7\)<br>
+    \(3x = 7 \implies x = \dfrac{7}{3}\) ✓ (positif)
+  </div>
+
+  <div class="formula example">
+    <strong>\(\log 2x - \log 4 = 2\log 5\)</strong><br><br>
+    \(\log\!\dfrac{2x}{4} = \log 25\)<br>
+    \(\dfrac{2x}{4} = 25 \implies 2x = 100 \implies x = 50\) ✓
+  </div>
+
+  <div class="formula example">
+    <strong>\(\ln 3x + \ln 5 = 2 - \ln 3\)</strong><br><br>
+    \(\ln(15x) = 2 - \ln 3\)<br>
+    \(\ln(15x) + \ln 3 = 2\)<br>
+    \(\ln(45x) = 2 \implies 45x = e^2 \implies x = \dfrac{e^2}{45}\)
+  </div>
+
+  <div class="formula example">
+    <strong>\(\log x = \dfrac{3}{2}\)</strong><br><br>
+    \(x = 10^{3/2} = 10\sqrt{10} \approx 31{,}6\)
+  </div>
+
+  <div class="warn"><span class="icon">⚠️</span><span>Toujours vérifier à la fin que les arguments de tous les log sont <strong>strictement positifs</strong>. Une solution négative ou nulle est à rejeter !</span></div>
+</section>
+
+<!-- ═══════ E4 EQUATIONS EXP ═══════ -->
+<section id="e4">
+  <div class="section-header">
+    <div class="section-num" style="background:#2e7d32">E4</div>
+    <h2>Équations exponentielles</h2>
+  </div>
+
+  <p>Pour résoudre une équation avec des exponentielles, on <strong>prend le log ou ln</strong> des deux membres, ou on ramène à une même base.</p>
+
+  <div class="steps">
+    <div class="step"><div class="step-num">1</div><p>Si possible, ramener à la même base : \(a^{f(x)} = a^{g(x)} \implies f(x) = g(x)\)</p></div>
+    <div class="step"><div class="step-num">2</div><p>Sinon, appliquer ln (ou log) des deux côtés</p></div>
+    <div class="step"><div class="step-num">3</div><p>Utiliser \(\ln(a^x) = x \ln a\) pour "descendre" l'exposant</p></div>
+    <div class="step"><div class="step-num">4</div><p>Résoudre l'équation obtenue (souvent linéaire ou quadratique)</p></div>
+  </div>
+
+  <h3>Exemples</h3>
+
+  <div class="formula example">
+    <strong>\(3^x = 5\)</strong><br><br>
+    \(\ln(3^x) = \ln 5\)<br>
+    \(x \ln 3 = \ln 5\)<br>
+    \(x = \dfrac{\ln 5}{\ln 3}\)
+  </div>
+
+  <div class="formula example">
+    <strong>\(2^{2x} + 2^x - 6 = 0\)</strong> (équation du 2e degré en \(2^x\))<br><br>
+    Poser \(u = 2^x\) :\quad \(u^2 + u - 6 = 0\)<br>
+    \((u+3)(u-2) = 0 \implies u = 2\) (car \(u = 2^x > 0\), donc \(u = -3\) rejeté)<br>
+    \(2^x = 2 \implies x = 1\)
+  </div>
+
+  <div class="formula example">
+    <strong>\(5^{x^2+4x+3} = 125\)</strong><br><br>
+    \(5^{x^2+4x+3} = 5^3\)<br>
+    \(x^2 + 4x + 3 = 3\)<br>
+    \(x^2 + 4x = 0 \implies x(x+4) = 0\)<br>
+    \(x = 0\) ou \(x = -4\)
+  </div>
+
+  <div class="formula example">
+    <strong>\(3 \cdot 2^x - 5 = 0\)</strong><br><br>
+    \(2^x = \dfrac{5}{3}\)<br>
+    \(x = \log_2\!\dfrac{5}{3} = \dfrac{\ln(5/3)}{\ln 2}\)
+  </div>
+
+  <div class="tip"><span class="icon">💡</span><span>Si tu vois \(e^{2x} + e^x - \ldots\), pose \(u = e^x\) → tu obtiens une équation du 2e degré en \(u\) !</span></div>
+</section>
+
+<!-- ═══════ E5 DERIVEES EXP LOG ═══════ -->
+<section id="e5">
+  <div class="section-header">
+    <div class="section-num" style="background:#2e7d32">E5</div>
+    <h2>Dérivées des fonctions exponentielles et logarithmiques</h2>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Fonction \(f(x)\)</th><th>Dérivée \(f'(x)\)</th><th>Exemple</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>\(e^x\)</td>
+          <td>\(e^x\)</td>
+          <td>\((e^x)' = e^x\)</td>
+        </tr>
+        <tr>
+          <td>\(e^{u(x)}\)</td>
+          <td>\(u'(x) \cdot e^{u(x)}\)</td>
+          <td>\((e^{3x})' = 3e^{3x}\)</td>
+        </tr>
+        <tr>
+          <td>\(a^x\)</td>
+          <td>\(a^x \ln a\)</td>
+          <td>\((5^x)' = 5^x \ln 5\)</td>
+        </tr>
+        <tr>
+          <td>\(a^{u(x)}\)</td>
+          <td>\(u'(x) \cdot a^{u(x)} \ln a\)</td>
+          <td>\((2^{\sin x})' = \cos x \cdot 2^{\sin x} \ln 2\)</td>
+        </tr>
+        <tr>
+          <td>\(\ln x\)</td>
+          <td>\(\dfrac{1}{x}\)</td>
+          <td>\((\ln x)' = \dfrac{1}{x}\)</td>
+        </tr>
+        <tr>
+          <td>\(\ln(u(x))\)</td>
+          <td>\(\dfrac{u'(x)}{u(x)}\)</td>
+          <td>\((\ln(x^2+1))' = \dfrac{2x}{x^2+1}\)</td>
+        </tr>
+        <tr>
+          <td>\(\log_a x\)</td>
+          <td>\(\dfrac{1}{x \ln a}\)</td>
+          <td>\((\log_2 x)' = \dfrac{1}{x \ln 2}\)</td>
+        </tr>
+        <tr>
+          <td>\(\ln x^2 = 2\ln x\)</td>
+          <td>\(\dfrac{2}{x}\)</td>
+          <td>\((\ln x^2)' = \dfrac{2}{x}\)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Exemples détaillés avec règle de la chaîne</h3>
+
+  <div class="formula example">
+    <strong>\(f(x) = e^x(\sin x + \cos x)\)</strong> (produit)<br><br>
+    \(f' = e^x(\sin x + \cos x) + e^x(\cos x - \sin x)\)<br>
+    \(= e^x(\sin x + \cos x + \cos x - \sin x) = \mathbf{2e^x \cos x}\)
+  </div>
+
+  <div class="formula example">
+    <strong>\(f(x) = \ln(\sin x)\)</strong> (composée)<br><br>
+    \(u = \sin x \implies u' = \cos x\)<br>
+    \(f'(x) = \dfrac{\cos x}{\sin x} = \cot x\)
+  </div>
+
+  <div class="formula example">
+    <strong>\(f(x) = x^2 \ln x\)</strong> (produit)<br><br>
+    \(f' = 2x \cdot \ln x + x^2 \cdot \dfrac{1}{x} = 2x\ln x + x = x(2\ln x + 1)\)
+  </div>
+
+  <div class="formula example">
+    <strong>\(f(x) = 2^{\sin^2 x}\)</strong> (double composée)<br><br>
+    \(u = \sin^2 x \implies u' = 2\sin x \cos x = \sin(2x)\)<br>
+    \(f'(x) = \sin(2x) \cdot 2^{\sin^2 x} \cdot \ln 2\)
+  </div>
+
+  <div style="text-align:center;margin-top:40px;padding:24px;background:linear-gradient(135deg,#7c2d12,#c0392b,#2e7d32);border-radius:16px;color:white;">
+    <div style="font-size:2rem;margin-bottom:8px">📐📈</div>
+    <div style="font-family:'Crimson Pro',serif;font-size:1.4rem;font-weight:600">Bonne chance pour ton examen !</div>
+    <div style="opacity:.7;font-size:.9rem;margin-top:4px">Dérivées + Expo/Log — encore un chapitre et tu es prêt ! 💪</div>
+  </div>
+</section>
+
+</main>
+</body>
+</html>

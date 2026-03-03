@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Synthèse — Nombres Complexes</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0f2744;
+    --blue: #1a4a8a;
+    --blue2: #2d6fd4;
+    --accent: #e8a020;
+    --red: #c0392b;
+    --green: #1e7a4a;
+    --teal: #0e7490;
+    --bg: #f4f6fa;
+    --white: #ffffff;
+    --gray: #64748b;
+    --light: #e8eef7;
+    --tip-bg: #edf7f0;
+    --warn-bg: #fef2f2;
+    --formula-bg: #f0f4ff;
+    --teal-bg: #f0fafa;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Outfit', sans-serif; background: var(--bg); color: #1a2332; line-height: 1.7; }
+
+  .hero {
+    background: linear-gradient(135deg, #0c2340 0%, #0e7490 60%, #06b6d4 100%);
+    color: white; padding: 56px 40px 48px; text-align: center; position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute; inset: 0;
+    background: repeating-linear-gradient(45deg, transparent, transparent 40px, rgba(255,255,255,.03) 40px, rgba(255,255,255,.03) 80px);
+  }
+  .hero-badge {
+    display: inline-block; background: var(--accent); color: #0c2340;
+    font-weight: 700; font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    padding: 5px 16px; border-radius: 20px; margin-bottom: 20px;
+  }
+  .hero h1 { font-family: 'Crimson Pro', serif; font-size: clamp(2rem,5vw,3.2rem); font-weight: 700; margin-bottom: 10px; position: relative; }
+  .hero p { font-size: 1rem; opacity: .75; font-weight: 300; position: relative; }
+
+  nav {
+    background: var(--white); border-bottom: 2px solid var(--light);
+    padding: 0 40px; display: flex; gap: 4px; overflow-x: auto;
+    position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,.08);
+  }
+  nav a {
+    display: block; padding: 14px 16px; font-size: 12px; font-weight: 600;
+    color: var(--gray); text-decoration: none; white-space: nowrap;
+    border-bottom: 3px solid transparent; transition: all .2s;
+  }
+  nav a:hover { color: var(--teal); border-color: var(--teal); }
+
+  main { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+  section { margin-bottom: 56px; }
+
+  .section-header {
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 24px; padding-bottom: 12px; border-bottom: 2px solid var(--light);
+  }
+  .section-num {
+    background: var(--teal); color: white; font-weight: 800; font-size: 13px;
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .section-header h2 { font-family: 'Crimson Pro', serif; font-size: 1.6rem; font-weight: 700; color: var(--navy); }
+
+  h3 {
+    font-size: 1rem; font-weight: 700; color: var(--teal); margin: 24px 0 10px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  h3::before { content: ''; display: inline-block; width: 4px; height: 18px; background: var(--accent); border-radius: 2px; }
+
+  p { margin-bottom: 10px; font-size: 0.97rem; }
+
+  .formula {
+    background: var(--formula-bg); border-left: 4px solid var(--blue2);
+    border-radius: 0 10px 10px 0; padding: 14px 20px; margin: 10px 0;
+    text-align: center; overflow-x: auto;
+  }
+  .formula.important { border-color: var(--red); background: #fff5f5; }
+  .formula.example { border-color: var(--green); background: #f0faf4; }
+  .formula.teal { border-color: var(--teal); background: var(--teal-bg); }
+
+  .tip, .warn {
+    padding: 11px 16px; border-radius: 10px; margin: 10px 0;
+    font-size: 0.91rem; display: flex; align-items: flex-start; gap: 10px;
+  }
+  .tip { background: var(--tip-bg); border: 1px solid #b8e2c8; color: #1a5c34; }
+  .warn { background: var(--warn-bg); border: 1px solid #f5c2c2; color: #8b1a1a; }
+  .tip .icon, .warn .icon { flex-shrink: 0; font-size: 1.1rem; }
+
+  .table-wrap { overflow-x: auto; margin: 14px 0; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,.08); }
+  table { width: 100%; border-collapse: collapse; background: white; font-size: 0.93rem; }
+  thead th {
+    background: var(--teal); color: white; padding: 11px 16px;
+    text-align: center; font-weight: 700; font-size: 0.85rem;
+  }
+  thead th:first-child { border-radius: 12px 0 0 0; }
+  thead th:last-child { border-radius: 0 12px 0 0; }
+  tbody td { padding: 11px 16px; text-align: center; border-bottom: 1px solid #e8eef7; }
+  tbody tr:nth-child(even) td { background: #f0fafa; }
+  tbody tr:hover td { background: #e0f7fa; }
+
+  .law-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0; }
+  .law-card { background: white; border: 1px solid var(--light); border-radius: 12px; padding: 14px; box-shadow: 0 1px 4px rgba(0,0,0,.05); }
+  .law-title { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--teal); margin-bottom: 8px; }
+
+  .steps { margin: 12px 0; }
+  .step {
+    display: flex; gap: 14px; align-items: flex-start; margin-bottom: 10px;
+    padding: 12px 16px; background: white; border-radius: 10px; border: 1px solid var(--light);
+  }
+  .step-num {
+    background: var(--accent); color: var(--navy); font-weight: 800; font-size: 13px;
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .step p { margin: 0; font-size: 0.93rem; }
+
+  /* 3 forms display */
+  .three-forms {
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin: 16px 0;
+  }
+  .form-card {
+    background: white; border-radius: 14px; padding: 20px; text-align: center;
+    box-shadow: 0 2px 12px rgba(0,0,0,.07);
+  }
+  .form-card .form-name { font-size: 11px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 10px; }
+  .form-card .form-eq { font-size: 1.2rem; font-weight: 700; margin-bottom: 10px; }
+  .form-card .form-note { font-size: 0.8rem; color: var(--gray); }
+  .f-cart { border-top: 4px solid var(--blue); } .f-cart .form-name { color: var(--blue); }
+  .f-pol  { border-top: 4px solid var(--teal); } .f-pol .form-name { color: var(--teal); }
+  .f-exp  { border-top: 4px solid var(--red); }  .f-exp .form-name { color: var(--red); }
+
+  @media (max-width: 650px) {
+    .three-forms { grid-template-columns: 1fr; }
+    .law-grid { grid-template-columns: 1fr; }
+    nav { padding: 0 12px; }
+    main { padding: 20px 14px 60px; }
+    .hero { padding: 36px 20px 30px; }
+  }
+</style>
+
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style id="theme-system">
+/* ════════════════════════════════════════════
+   SHARED DESIGN SYSTEM — light & dark
+   ════════════════════════════════════════════ */
+:root {
+  /* ── Light (default) ── */
+  --bg:          #f5f6fa;
+  --surface:     #ffffff;
+  --surface2:    #f0f1f7;
+  --border:      #e2e4ef;
+  --border2:     #c8cbdc;
+  --text:        #111827;
+  --text2:       #374151;
+  --muted:       #6b7280;
+  --dim:         #9ca3af;
+
+  /* ── Accents ── */
+  --blue:        #2563eb;
+  --blue-bg:     #eff6ff;
+  --blue-bd:     #bfdbfe;
+  --purple:      #7c3aed;
+  --purple-bg:   #f5f3ff;
+  --teal:        #0891b2;
+  --teal-bg:     #ecfeff;
+  --teal-bd:     #a5f3fc;
+  --green:       #16a34a;
+  --green-bg:    #f0fdf4;
+  --green-bd:    #bbf7d0;
+  --orange:      #d97706;
+  --orange-bg:   #fffbeb;
+  --orange-bd:   #fde68a;
+  --red:         #dc2626;
+  --red-bg:      #fef2f2;
+  --red-bd:      #fecaca;
+  --yellow:      #ca8a04;
+  --yellow-bg:   #fefce8;
+
+  /* ── Shadows ── */
+  --shadow-sm:   0 1px 3px rgba(0,0,0,.08);
+  --shadow:      0 4px 16px rgba(0,0,0,.08);
+  --shadow-lg:   0 8px 32px rgba(0,0,0,.1);
+
+  /* ── Radius ── */
+  --r-sm: 8px;
+  --r:    12px;
+  --r-lg: 18px;
+  --r-xl: 24px;
+}
+
+[data-theme="dark"] {
+  /* ── Navy/slate blue-night palette ── */
+  --bg:          #0d1117;   /* deep navy-black, like GitHub dark */
+  --surface:     #161b22;   /* card surface — slate navy */
+  --surface2:    #1c2333;   /* elevated elements */
+  --border:      #2d3748;   /* slate border, visible but subtle */
+  --border2:     #4a5568;   /* stronger border for hover/focus */
+  --text:        #e2e8f0;   /* soft white, easy on eyes */
+  --text2:       #a0aec0;   /* secondary text — slate-400 */
+  --muted:       #718096;   /* muted — slate-500 */
+  --dim:         #2d3748;   /* very dim — slate-700 */
+
+  /* ── Accents tuned for navy backgrounds ── */
+  --blue:        #63b3ed;   /* sky blue — readable on navy */
+  --blue-bg:     #1a2744;   /* navy-tinted blue bg */
+  --blue-bd:     #2c4a7c;   /* blue border */
+  --purple:      #b794f4;   /* soft purple */
+  --purple-bg:   #1e1a3a;
+  --teal:        #4fd1c5;   /* teal — pops on navy */
+  --teal-bg:     #0e2a2e;
+  --teal-bd:     #1a4a50;
+  --green:       #68d391;   /* mint green */
+  --green-bg:    #0e2a1a;
+  --green-bd:    #1a4a2e;
+  --orange:      #f6ad55;   /* warm amber */
+  --orange-bg:   #2a1e0e;
+  --orange-bd:   #4a3418;
+  --red:         #fc8181;   /* soft red */
+  --red-bg:      #2a1414;
+  --red-bd:      #4a2020;
+  --yellow:      #f6e05e;
+  --yellow-bg:   #2a2400;
+
+  --shadow-sm:   0 1px 4px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.03);
+  --shadow:      0 4px 20px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.04);
+  --shadow-lg:   0 12px 48px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.05);
+}
+
+/* ── Base reset ── */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: 'Bricolage Grotesque', 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+/* ── Toggle button ── */
+#theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 100px;
+  padding: 7px 14px 7px 10px;
+  cursor: pointer;
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s;
+  user-select: none;
+}
+#theme-toggle:hover {
+  color: var(--text);
+  border-color: var(--border2);
+  box-shadow: var(--shadow);
+}
+#theme-toggle .t-icon { font-size: 15px; transition: transform 0.3s; }
+[data-theme="dark"] #theme-toggle .t-icon { transform: rotate(180deg); }
+</style>
+
+<style id="theme-override">
+:root, [data-theme="light"] {
+  --navy: #1e3a5f; --teal: #0891b2; --accent: #d97706;
+  --bg: var(--bg); --white: var(--surface); --light: var(--border);
+  --gray: var(--muted); --formula-bg: var(--blue-bg); --tip-bg: var(--green-bg);
+  --warn-bg: var(--red-bg); --teal-bg: var(--teal-bg);
+}
+[data-theme="dark"] {
+  --navy: #93c5fd; --teal: #4fd1c5; --accent: #f6ad55;
+  --white: var(--surface); --light: var(--border);
+  --gray: var(--muted); --formula-bg: var(--blue-bg); --tip-bg: var(--green-bg);
+  --warn-bg: var(--red-bg); --teal-bg: var(--teal-bg);
+}
+body { background: var(--bg) !important; color: var(--text) !important; }
+nav { background: var(--surface) !important; border-color: var(--border) !important; box-shadow: var(--shadow-sm) !important; }
+nav a { color: var(--muted) !important; }
+nav a:hover, nav a.active { color: var(--teal) !important; border-color: var(--teal) !important; }
+main { background: transparent !important; }
+section { background: transparent !important; }
+.section-header { border-color: var(--border) !important; }
+.section-header h2 { color: var(--navy) !important; }
+.section-num { background: var(--teal) !important; color: #fff !important; }
+h3 { color: var(--teal) !important; }
+h3::before { background: var(--accent) !important; }
+p { color: var(--text2) !important; }
+.formula { background: var(--blue-bg) !important; border-color: var(--blue) !important; }
+.formula.important { background: var(--red-bg) !important; border-color: var(--red) !important; }
+.formula.example { background: var(--green-bg) !important; border-color: var(--green) !important; }
+.formula.teal { background: var(--teal-bg) !important; border-color: var(--teal) !important; }
+.tip { background: var(--green-bg) !important; border-color: var(--green-bd) !important; color: var(--green) !important; }
+.warn { background: var(--red-bg) !important; border-color: var(--red-bd) !important; color: var(--red) !important; }
+table { background: var(--surface) !important; }
+th { background: var(--teal) !important; color: #fff !important; }
+td { border-color: var(--border) !important; color: var(--text) !important; }
+tbody tr:nth-child(even) td { background: var(--surface2) !important; }
+tbody tr:hover td { background: var(--teal-bg) !important; }
+.law-card, .step, .form-card { background: var(--surface) !important; border-color: var(--border) !important; color: var(--text) !important; }
+.hero { background: linear-gradient(135deg, #0c2340 0%, #0891b2 60%, #06b6d4 100%) !important; color: #fff !important; }
+.hero h1, .hero p { color: #fff !important; -webkit-text-fill-color: #fff !important; }
+code, pre { background: var(--surface2) !important; color: var(--teal) !important; border-color: var(--border) !important; }
+</style>
+
+<style id="back-btn-style">
+.hub-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 100px;
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: all .2s;
+  position: relative;
+  z-index: 200;
+}
+.hub-back:hover { color: var(--text); border-color: var(--border2); box-shadow: var(--shadow); transform: translateX(-2px); }
+.hub-back-bar {
+  position: sticky;
+  top: 0;
+  z-index: 500;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.hub-back-bar .breadcrumb {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.hub-back-bar .breadcrumb a {
+  color: var(--muted);
+  text-decoration: none;
+  transition: color .15s;
+}
+.hub-back-bar .breadcrumb a:hover { color: var(--text); }
+.hub-back-bar .breadcrumb span { color: var(--dim); }
+</style>
+
+</head>
+<body>
+
+<div class="hub-back-bar">
+  <a href="index.html" class="hub-back">← Retour</a>
+  <div class="breadcrumb">
+    <a href="index.html">Hub</a>
+    <span>›</span>
+    <span>Mathématiques</span>
+    <span>›</span>
+    <span>Nombres Complexes</span>
+  </div>
+</div>
+
+<button id="theme-toggle" onclick="toggleTheme()" aria-label="Changer le thème">
+  <span class="t-icon">☀️</span>
+  <span class="t-label">Thème</span>
+</button>
+<script>
+(function(){
+  const saved = localStorage.getItem('theme') || 'light';
+  document.documentElement.setAttribute('data-theme', saved);
+  document.addEventListener('DOMContentLoaded', function(){
+    const lbl = document.querySelector('#theme-toggle .t-label');
+    const icon = document.querySelector('#theme-toggle .t-icon');
+    const t = document.documentElement.getAttribute('data-theme');
+    if(lbl) lbl.textContent = t === 'dark' ? 'Clair' : 'Sombre';
+    if(icon) icon.textContent = t === 'dark' ? '🌙' : '☀️';
+  });
+})();
+function toggleTheme(){
+  const html = document.documentElement;
+  const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+  const lbl = document.querySelector('#theme-toggle .t-label');
+  const icon = document.querySelector('#theme-toggle .t-icon');
+  if(lbl) lbl.textContent = next === 'dark' ? 'Clair' : 'Sombre';
+  if(icon) icon.textContent = next === 'dark' ? '🌙' : '☀️';
+}
+</script>
+
+
+<div class="hero">
+  <div class="hero-badge">Examen de rattrapage</div>
+  <h1>Synthèse — Nombres Complexes</h1>
+  <p>Représentations · Conversions · Opérations · Conjugué · Équations</p>
+</div>
+
+<nav>
+  <a href="#c1">C1. Les 3 formes</a>
+  <a href="#c2">C2. Conversions</a>
+  <a href="#c3">C3. Plan complexe</a>
+  <a href="#c4">C4. Opérations</a>
+  <a href="#c5">C5. Conjugué</a>
+  <a href="#c6">C6. Puissances de j</a>
+  <a href="#c7">C7. Équations</a>
+  <a href="#c8">C8. Méthode</a>
+</nav>
+
+<main>
+
+<!-- ═══════ C1 LES 3 FORMES ═══════ -->
+<section id="c1">
+  <div class="section-header">
+    <div class="section-num">C1</div>
+    <h2>Les trois représentations d'un nombre complexe</h2>
+  </div>
+
+  <p>Un nombre complexe peut s'écrire de <strong>trois façons différentes</strong>, toutes équivalentes.</p>
+
+  <div class="three-forms">
+    <div class="form-card f-cart">
+      <div class="form-name">Cartésienne (Algébrique)</div>
+      <div class="form-eq">\(z = a + jb\)</div>
+      <div class="formula" style="margin:8px 0;font-size:.9rem">\(a = \text{Re}(z)\) : partie réelle<br>\(b = \text{Im}(z)\) : partie imaginaire</div>
+      <div class="form-note">Idéale pour additionner et soustraire</div>
+    </div>
+    <div class="form-card f-pol">
+      <div class="form-name">Polaire (Trigonométrique)</div>
+      <div class="form-eq">\(z = r\,\text{cjs}(\theta)\)</div>
+      <div class="formula" style="margin:8px 0;font-size:.9rem">\(r = |z|\) : module<br>\(\theta\) : argument (en rad ou degrés)</div>
+      <div class="form-note">Idéale pour multiplier et diviser</div>
+    </div>
+    <div class="form-card f-exp">
+      <div class="form-name">Exponentielle</div>
+      <div class="form-eq">\(z = re^{j\theta}\)</div>
+      <div class="formula" style="margin:8px 0;font-size:.9rem">\(r = |z|\) : module<br>\(\theta\) : argument</div>
+      <div class="form-note">Identique à la polaire, notation compacte</div>
+    </div>
+  </div>
+
+  <div class="tip"><span class="icon">💡</span><span>Note : en électronique/maths belges on utilise \(j\) à la place de \(i\) pour l'unité imaginaire. C'est la même chose : \(j^2 = -1\)</span></div>
+</section>
+
+<!-- ═══════ C2 CONVERSIONS ═══════ -->
+<section id="c2">
+  <div class="section-header">
+    <div class="section-num">C2</div>
+    <h2>Conversions entre les formes</h2>
+  </div>
+
+  <h3>Cartésienne → Polaire/Exponentielle</h3>
+  <p>On cherche le module \(r\) et l'argument \(\theta\) à partir de \(a\) et \(b\).</p>
+
+  <div class="law-grid">
+    <div class="law-card">
+      <div class="law-title">Module</div>
+      <div class="formula important" style="margin:4px 0">\[r = |z| = \sqrt{a^2 + b^2}\]</div>
+    </div>
+    <div class="law-card">
+      <div class="law-title">Argument</div>
+      <div class="formula important" style="margin:4px 0">\[\theta = \arctan\!\left(\frac{b}{a}\right)\]</div>
+      <p style="font-size:.82rem;margin-top:6px;color:var(--red)">⚠ Attention au quadrant ! (voir ci-dessous)</p>
+    </div>
+  </div>
+
+  <div class="warn"><span class="icon">⚠️</span><span><strong>L'argument dépend du quadrant !</strong> La calculatrice donne arctan dans \([-90°, 90°]\), mais \(\theta\) peut être dans n'importe quel quadrant selon les signes de \(a\) et \(b\) :<br>
+  • \(a > 0\) : \(\theta = \arctan(b/a)\)<br>
+  • \(a < 0, b \geq 0\) : \(\theta = \arctan(b/a) + 180°\)<br>
+  • \(a < 0, b < 0\) : \(\theta = \arctan(b/a) - 180°\)<br>
+  • \(a = 0, b > 0\) : \(\theta = 90°\) &nbsp;|&nbsp; \(a = 0, b < 0\) : \(\theta = -90°\)</span></div>
+
+  <div class="formula example">
+    <strong>Exemple : \(z = 1 - j\)</strong> → \(a = 1,\ b = -1\)<br><br>
+    \(r = \sqrt{1^2 + (-1)^2} = \sqrt{2}\)<br>
+    \(\theta = \arctan\!\left(\dfrac{-1}{1}\right) = -45° = -\dfrac{\pi}{4}\) (4e quadrant, \(a > 0\) ✓)<br><br>
+    \(\Rightarrow z = \sqrt{2}\,\text{cjs}(-45°) = \sqrt{2}\,e^{-j\pi/4}\)
+  </div>
+
+  <div class="formula example">
+    <strong>Exemple : \(z = -\sqrt{3} + j\)</strong> → \(a = -\sqrt{3},\ b = 1\)<br><br>
+    \(r = \sqrt{3 + 1} = 2\)<br>
+    \(\theta = \arctan\!\left(\dfrac{1}{-\sqrt{3}}\right) + 180° = -30° + 180° = 150° = \dfrac{5\pi}{6}\)<br><br>
+    \(\Rightarrow z = 2\,\text{cjs}(150°)\)
+  </div>
+
+  <h3>Polaire/Exponentielle → Cartésienne</h3>
+  <p>On cherche \(a\) et \(b\) à partir de \(r\) et \(\theta\).</p>
+
+  <div class="law-grid">
+    <div class="law-card">
+      <div class="law-title">Partie réelle</div>
+      <div class="formula teal" style="margin:4px 0">\[a = r\cos(\theta)\]</div>
+    </div>
+    <div class="law-card">
+      <div class="law-title">Partie imaginaire</div>
+      <div class="formula teal" style="margin:4px 0">\[b = r\sin(\theta)\]</div>
+    </div>
+  </div>
+
+  <div class="formula example">
+    <strong>Exemple : \(z = 2\,\text{cjs}\!\left(\dfrac{\pi}{3}\right)\)</strong><br><br>
+    \(a = 2\cos\!\left(\dfrac{\pi}{3}\right) = 2 \times \dfrac{1}{2} = 1\)<br>
+    \(b = 2\sin\!\left(\dfrac{\pi}{3}\right) = 2 \times \dfrac{\sqrt{3}}{2} = \sqrt{3}\)<br><br>
+    \(\Rightarrow z = 1 + j\sqrt{3}\)
+  </div>
+</section>
+
+<!-- ═══════ C3 PLAN COMPLEXE ═══════ -->
+<section id="c3">
+  <div class="section-header">
+    <div class="section-num">C3</div>
+    <h2>Représentation dans le plan complexe</h2>
+  </div>
+
+  <p>Un nombre complexe \(z = a + jb\) se représente comme un point de coordonnées \((a, b)\) dans le plan :</p>
+  <p>• L'axe horizontal = axe réel (partie \(a\))</p>
+  <p>• L'axe vertical = axe imaginaire (partie \(b\))</p>
+
+  <div class="formula teal">
+    \[z = a + jb \longleftrightarrow \text{Point } (a,\ b) \text{ dans le plan}\]
+  </div>
+
+  <div class="tip"><span class="icon">💡</span><span>Le module \(r = |z|\) est la <strong>distance</strong> du point à l'origine. L'argument \(\theta\) est l'<strong>angle</strong> que fait le vecteur avec l'axe réel positif.</span></div>
+</section>
+
+<!-- ═══════ C4 OPERATIONS ═══════ -->
+<section id="c4">
+  <div class="section-header">
+    <div class="section-num">C4</div>
+    <h2>Opérations sur les complexes</h2>
+  </div>
+
+  <h3>Addition et soustraction → forme cartésienne</h3>
+  <div class="formula teal">
+    \[(a+jb) \pm (c+jd) = (a \pm c) + j(b \pm d)\]
+  </div>
+  <div class="formula example">
+    \((2-j) + (1+2j) = (2+1) + j(-1+2) = 3 + j\)
+  </div>
+
+  <h3>Multiplication → forme polaire ou cartésienne</h3>
+  <div class="law-grid">
+    <div class="law-card">
+      <div class="law-title">En cartésienne</div>
+      <div class="formula" style="margin:4px 0;font-size:.9rem">\[(a+jb)(c+jd) = (ac-bd) + j(ad+bc)\]</div>
+      <p style="font-size:.82rem;margin-top:4px">Développer comme un produit normal, puis utiliser \(j^2 = -1\)</p>
+    </div>
+    <div class="law-card">
+      <div class="law-title">En polaire (plus simple !)</div>
+      <div class="formula important" style="margin:4px 0">\[r_1\text{cjs}(\theta_1) \times r_2\text{cjs}(\theta_2) = r_1 r_2\,\text{cjs}(\theta_1+\theta_2)\]</div>
+      <p style="font-size:.82rem;margin-top:4px">On multiplie les modules et on additionne les arguments</p>
+    </div>
+  </div>
+
+  <div class="formula example">
+    <strong>Exemple polaire :</strong> \(\sqrt{2}\,\text{cjs}(45°) \times \sqrt{2}\,\text{cjs}(300°)\)<br><br>
+    \(r = \sqrt{2} \times \sqrt{2} = 2 \quad;\quad \theta = 45° + 300° = 345°\)<br>
+    \(\Rightarrow 2\,\text{cjs}(345°)\)
+  </div>
+
+  <h3>Division → forme polaire</h3>
+  <div class="formula important">
+    \[\frac{r_1\,\text{cjs}(\theta_1)}{r_2\,\text{cjs}(\theta_2)} = \frac{r_1}{r_2}\,\text{cjs}(\theta_1 - \theta_2)\]
+  </div>
+  <p>On divise les modules et on soustrait les arguments.</p>
+
+  <div class="formula example">
+    <strong>Exemple :</strong> \(\dfrac{12\,\text{cjs}(330°)}{4\,\text{cjs}(210°)}\)<br><br>
+    \(r = \dfrac{12}{4} = 3 \quad;\quad \theta = 330° - 210° = 120°\)<br>
+    \(\Rightarrow 3\,\text{cjs}(120°)\)
+  </div>
+
+  <h3>Division en cartésienne (par le conjugué)</h3>
+  <p>Multiplier numérateur et dénominateur par le <strong>conjugué du dénominateur</strong>.</p>
+  <div class="formula teal">
+    \[\frac{a+jb}{c+jd} = \frac{(a+jb)(c-jd)}{(c+jd)(c-jd)} = \frac{(a+jb)(c-jd)}{c^2+d^2}\]
+  </div>
+
+  <div class="formula example">
+    <strong>Exemple :</strong> \(\dfrac{1+j}{1-j}\)<br><br>
+    \(= \dfrac{(1+j)(1+j)}{(1-j)(1+j)} = \dfrac{1 + 2j + j^2}{1 + 1} = \dfrac{1 + 2j - 1}{2} = \dfrac{2j}{2} = j\)
+  </div>
+
+  <h3>Puissance → forme polaire</h3>
+  <div class="formula important">
+    \[\bigl(r\,\text{cjs}(\theta)\bigr)^n = r^n\,\text{cjs}(n\theta)\]
+  </div>
+  <div class="formula example">
+    <strong>Exemple :</strong> \((3\,\text{cjs}(60°))^4 = 3^4\,\text{cjs}(240°) = 81\,\text{cjs}(240°)\)
+  </div>
+</section>
+
+<!-- ═══════ C5 CONJUGUE ═══════ -->
+<section id="c5">
+  <div class="section-header">
+    <div class="section-num">C5</div>
+    <h2>Conjugué d'un nombre complexe</h2>
+  </div>
+
+  <p>Le conjugué de \(z = a + jb\) est noté \(\bar{z}\) et s'obtient en changeant le signe de la partie imaginaire.</p>
+
+  <div class="law-grid">
+    <div class="law-card">
+      <div class="law-title">En cartésienne</div>
+      <div class="formula important" style="margin:4px 0">\[\bar{z} = a - jb\]</div>
+    </div>
+    <div class="law-card">
+      <div class="law-title">En polaire</div>
+      <div class="formula important" style="margin:4px 0">\[\bar{z} = r\,\text{cjs}(-\theta)\]</div>
+      <p style="font-size:.82rem;margin-top:4px">Même module, argument opposé</p>
+    </div>
+  </div>
+
+  <h3>Propriétés du conjugué</h3>
+  <div class="law-grid">
+    <div class="law-card">
+      <div class="law-title">Produit z × z̄</div>
+      <div class="formula teal" style="margin:4px 0">\[z \cdot \bar{z} = a^2 + b^2 = r^2 = |z|^2\]</div>
+      <p style="font-size:.82rem;margin-top:4px;color:var(--green)">Toujours réel et positif ! Utile pour les divisions.</p>
+    </div>
+    <div class="law-card">
+      <div class="law-title">Somme z + z̄</div>
+      <div class="formula teal" style="margin:4px 0">\[z + \bar{z} = 2a = 2\,\text{Re}(z)\]</div>
+    </div>
+    <div class="law-card">
+      <div class="law-title">Conjugué d'un produit</div>
+      <div class="formula" style="margin:4px 0">\[\overline{z_1 z_2} = \bar{z}_1 \cdot \bar{z}_2\]</div>
+    </div>
+    <div class="law-card">
+      <div class="law-title">Module du conjugué</div>
+      <div class="formula" style="margin:4px 0">\[|\bar{z}| = |z|\]</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ C6 PUISSANCES DE J ═══════ -->
+<section id="c6">
+  <div class="section-header">
+    <div class="section-num">C6</div>
+    <h2>Puissances de j</h2>
+  </div>
+
+  <p>Les puissances de \(j\) sont cycliques avec une période de 4.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>\(j^0\)</th><th>\(j^1\)</th><th>\(j^2\)</th><th>\(j^3\)</th><th>\(j^4\)</th><th>\(j^5\)</th><th>\(j^6\)</th><th>\(j^7\)</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>\(1\)</td><td>\(j\)</td><td>\(-1\)</td><td>\(-j\)</td>
+          <td>\(1\)</td><td>\(j\)</td><td>\(-1\)</td><td>\(-j\)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="tip"><span class="icon">💡</span><span><strong>Méthode pour \(j^n\) :</strong> diviser \(n\) par 4 et regarder le reste.<br>
+  Reste 0 → \(1\) &nbsp;|&nbsp; Reste 1 → \(j\) &nbsp;|&nbsp; Reste 2 → \(-1\) &nbsp;|&nbsp; Reste 3 → \(-j\)<br><br>
+  Exemple : \(j^{37} = j^{4\times9+1} = j^1 = j\)</span></div>
+
+  <div class="formula example">
+    <strong>Montrons que \(j^3 = \dfrac{1}{j}\)</strong><br><br>
+    \(\dfrac{1}{j} = \dfrac{1}{j} \times \dfrac{j}{j} = \dfrac{j}{j^2} = \dfrac{j}{-1} = -j = j^3\) ✓
+  </div>
+</section>
+
+<!-- ═══════ C7 EQUATIONS ═══════ -->
+<section id="c7">
+  <div class="section-header">
+    <div class="section-num">C7</div>
+    <h2>Équations dans les complexes</h2>
+  </div>
+
+  <h3>Équation du 2e degré \(az^2 + bz + c = 0\)</h3>
+  <p>Le discriminant peut être négatif → les solutions sont complexes !</p>
+
+  <div class="formula important">
+    \[\Delta = b^2 - 4ac\]
+  </div>
+
+  <div class="law-grid">
+    <div class="law-card">
+      <div class="law-title">\(\Delta > 0\) — 2 solutions réelles</div>
+      <div class="formula" style="margin:4px 0">\[z = \frac{-b \pm \sqrt{\Delta}}{2a}\]</div>
+    </div>
+    <div class="law-card">
+      <div class="law-title">\(\Delta = 0\) — 1 solution double</div>
+      <div class="formula" style="margin:4px 0">\[z = \frac{-b}{2a}\]</div>
+    </div>
+    <div class="law-card" style="grid-column:span 2">
+      <div class="law-title">\(\Delta < 0\) — 2 solutions complexes conjuguées</div>
+      <div class="formula important" style="margin:4px 0">\[z = \frac{-b \pm j\sqrt{|\Delta|}}{2a}\]</div>
+      <p style="font-size:.85rem;margin-top:6px">Les deux solutions sont toujours conjuguées l'une de l'autre !</p>
+    </div>
+  </div>
+
+  <div class="formula example">
+    <strong>Exemple : \(4 + x^2 = 0\)</strong><br><br>
+    \(x^2 = -4 \implies x = \pm\sqrt{-4} = \pm 2j\)
+  </div>
+
+  <div class="formula example">
+    <strong>Exemple : \(3x^2 - 4x + 2 = 0\)</strong><br><br>
+    \(\Delta = 16 - 24 = -8 < 0\)<br>
+    \(x = \dfrac{4 \pm j\sqrt{8}}{6} = \dfrac{4 \pm 2j\sqrt{2}}{6} = \dfrac{2 \pm j\sqrt{2}}{3}\)
+  </div>
+
+  <h3>Équation du type \((1+j)z = -2+5j\)</h3>
+  <p>Diviser les deux membres par le coefficient complexe (utiliser le conjugué).</p>
+
+  <div class="formula example">
+    <strong>\((1+j)z = -2+5j\)</strong><br><br>
+    \(z = \dfrac{-2+5j}{1+j} = \dfrac{(-2+5j)(1-j)}{(1+j)(1-j)} = \dfrac{-2+2j+5j-5j^2}{1+1} = \dfrac{-2+7j+5}{2} = \dfrac{3+7j}{2}\)
+  </div>
+
+  <h3>Équation du type \(z^4 + 5z^2 + 4 = 0\)</h3>
+  <p>Poser \(u = z^2\) pour se ramener à une équation du 2e degré.</p>
+
+  <div class="formula example">
+    <strong>\(z^4 + 5z^2 + 4 = 0\)</strong> — poser \(u = z^2\)<br><br>
+    \(u^2 + 5u + 4 = 0 \implies (u+1)(u+4) = 0\)<br>
+    \(u = -1 \implies z^2 = -1 \implies z = \pm j\)<br>
+    \(u = -4 \implies z^2 = -4 \implies z = \pm 2j\)<br><br>
+    Solutions : \(z \in \{j,\ -j,\ 2j,\ -2j\}\)
+  </div>
+</section>
+
+<!-- ═══════ C8 METHODE ═══════ -->
+<section id="c8">
+  <div class="section-header">
+    <div class="section-num">C8</div>
+    <h2>Récap — Méthode pour chaque exercice</h2>
+  </div>
+
+  <h3>Convertir cartésienne → polaire</h3>
+  <div class="steps">
+    <div class="step"><div class="step-num">1</div><p>Calculer \(r = \sqrt{a^2+b^2}\)</p></div>
+    <div class="step"><div class="step-num">2</div><p>Calculer \(\theta = \arctan(b/a)\) puis <strong>ajuster selon le quadrant</strong></p></div>
+    <div class="step"><div class="step-num">3</div><p>Écrire \(z = r\,\text{cjs}(\theta) = re^{j\theta}\)</p></div>
+  </div>
+
+  <h3>Convertir polaire → cartésienne</h3>
+  <div class="steps">
+    <div class="step"><div class="step-num">1</div><p>Calculer \(a = r\cos\theta\) et \(b = r\sin\theta\)</p></div>
+    <div class="step"><div class="step-num">2</div><p>Écrire \(z = a + jb\)</p></div>
+  </div>
+
+  <h3>Multiplier / Diviser / Mettre à la puissance</h3>
+  <div class="steps">
+    <div class="step"><div class="step-num">✓</div><p>Convertir en <strong>forme polaire</strong> si ce n'est pas déjà fait</p></div>
+    <div class="step"><div class="step-num">✓</div><p>Multiplier/diviser les modules, additionner/soustraire les arguments</p></div>
+    <div class="step"><div class="step-num">✓</div><p>Pour une puissance \(n\) : \(r^n\,\text{cjs}(n\theta)\)</p></div>
+    <div class="step"><div class="step-num">✓</div><p>Reconvertir dans la forme demandée à la fin</p></div>
+  </div>
+
+  <h3>Simplifier une fraction complexe en cartésienne</h3>
+  <div class="steps">
+    <div class="step"><div class="step-num">1</div><p>Multiplier numérateur ET dénominateur par le <strong>conjugué du dénominateur</strong></p></div>
+    <div class="step"><div class="step-num">2</div><p>Développer — le dénominateur devient \(a^2 + b^2\) (réel !)</p></div>
+    <div class="step"><div class="step-num">3</div><p>Simplifier la fraction obtenue</p></div>
+  </div>
+
+  <div class="table-wrap" style="margin-top:20px">
+    <table>
+      <thead><tr><th>Opération</th><th>Meilleure forme</th><th>Règle</th></tr></thead>
+      <tbody>
+        <tr><td>Addition / Soustraction</td><td>Cartésienne</td><td>\((a+jb)+(c+jd) = (a+c)+j(b+d)\)</td></tr>
+        <tr><td>Multiplication</td><td>Polaire</td><td>Modules × , arguments +</td></tr>
+        <tr><td>Division</td><td>Polaire</td><td>Modules ÷ , arguments −</td></tr>
+        <tr><td>Puissance</td><td>Polaire</td><td>\(r^n\,\text{cjs}(n\theta)\)</td></tr>
+        <tr><td>Conjugué</td><td>Cartésienne ou polaire</td><td>\(\bar{z} = a-jb\) ou \(r\,\text{cjs}(-\theta)\)</td></tr>
+        <tr><td>Équation \(az^2+bz+c=0\)</td><td>Cartésienne</td><td>\(\Delta = b^2-4ac\), si \(\Delta<0\) : \(z=\frac{-b\pm j\sqrt{|\Delta|}}{2a}\)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div style="text-align:center;margin-top:40px;padding:24px;background:linear-gradient(135deg,#0c2340,#0e7490);border-radius:16px;color:white;">
+    <div style="font-size:2rem;margin-bottom:8px">🎯</div>
+    <div style="font-family:'Crimson Pro',serif;font-size:1.4rem;font-weight:600">Bonne chance pour ton examen !</div>
+    <div style="opacity:.7;font-size:.9rem;margin-top:4px">Tu as maintenant tous les chapitres couverts — tu peux y arriver ! 💪</div>
+  </div>
+</section>
+
+</main>
+</body>
+</html>

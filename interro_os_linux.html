@@ -1,0 +1,1422 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interro OS — Commandes Linux</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  /* ─── TOKENS ─── */
+  :root {
+    --bg:        #f7f8fa;
+    --bg2:       #ffffff;
+    --bg3:       #eef0f4;
+    --border:    #e2e4ea;
+    --ink:       #14161f;
+    --ink2:      #4a4e63;
+    --ink3:      #8d91a8;
+
+    --green:     #0e7c4a;
+    --green-bg:  #e8f7ef;
+    --green-bd:  #b8e6cf;
+    --blue:      #1d5fc4;
+    --blue-bg:   #eaf1fd;
+    --blue-bd:   #b3cef5;
+    --orange:    #c25d00;
+    --orange-bg: #fff1e6;
+    --orange-bd: #f5c89a;
+    --red:       #bf2020;
+    --red-bg:    #fdeaea;
+    --red-bd:    #f5b5b5;
+    --purple:    #6b27c0;
+    --purple-bg: #f3eefb;
+    --purple-bd: #d0b8f5;
+    --yellow-bg: #fffbeb;
+    --yellow-bd: #f5e070;
+
+    --accent:    #2155d4;
+    --mono:      'JetBrains Mono', monospace;
+    --sans:      'Plus Jakarta Sans', sans-serif;
+    --radius:    10px;
+    --shadow:    0 1px 3px rgba(0,0,0,.07), 0 4px 12px rgba(0,0,0,.05);
+  }
+
+  [data-theme="dark"] {
+    --bg:        #101218;
+    --bg2:       #181b24;
+    --bg3:       #1e2130;
+    --border:    #2c3045;
+    --ink:       #e8eaf4;
+    --ink2:      #9ba1c0;
+    --ink3:      #555d7a;
+
+    --green:     #34c87a;
+    --green-bg:  #0d2a1c;
+    --green-bd:  #1d5a37;
+    --blue:      #6a9ef5;
+    --blue-bg:   #0d1e3a;
+    --blue-bd:   #1e3d72;
+    --orange:    #f5a04a;
+    --orange-bg: #2a1800;
+    --orange-bd: #5a3300;
+    --red:       #f57575;
+    --red-bg:    #2a0d0d;
+    --red-bd:    #5a1a1a;
+    --purple:    #b47ef5;
+    --purple-bg: #1e0d3a;
+    --purple-bd: #45207a;
+    --yellow-bg: #1e1a00;
+    --yellow-bd: #4a4200;
+
+    --accent:    #6a9ef5;
+    --shadow:    0 1px 3px rgba(0,0,0,.3), 0 4px 12px rgba(0,0,0,.2);
+  }
+
+  /* ─── RESET ─── */
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; font-size:15px; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    line-height: 1.65;
+    transition: background .25s, color .25s;
+  }
+
+  /* ─── THEME TOGGLE ─── */
+  #theme-toggle {
+    position: fixed;
+    top: 16px;
+    right: 20px;
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 40px;
+    padding: 6px 14px 6px 10px;
+    cursor: pointer;
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink2);
+    box-shadow: var(--shadow);
+    transition: all .2s;
+    user-select: none;
+  }
+  #theme-toggle:hover { color: var(--ink); border-color: var(--ink3); }
+  #theme-toggle .toggle-icon { font-size: 16px; transition: transform .3s; }
+  [data-theme="dark"] #theme-toggle .toggle-icon { transform: rotate(180deg); }
+
+  /* ─── HEADER ─── */
+  header {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 44px 52px 36px;
+  }
+  .header-eyebrow {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--ink3);
+    margin-bottom: 10px;
+  }
+  header h1 {
+    font-size: clamp(26px, 3.5vw, 46px);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -1px;
+    color: var(--ink);
+  }
+  header h1 em {
+    font-style: normal;
+    color: var(--accent);
+  }
+  .header-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 18px;
+  }
+  .htag {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--ink2);
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    padding: 4px 11px;
+    border-radius: 6px;
+    letter-spacing: .5px;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 0 52px;
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    display: flex;
+    gap: 2px;
+    overflow-x: auto;
+    box-shadow: 0 2px 8px rgba(0,0,0,.06);
+    scrollbar-width: none;
+  }
+  nav::-webkit-scrollbar { display: none; }
+  nav a {
+    font-size: 12.5px;
+    font-weight: 600;
+    text-decoration: none;
+    padding: 13px 14px;
+    color: var(--ink3);
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: all .15s;
+    letter-spacing: .1px;
+  }
+  nav a:hover { color: var(--ink); border-bottom-color: var(--accent); }
+
+  /* ─── MAIN ─── */
+  main {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 44px 52px 100px;
+    display: flex;
+    flex-direction: column;
+    gap: 52px;
+  }
+
+  /* ─── ALERT ─── */
+  .alert {
+    background: var(--yellow-bg);
+    border: 1.5px solid var(--yellow-bd);
+    border-radius: var(--radius);
+    padding: 18px 22px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .alert-icon { font-size: 22px; flex-shrink: 0; margin-top: 1px; }
+  .alert strong { display: block; margin-bottom: 4px; font-size: 15px; font-weight: 700; }
+  .alert p, .alert > div > span { font-size: 14px; color: var(--ink2); }
+
+  /* ─── SECTION ─── */
+  section { scroll-margin-top: 56px; }
+
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 22px;
+    padding-bottom: 14px;
+    border-bottom: 2px solid var(--border);
+  }
+  .section-num {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 700;
+    background: var(--accent);
+    color: #fff;
+    padding: 3px 9px;
+    border-radius: 5px;
+    letter-spacing: 1px;
+  }
+  h2 {
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: -.2px;
+    color: var(--ink);
+  }
+
+  /* ─── CMD BADGE (remplace les "dots") ─── */
+  .cmd-badge {
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1.5px solid;
+    letter-spacing: .2px;
+    white-space: nowrap;
+  }
+  .cb-green  { background: var(--green-bg);  border-color: var(--green-bd);  color: var(--green); }
+  .cb-blue   { background: var(--blue-bg);   border-color: var(--blue-bd);   color: var(--blue); }
+  .cb-orange { background: var(--orange-bg); border-color: var(--orange-bd); color: var(--orange); }
+  .cb-red    { background: var(--red-bg);    border-color: var(--red-bd);    color: var(--red); }
+  .cb-purple { background: var(--purple-bg); border-color: var(--purple-bd); color: var(--purple); }
+
+  /* ─── TABLE ─── */
+  .tbl-wrap { overflow-x: auto; border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow); margin-bottom: 20px; }
+  .cmd-table { width: 100%; border-collapse: collapse; background: var(--bg2); }
+  .cmd-table thead tr { background: var(--bg3); }
+  .cmd-table th {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 11px 16px;
+    text-align: left;
+    font-weight: 700;
+    color: var(--ink3);
+    border-bottom: 1px solid var(--border);
+  }
+  .cmd-table td {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13.5px;
+    vertical-align: middle;
+  }
+  .cmd-table tr:last-child td { border-bottom: none; }
+  .cmd-table tr:hover td { background: var(--bg3); }
+  .cmd-args {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink3);
+  }
+  .cmd-desc { color: var(--ink2); font-size: 13.5px; }
+  .cmd-desc strong { color: var(--ink); }
+  .cmd-ex {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--green);
+    font-weight: 500;
+  }
+  .cmd-table code, .cmd-desc code {
+    font-family: var(--mono);
+    font-size: 12px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    padding: 1px 6px;
+    border-radius: 4px;
+    color: var(--accent);
+  }
+
+  /* ─── CODE BLOCK ─── */
+  .code {
+    background: #0d1117;
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    line-height: 2;
+    overflow-x: auto;
+    box-shadow: var(--shadow);
+    border: 1px solid #1e2535;
+  }
+  [data-theme="dark"] .code { background: #0a0c12; border-color: #1a1f30; }
+  .c-prompt { color: #555d7a; }
+  .c-cmd    { color: #79b8ff; font-weight: 500; }
+  .c-arg    { color: #f0c060; }
+  .c-flag   { color: #90d870; }
+  .c-path   { color: #c9a0f5; }
+  .c-comment{ color: #555d7a; font-style: italic; }
+  .c-out    { color: #8090a8; }
+  .c-red    { color: #ff7b7b; }
+
+  /* ─── GRID ─── */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+
+  /* ─── CARD ─── */
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow);
+  }
+  .card-head {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    font-weight: 700;
+  }
+  .card h3 { font-size: 14.5px; font-weight: 700; margin-bottom: 8px; }
+  .card p, .card li { font-size: 13px; color: var(--ink2); line-height: 1.75; }
+  .card ul { padding-left: 16px; }
+  .card code {
+    font-family: var(--mono);
+    font-size: 12px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    padding: 1px 6px;
+    border-radius: 4px;
+    color: var(--accent);
+  }
+
+  /* ─── PERMISSION VISUAL ─── */
+  .perm-box {
+    background: #0d1117;
+    border-radius: var(--radius);
+    padding: 24px 28px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    border: 1px solid #1e2535;
+    box-shadow: var(--shadow);
+  }
+  [data-theme="dark"] .perm-box { background: #0a0c12; }
+  .perm-group { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .perm-bits  { display: flex; gap: 4px; }
+  .perm-bit {
+    width: 38px; height: 38px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--mono); font-size: 15px; font-weight: 700;
+    border-radius: 6px;
+  }
+  .perm-on   { background: rgba(52,200,122,.12); color: #34c87a; border: 1.5px solid rgba(52,200,122,.3); }
+  .perm-off  { background: rgba(255,255,255,.04); color: #555d7a; border: 1.5px solid #252c3e; }
+  .perm-type { background: rgba(106,158,245,.12); color: #6a9ef5; border: 1.5px solid rgba(106,158,245,.3); }
+  .perm-label { font-family: var(--mono); font-size: 10px; color: #555d7a; letter-spacing: 1px; }
+  .perm-sep  { color: #2c3045; font-size: 28px; align-self: center; font-family: var(--mono); }
+
+  /* ─── CHMOD NUMS ─── */
+  .chmod-nums { display: flex; gap: 10px; flex-wrap: wrap; }
+  .chmod-n {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    text-align: center;
+    min-width: 78px;
+    box-shadow: var(--shadow);
+  }
+  .chmod-n .val { font-family: var(--mono); font-size: 28px; font-weight: 700; color: var(--green); line-height: 1; }
+  .chmod-n .sym { font-family: var(--mono); font-size: 12px; color: var(--ink3); margin-top: 6px; }
+
+  /* ─── REDIRECT / WILDCARD TABLE ─── */
+  .plain-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--bg2);
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+  }
+  .plain-table tr { border-bottom: 1px solid var(--border); }
+  .plain-table tr:last-child { border-bottom: none; }
+  .plain-table td { padding: 12px 16px; vertical-align: middle; font-size: 13.5px; }
+  .plain-table tr:hover td { background: var(--bg3); }
+  .sym-cell {
+    font-family: var(--mono);
+    font-size: 17px;
+    font-weight: 700;
+    min-width: 70px;
+    color: var(--green);
+  }
+  .sym-blue   { color: var(--blue); }
+  .sym-orange { color: var(--orange); }
+  .sym-red    { color: var(--red); }
+  .sym-dim    { color: var(--ink3); }
+  .desc-cell { color: var(--ink2); font-size: 13.5px; }
+  .desc-cell strong { color: var(--ink); }
+  .ex-cell { font-family: var(--mono); font-size: 12px; color: var(--orange); }
+
+  /* ─── TREE ─── */
+  .tree {
+    background: #0d1117;
+    border-radius: var(--radius);
+    padding: 22px 26px;
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 2.1;
+    color: #8090a8;
+    border: 1px solid #1e2535;
+    box-shadow: var(--shadow);
+  }
+  [data-theme="dark"] .tree { background: #0a0c12; }
+  .t-dir     { color: #6a9ef5; }
+  .t-special { color: #f0c060; }
+  .t-note    { color: #40485e; margin-left: 8px; font-size: 11px; }
+
+  /* ─── INFO BOX ─── */
+  .info {
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 13.5px;
+    display: flex;
+    gap: 12px;
+    margin-top: 14px;
+    align-items: flex-start;
+  }
+  .info-tip    { background: var(--green-bg);  border: 1px solid var(--green-bd); }
+  .info-warn   { background: var(--orange-bg); border: 1px solid var(--orange-bd); }
+  .info-danger { background: var(--red-bg);    border: 1px solid var(--red-bd); }
+  .info p, .info > div { color: var(--ink2); line-height: 1.65; }
+  .info strong { color: var(--ink); }
+  .info code {
+    font-family: var(--mono);
+    font-size: 12px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    padding: 1px 6px;
+    border-radius: 4px;
+    color: var(--accent);
+  }
+
+  /* ─── BADGE ─── */
+  .badge {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 9px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 4px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    vertical-align: middle;
+    margin-left: 6px;
+  }
+  .b-exam { background: var(--yellow-bg); color: #8a6500; border: 1px solid var(--yellow-bd); }
+  .b-new  { background: var(--red-bg);    color: var(--red); border: 1px solid var(--red-bd); }
+
+  /* ─── KBD ─── */
+  kbd {
+    font-family: var(--mono);
+    font-size: 11px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-bottom: 2px solid var(--border);
+    padding: 1px 6px;
+    border-radius: 4px;
+    color: var(--ink2);
+  }
+
+  /* ─── SCROLLBAR ─── */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* ─── FOOTER ─── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 26px 52px;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--ink3);
+    text-align: center;
+    background: var(--bg2);
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 720px) {
+    header, nav, main, footer { padding-left: 18px; padding-right: 18px; }
+    .grid2, .grid3 { grid-template-columns: 1fr; }
+    .perm-box { flex-direction: column; }
+    #theme-toggle { top: 10px; right: 10px; }
+  }
+</style>
+
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style id="theme-system">
+/* ════════════════════════════════════════════
+   SHARED DESIGN SYSTEM — light & dark
+   ════════════════════════════════════════════ */
+:root {
+  /* ── Light (default) ── */
+  --bg:          #f5f6fa;
+  --surface:     #ffffff;
+  --surface2:    #f0f1f7;
+  --border:      #e2e4ef;
+  --border2:     #c8cbdc;
+  --text:        #111827;
+  --text2:       #374151;
+  --muted:       #6b7280;
+  --dim:         #9ca3af;
+
+  /* ── Accents ── */
+  --blue:        #2563eb;
+  --blue-bg:     #eff6ff;
+  --blue-bd:     #bfdbfe;
+  --purple:      #7c3aed;
+  --purple-bg:   #f5f3ff;
+  --teal:        #0891b2;
+  --teal-bg:     #ecfeff;
+  --teal-bd:     #a5f3fc;
+  --green:       #16a34a;
+  --green-bg:    #f0fdf4;
+  --green-bd:    #bbf7d0;
+  --orange:      #d97706;
+  --orange-bg:   #fffbeb;
+  --orange-bd:   #fde68a;
+  --red:         #dc2626;
+  --red-bg:      #fef2f2;
+  --red-bd:      #fecaca;
+  --yellow:      #ca8a04;
+  --yellow-bg:   #fefce8;
+
+  /* ── Shadows ── */
+  --shadow-sm:   0 1px 3px rgba(0,0,0,.08);
+  --shadow:      0 4px 16px rgba(0,0,0,.08);
+  --shadow-lg:   0 8px 32px rgba(0,0,0,.1);
+
+  /* ── Radius ── */
+  --r-sm: 8px;
+  --r:    12px;
+  --r-lg: 18px;
+  --r-xl: 24px;
+}
+
+[data-theme="dark"] {
+  /* ── Navy/slate blue-night palette ── */
+  --bg:          #0d1117;   /* deep navy-black, like GitHub dark */
+  --surface:     #161b22;   /* card surface — slate navy */
+  --surface2:    #1c2333;   /* elevated elements */
+  --border:      #2d3748;   /* slate border, visible but subtle */
+  --border2:     #4a5568;   /* stronger border for hover/focus */
+  --text:        #e2e8f0;   /* soft white, easy on eyes */
+  --text2:       #a0aec0;   /* secondary text — slate-400 */
+  --muted:       #718096;   /* muted — slate-500 */
+  --dim:         #2d3748;   /* very dim — slate-700 */
+
+  /* ── Accents tuned for navy backgrounds ── */
+  --blue:        #63b3ed;   /* sky blue — readable on navy */
+  --blue-bg:     #1a2744;   /* navy-tinted blue bg */
+  --blue-bd:     #2c4a7c;   /* blue border */
+  --purple:      #b794f4;   /* soft purple */
+  --purple-bg:   #1e1a3a;
+  --teal:        #4fd1c5;   /* teal — pops on navy */
+  --teal-bg:     #0e2a2e;
+  --teal-bd:     #1a4a50;
+  --green:       #68d391;   /* mint green */
+  --green-bg:    #0e2a1a;
+  --green-bd:    #1a4a2e;
+  --orange:      #f6ad55;   /* warm amber */
+  --orange-bg:   #2a1e0e;
+  --orange-bd:   #4a3418;
+  --red:         #fc8181;   /* soft red */
+  --red-bg:      #2a1414;
+  --red-bd:      #4a2020;
+  --yellow:      #f6e05e;
+  --yellow-bg:   #2a2400;
+
+  --shadow-sm:   0 1px 4px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.03);
+  --shadow:      0 4px 20px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.04);
+  --shadow-lg:   0 12px 48px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.05);
+}
+
+/* ── Base reset ── */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: 'Bricolage Grotesque', 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+/* ── Toggle button ── */
+#theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 100px;
+  padding: 7px 14px 7px 10px;
+  cursor: pointer;
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s;
+  user-select: none;
+}
+#theme-toggle:hover {
+  color: var(--text);
+  border-color: var(--border2);
+  box-shadow: var(--shadow);
+}
+#theme-toggle .t-icon { font-size: 15px; transition: transform 0.3s; }
+[data-theme="dark"] #theme-toggle .t-icon { transform: rotate(180deg); }
+</style>
+
+<style id="theme-override">
+:root {
+  --bg: #f5f6fa; --bg2: #ffffff; --bg3: #f0f1f7; --border: #e2e4ef;
+  --ink: #111827; --ink2: #374151; --ink3: #9ca3af;
+  --shadow: 0 4px 16px rgba(0,0,0,.08);
+  --sans: 'Bricolage Grotesque', sans-serif; --mono: 'DM Mono', monospace;
+}
+[data-theme="dark"] {
+  --bg: #0d1117; --bg2: #161b22; --bg3: #1c2333; --border: #2d3748;
+  --ink: #e2e8f0; --ink2: #a0aec0; --ink3: #718096;
+  --shadow: 0 4px 20px rgba(0,0,0,.6);
+}
+body { font-family: var(--sans) !important; }
+</style>
+
+<style id="back-btn-style">
+.hub-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 100px;
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: all .2s;
+  position: relative;
+  z-index: 200;
+}
+.hub-back:hover { color: var(--text); border-color: var(--border2); box-shadow: var(--shadow); transform: translateX(-2px); }
+.hub-back-bar {
+  position: sticky;
+  top: 0;
+  z-index: 500;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.hub-back-bar .breadcrumb {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.hub-back-bar .breadcrumb a {
+  color: var(--muted);
+  text-decoration: none;
+  transition: color .15s;
+}
+.hub-back-bar .breadcrumb a:hover { color: var(--text); }
+.hub-back-bar .breadcrumb span { color: var(--dim); }
+</style>
+
+</head>
+<body>
+
+<div class="hub-back-bar">
+  <a href="index.html" class="hub-back">← Retour</a>
+  <div class="breadcrumb">
+    <a href="index.html">Hub</a>
+    <span>›</span>
+    <span>Systèmes & OS</span>
+    <span>›</span>
+    <span>Linux</span>
+  </div>
+</div>
+
+<button id="theme-toggle" onclick="toggleTheme()" aria-label="Changer le thème">
+  <span class="t-icon">☀️</span>
+  <span class="t-label">Thème</span>
+</button>
+<script>
+(function(){
+  const saved = localStorage.getItem('theme') || 'light';
+  document.documentElement.setAttribute('data-theme', saved);
+  document.addEventListener('DOMContentLoaded', function(){
+    const lbl = document.querySelector('#theme-toggle .t-label');
+    const icon = document.querySelector('#theme-toggle .t-icon');
+    const t = document.documentElement.getAttribute('data-theme');
+    if(lbl) lbl.textContent = t === 'dark' ? 'Clair' : 'Sombre';
+    if(icon) icon.textContent = t === 'dark' ? '🌙' : '☀️';
+  });
+})();
+function toggleTheme(){
+  const html = document.documentElement;
+  const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+  const lbl = document.querySelector('#theme-toggle .t-label');
+  const icon = document.querySelector('#theme-toggle .t-icon');
+  if(lbl) lbl.textContent = next === 'dark' ? 'Clair' : 'Sombre';
+  if(icon) icon.textContent = next === 'dark' ? '🌙' : '☀️';
+}
+</script>
+
+
+<!-- THEME TOGGLE -->
+
+
+<header>
+  <div class="header-eyebrow">T1122 · Systèmes d'exploitation I · 1ère BAC</div>
+  <h1>Interro OS — <em>Commandes Linux</em></h1>
+  <div class="header-tags">
+    <span class="htag">TP01 · TP02 · TP03</span>
+    <span class="htag">Cours 1 · 2 · 3</span>
+    <span class="htag">Ubuntu 24.04 LTS</span>
+    <span class="htag">Prof: VAN DORMAEL Louis</span>
+  </div>
+</header>
+
+<nav>
+  <a href="#alerte">⚠ Interro</a>
+  <a href="#terminal">Terminal</a>
+  <a href="#navigation">Navigation</a>
+  <a href="#fichiers">Fichiers</a>
+  <a href="#avance">Avancé</a>
+  <a href="#redirections">Redirections</a>
+  <a href="#droits">Droits</a>
+  <a href="#users">Users/Groupes</a>
+  <a href="#wildcards">Wildcards</a>
+  <a href="#arbo">Arborescence</a>
+  <a href="#ssh">SSH</a>
+</nav>
+
+<main>
+
+  <!-- ALERTE EXAM -->
+  <div class="alert" id="alerte">
+    <div class="alert-icon">📋</div>
+    <div>
+      <strong>Interrogation comptant pour l'évaluation continue — Mardi 3 mars 2026</strong>
+      <span>Porte sur les 3 premiers cours et les 3 premiers TP. Tu dois connaître et <strong>écrire</strong> toutes les commandes listées ci-dessous. Cette page couvre exactement la liste envoyée par ton prof.</span>
+    </div>
+  </div>
+
+  <!-- ══════════════ 01 TERMINAL ══════════════ -->
+  <section id="terminal">
+    <div class="section-title">
+      <span class="section-num">01</span>
+      <h2>Premiers pas — Infos système &amp; terminal</h2>
+    </div>
+    <div class="tbl-wrap">
+    <table class="cmd-table">
+      <thead><tr><th>Commande</th><th>Options utiles</th><th>Description</th><th>Exemple</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="cmd-badge cb-green">pwd</span></td>
+          <td class="cmd-args">—</td>
+          <td class="cmd-desc"><strong>P</strong>rint <strong>W</strong>orking <strong>D</strong>irectory — affiche le chemin du répertoire courant</td>
+          <td class="cmd-ex">pwd</td>
+        </tr>
+        <tr>
+          <td><span class="cmd-badge cb-green">whoami</span></td>
+          <td class="cmd-args">—</td>
+          <td class="cmd-desc">Affiche le nom de l'utilisateur courant</td>
+          <td class="cmd-ex">whoami</td>
+        </tr>
+        <tr>
+          <td><span class="cmd-badge cb-green">who</span></td>
+          <td class="cmd-args">-a, am i</td>
+          <td class="cmd-desc">Affiche <strong>tous les utilisateurs connectés</strong> (TTY, heure, IP…)</td>
+          <td class="cmd-ex">who</td>
+        </tr>
+        <tr>
+          <td><span class="cmd-badge cb-green">logname</span></td>
+          <td class="cmd-args">—</td>
+          <td class="cmd-desc">Affiche le nom de l'utilisateur du <strong>login initial</strong> (différent si su)</td>
+          <td class="cmd-ex">logname</td>
+        </tr>
+        <tr>
+          <td><span class="cmd-badge cb-green">id</span></td>
+          <td class="cmd-args">nom</td>
+          <td class="cmd-desc">Affiche l'UID, GID et les groupes de l'utilisateur</td>
+          <td class="cmd-ex">id bob</td>
+        </tr>
+        <tr>
+          <td><span class="cmd-badge cb-blue">pinky</span></td>
+          <td class="cmd-args">-l user</td>
+          <td class="cmd-desc">Infos détaillées sur un utilisateur (remplacement de <code>finger</code>)</td>
+          <td class="cmd-ex">pinky -l liam</td>
+        </tr>
+        <tr>
+          <td><span class="cmd-badge cb-blue">tty</span></td>
+          <td class="cmd-args">—</td>
+          <td class="cmd-desc">Affiche le nom du <strong>terminal</strong> actuel (/dev/pts/0, /dev/tty1…)</td>
+          <td class="cmd-ex">tty</td>
+        </tr>
+        <tr>
+          <td><span class="cmd-badge cb-blue">stty</span></td>
+          <td class="cmd-args">-a, -echo</td>
+          <td class="cmd-desc">Affiche/modifie les réglages du terminal (vitesse, echo, taille…)</td>
+          <td class="cmd-ex">stty -a</td>
+        </tr>
+        <tr>
+          <td><span class="cmd-badge cb-orange">hostname</span></td>
+          <td class="cmd-args">—</td>
+          <td class="cmd-desc">Affiche le <strong>nom de la machine</strong></td>
+          <td class="cmd-ex">hostname</td>
+        </tr>
+        <tr>
+          <td><span class="cmd-badge cb-orange">date</span></td>
+          <td class="cmd-args">—</td>
+          <td class="cmd-desc">Affiche la date et l'heure actuelles</td>
+          <td class="cmd-ex">date</td>
+        </tr>
+        <tr>
+          <td><span class="cmd-badge cb-orange">clear</span></td>
+          <td class="cmd-args">—</td>
+          <td class="cmd-desc">Efface l'écran du terminal (raccourci: <kbd>Ctrl+L</kbd>)</td>
+          <td class="cmd-ex">clear</td>
+        </tr>
+        <tr>
+          <td><span class="cmd-badge cb-green">man</span></td>
+          <td class="cmd-args">cmd</td>
+          <td class="cmd-desc">Affiche le <strong>manuel</strong> d'une commande (q = quitter)</td>
+          <td class="cmd-ex">man ls</td>
+        </tr>
+        <tr>
+          <td><span class="cmd-badge cb-green">type</span></td>
+          <td class="cmd-args">cmd</td>
+          <td class="cmd-desc">Indique la <strong>nature</strong> d'une commande (builtin, alias, programme…)</td>
+          <td class="cmd-ex">type cd</td>
+        </tr>
+        <tr>
+          <td><span class="cmd-badge cb-blue">which</span></td>
+          <td class="cmd-args">cmd</td>
+          <td class="cmd-desc">Indique <strong>où se trouve</strong> le programme exécutable (pas les builtins)</td>
+          <td class="cmd-ex">which nano</td>
+        </tr>
+        <tr>
+          <td><span class="cmd-badge cb-blue">echo</span></td>
+          <td class="cmd-args">-n, -e</td>
+          <td class="cmd-desc">Affiche du texte dans le terminal</td>
+          <td class="cmd-ex">echo "Bonjour"</td>
+        </tr>
+        <tr>
+          <td><span class="cmd-badge cb-orange">sudo</span></td>
+          <td class="cmd-args">commande</td>
+          <td class="cmd-desc">Exécute une commande en tant que <strong>root</strong> (super-admin)</td>
+          <td class="cmd-ex">sudo apt update</td>
+        </tr>
+        <tr>
+          <td><span class="cmd-badge cb-orange">su</span></td>
+          <td class="cmd-args">- nom</td>
+          <td class="cmd-desc">Changer d'utilisateur (su - = login complet)</td>
+          <td class="cmd-ex">su - bob</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+  </section>
+
+  <!-- ══════════════ 02 NAVIGATION ══════════════ -->
+  <section id="navigation">
+    <div class="section-title">
+      <span class="section-num">02</span>
+      <h2>Navigation dans les dossiers</h2>
+    </div>
+    <div class="tbl-wrap">
+    <table class="cmd-table">
+      <thead><tr><th>Commande</th><th>Syntaxe clé</th><th>Description</th><th>Exemple</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="cmd-badge cb-green">ls</span></td>
+          <td class="cmd-args">-a -l -i -h</td>
+          <td class="cmd-desc">Liste les fichiers. <code>-a</code>=cachés, <code>-l</code>=détails, <code>-i</code>=inodes, <code>-h</code>=taille lisible</td>
+          <td class="cmd-ex">ls -la</td>
+        </tr>
+        <tr>
+          <td><span class="cmd-badge cb-green">cd</span></td>
+          <td class="cmd-args">. .. ~ /</td>
+          <td class="cmd-desc"><strong>C</strong>hange <strong>D</strong>irectory. <code>~</code>=home, <code>..</code>=parent, <code>/</code>=racine</td>
+          <td class="cmd-ex">cd ~/docs</td>
+        </tr>
+        <tr>
+          <td><span class="cmd-badge cb-green">pwd</span></td>
+          <td class="cmd-args">—</td>
+          <td class="cmd-desc">Affiche le chemin complet du répertoire courant</td>
+          <td class="cmd-ex">pwd</td>
+        </tr>
+        <tr>
+          <td><span class="cmd-badge cb-blue">mkdir</span></td>
+          <td class="cmd-args">-p</td>
+          <td class="cmd-desc">Crée un répertoire (<code>-p</code> = crée les parents si besoin)</td>
+          <td class="cmd-ex">mkdir DIR1</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="grid3">
+      <div class="card">
+        <div class="card-head" style="color:var(--green)">Chemins relatifs</div>
+        <ul>
+          <li><code>.</code> → dossier courant</li>
+          <li><code>..</code> → dossier parent</li>
+          <li><code>../docs</code> → relatif</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-head" style="color:var(--blue)">Chemins absolus</div>
+        <ul>
+          <li>Commence toujours par <code>/</code></li>
+          <li><code>/home/user/docs</code></li>
+          <li><code>~</code> = <code>/home/user</code></li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-head" style="color:var(--orange)">cd raccourcis</div>
+        <ul>
+          <li><code>cd</code> ou <code>cd ~</code> → home</li>
+          <li><code>cd -</code> → dossier précédent</li>
+          <li><code>cd /</code> → racine</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════ 03 FICHIERS ══════════════ -->
+  <section id="fichiers">
+    <div class="section-title">
+      <span class="section-num">03</span>
+      <h2>Manipulation des fichiers</h2>
+    </div>
+    <div class="tbl-wrap">
+    <table class="cmd-table">
+      <thead><tr><th>Commande</th><th>Options</th><th>Description</th><th>Exemple</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="cmd-badge cb-green">touch</span></td>
+          <td class="cmd-args">—</td>
+          <td class="cmd-desc">Crée un fichier vide (ou met à jour la date)</td>
+          <td class="cmd-ex">touch fichier.txt</td>
+        </tr>
+        <tr>
+          <td><span class="cmd-badge cb-green">cp</span></td>
+          <td class="cmd-args">-r</td>
+          <td class="cmd-desc">Copie un fichier ou dossier (<code>-r</code> = récursif pour dossiers)</td>
+          <td class="cmd-ex">cp -r src/ dest/</td>
+        </tr>
+        <tr>
+          <td><span class="cmd-badge cb-green">mv</span></td>
+          <td class="cmd-args">—</td>
+          <td class="cmd-desc"><strong>Déplace</strong> ou <strong>renomme</strong> un fichier/dossier</td>
+          <td class="cmd-ex">mv old.txt new.txt</td>
+        </tr>
+        <tr>
+          <td><span class="cmd-badge cb-red">rm</span></td>
+          <td class="cmd-args">-r -f -i</td>
+          <td class="cmd-desc">Supprime fichier (<code>-r</code>=récursif, <code>-f</code>=forcé, <code>-i</code>=confirmation)</td>
+          <td class="cmd-ex">rm -ri dossier/</td>
+        </tr>
+        <tr>
+          <td><span class="cmd-badge cb-green">cat</span></td>
+          <td class="cmd-args">-n</td>
+          <td class="cmd-desc">Affiche le contenu d'un fichier (<code>-n</code> = numéros de lignes)</td>
+          <td class="cmd-ex">cat /etc/passwd</td>
+        </tr>
+        <tr>
+          <td><span class="cmd-badge cb-green">less</span></td>
+          <td class="cmd-args">—</td>
+          <td class="cmd-desc">Affiche page par page (q=quitter, /=chercher, flèches=naviguer)</td>
+          <td class="cmd-ex">less fichier.txt</td>
+        </tr>
+        <tr>
+          <td><span class="cmd-badge cb-green">more</span></td>
+          <td class="cmd-args">—</td>
+          <td class="cmd-desc">Affiche page par page (plus simple que less, q=quitter)</td>
+          <td class="cmd-ex">more fichier.txt</td>
+        </tr>
+        <tr>
+          <td><span class="cmd-badge cb-blue">head</span></td>
+          <td class="cmd-args">-n N</td>
+          <td class="cmd-desc">Affiche les <strong>N premières lignes</strong> (défaut = 10)</td>
+          <td class="cmd-ex">head -3 essai.txt</td>
+        </tr>
+        <tr>
+          <td><span class="cmd-badge cb-blue">tail</span></td>
+          <td class="cmd-args">-n N</td>
+          <td class="cmd-desc">Affiche les <strong>N dernières lignes</strong> (défaut = 10)</td>
+          <td class="cmd-ex">tail -3 essai.txt</td>
+        </tr>
+        <tr>
+          <td><span class="cmd-badge cb-blue">grep</span></td>
+          <td class="cmd-args">-i -v -r -n</td>
+          <td class="cmd-desc">Cherche un motif dans un fichier. <code>-i</code>=casse, <code>-v</code>=inverse, <code>-r</code>=récursif</td>
+          <td class="cmd-ex">grep -v "Lorem" f.txt</td>
+        </tr>
+        <tr>
+          <td><span class="cmd-badge cb-blue">find</span></td>
+          <td class="cmd-args">-name -type -size</td>
+          <td class="cmd-desc">Recherche dans l'arborescence selon critères</td>
+          <td class="cmd-ex">find . -name "*.txt"</td>
+        </tr>
+        <tr>
+          <td><span class="cmd-badge cb-purple">wc</span></td>
+          <td class="cmd-args">-l -c -w</td>
+          <td class="cmd-desc"><strong>W</strong>ord <strong>C</strong>ount : <code>-l</code>=lignes, <code>-c</code>=caractères, <code>-w</code>=mots</td>
+          <td class="cmd-ex">wc -l essai.txt</td>
+        </tr>
+        <tr>
+          <td><span class="cmd-badge cb-purple">diff</span></td>
+          <td class="cmd-args">—</td>
+          <td class="cmd-desc">Compare deux fichiers et affiche les <strong>différences</strong></td>
+          <td class="cmd-ex">diff f1.txt f2.txt</td>
+        </tr>
+        <tr>
+          <td><span class="cmd-badge cb-purple">sort</span></td>
+          <td class="cmd-args">-r -n -u</td>
+          <td class="cmd-desc">Trie les lignes (<code>-r</code>=inverse, <code>-n</code>=numérique, <code>-u</code>=unique)</td>
+          <td class="cmd-ex">sort fichier.txt</td>
+        </tr>
+        <tr>
+          <td><span class="cmd-badge cb-purple">sed</span></td>
+          <td class="cmd-args">s/old/new/</td>
+          <td class="cmd-desc">Éditeur de flux — principalement pour la <strong>substitution</strong></td>
+          <td class="cmd-ex">sed 's/chat/chien/' f</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="code">
+      <div><span class="c-comment"># Éditeurs de texte</span></div>
+      <div><span class="c-cmd">nano</span> <span class="c-path">fichier.txt</span>    <span class="c-comment"># Ctrl+O sauver | Ctrl+X quitter</span></div>
+      <div><span class="c-cmd">vi</span> <span class="c-path">fichier.txt</span>      <span class="c-comment"># i=insert | Esc=normal | :wq=sauver&amp;quit | :q!=quit sans sauver</span></div>
+      <div style="margin-top:12px"><span class="c-comment"># APT — Gestionnaire de paquets</span></div>
+      <div><span class="c-cmd">sudo apt</span> <span class="c-arg">update</span>              <span class="c-comment"># màj liste paquets</span></div>
+      <div><span class="c-cmd">sudo apt</span> <span class="c-arg">upgrade</span>             <span class="c-comment"># màj logiciels</span></div>
+      <div><span class="c-cmd">sudo apt install</span> <span class="c-arg">nano</span>         <span class="c-comment"># installer</span></div>
+      <div><span class="c-cmd">sudo apt remove</span> <span class="c-arg">nano</span>          <span class="c-comment"># supprimer</span></div>
+      <div><span class="c-cmd">sudo apt purge</span> <span class="c-arg">nano</span>           <span class="c-comment"># supprimer + fichiers config</span></div>
+    </div>
+  </section>
+
+  <!-- ══════════════ 04 AVANCE ══════════════ -->
+  <section id="avance">
+    <div class="section-title">
+      <span class="section-num">04</span>
+      <h2>Commandes avancées</h2>
+    </div>
+    <div class="code" style="margin-bottom:16px">
+      <div><span class="c-comment"># head / tail — premières et dernières lignes</span></div>
+      <div><span class="c-cmd">head</span> <span class="c-flag">-3</span> <span class="c-path">essai.txt</span>               <span class="c-comment"># 3 premières lignes</span></div>
+      <div><span class="c-cmd">tail</span> <span class="c-flag">-3</span> <span class="c-path">essai.txt</span>               <span class="c-comment"># 3 dernières lignes</span></div>
+      <div><span class="c-cmd">head</span> <span class="c-flag">-3</span> <span class="c-path">essai.txt</span> <span class="c-comment">;</span> <span class="c-cmd">tail</span> <span class="c-flag">-3</span> <span class="c-path">essai.txt</span>   <span class="c-comment"># les 2 ensemble</span></div>
+      <div style="margin-top:12px"><span class="c-comment"># grep — filtrer des lignes</span></div>
+      <div><span class="c-cmd">grep</span> <span class="c-arg">"Lorem"</span> <span class="c-path">essai.txt</span>           <span class="c-comment"># lignes AVEC "Lorem"</span></div>
+      <div><span class="c-cmd">grep</span> <span class="c-flag">-v</span> <span class="c-arg">"Lorem"</span> <span class="c-path">essai.txt</span>        <span class="c-comment"># lignes SANS "Lorem"</span></div>
+      <div><span class="c-cmd">grep</span> <span class="c-flag">-i</span> <span class="c-arg">"lorem"</span> <span class="c-path">essai.txt</span>        <span class="c-comment"># insensible à la casse</span></div>
+      <div style="margin-top:12px"><span class="c-comment"># wc — compter</span></div>
+      <div><span class="c-cmd">wc</span> <span class="c-flag">-l</span> <span class="c-path">essai.txt</span>                   <span class="c-comment"># nombre de lignes</span></div>
+      <div><span class="c-cmd">wc</span> <span class="c-flag">-c</span> <span class="c-path">essai.txt</span>                   <span class="c-comment"># nombre de caractères</span></div>
+      <div><span class="c-cmd">wc</span> <span class="c-flag">-w</span> <span class="c-path">essai.txt</span>                   <span class="c-comment"># nombre de mots</span></div>
+      <div style="margin-top:12px"><span class="c-comment"># sed — substitution</span></div>
+      <div><span class="c-cmd">sed</span> <span class="c-arg">'s/chat/chien/'</span> <span class="c-path">f.txt</span>         <span class="c-comment"># remplace 1ère occurrence par ligne</span></div>
+      <div><span class="c-cmd">sed</span> <span class="c-arg">'s/chat/chien/g'</span> <span class="c-path">f.txt</span>        <span class="c-comment"># remplace TOUTES les occurrences</span></div>
+    </div>
+  </section>
+
+  <!-- ══════════════ 05 REDIRECTIONS ══════════════ -->
+  <section id="redirections">
+    <div class="section-title">
+      <span class="section-num">05</span>
+      <h2>Redirections &amp; Pipes</h2>
+    </div>
+    <div class="grid2" style="margin-bottom:20px">
+      <div class="card">
+        <div class="card-head" style="color:var(--blue)">Flux standards</div>
+        <ul>
+          <li><strong>stdin (0)</strong> — entrée = clavier</li>
+          <li><strong>stdout (1)</strong> — sortie normale = terminal</li>
+          <li><strong>stderr (2)</strong> — sortie d'erreur = terminal</li>
+        </ul>
+      </div>
+      <div class="card" style="background:var(--yellow-bg); border-color:var(--yellow-bd)">
+        <div class="card-head" style="color:#7a6500">À retenir pour l'interro !</div>
+        <ul>
+          <li><code>&gt;</code> écrase le fichier</li>
+          <li><code>&gt;&gt;</code> ajoute à la fin</li>
+          <li><code>|</code> chaîne deux commandes</li>
+          <li><code>2&gt;</code> redirige les erreurs</li>
+          <li><code>&amp;&amp;</code> si 1ère réussit</li>
+          <li><code>;</code> dans tous les cas</li>
+          <li><code>||</code> si 1ère échoue</li>
+        </ul>
+      </div>
+    </div>
+    <table class="plain-table" style="margin-bottom:16px">
+      <tr><td class="sym-cell">&gt;</td><td class="desc-cell">Redirige stdout vers un fichier <strong>(écrase)</strong></td><td class="ex-cell">ls &gt; liste.txt</td></tr>
+      <tr><td class="sym-cell">&gt;&gt;</td><td class="desc-cell">Redirige stdout <strong>(ajoute à la fin)</strong></td><td class="ex-cell">ls &gt;&gt; liste.txt</td></tr>
+      <tr><td class="sym-cell">2&gt;</td><td class="desc-cell">Redirige <strong>stderr</strong> vers un fichier</td><td class="ex-cell">cmd 2&gt; erreurs.txt</td></tr>
+      <tr><td class="sym-cell">&lt;</td><td class="desc-cell">Redirige stdin depuis un fichier</td><td class="ex-cell">sort &lt; liste.txt</td></tr>
+      <tr><td class="sym-cell sym-blue">|</td><td class="desc-cell"><strong>Pipe</strong> — envoie stdout → stdin de la commande suivante</td><td class="ex-cell">ls | grep ".txt"</td></tr>
+      <tr><td class="sym-cell sym-orange">&amp;&amp;</td><td class="desc-cell">Exécute cmd2 <strong>seulement si</strong> cmd1 réussit (code retour 0)</td><td class="ex-cell">apt update &amp;&amp; apt upgrade</td></tr>
+      <tr><td class="sym-cell sym-dim">;</td><td class="desc-cell">Exécute cmd2 <strong>dans tous les cas</strong></td><td class="ex-cell">head -3 f ; tail -3 f</td></tr>
+      <tr><td class="sym-cell sym-red">||</td><td class="desc-cell">Exécute cmd2 <strong>seulement si</strong> cmd1 échoue</td><td class="ex-cell">cmd1 || echo "raté"</td></tr>
+    </table>
+    <div class="code">
+      <div><span class="c-comment"># Exemples pratiques pipes</span></div>
+      <div><span class="c-cmd">cat</span> <span class="c-path">essai.txt</span> <span style="color:#79b8ff">|</span> <span class="c-cmd">grep</span> <span class="c-arg">"Lorem"</span> <span style="color:#79b8ff">|</span> <span class="c-cmd">wc -l</span>    <span class="c-comment"># compter les lignes avec "Lorem"</span></div>
+      <div><span class="c-cmd">ls</span> <span style="color:#79b8ff">|</span> <span class="c-cmd">sort</span>                                       <span class="c-comment"># liste triée</span></div>
+      <div><span class="c-cmd">ls</span> <span class="c-path">inexistant</span> <span class="c-flag">2&gt;</span> <span class="c-path">/dev/null</span>                  <span class="c-comment"># supprimer les erreurs</span></div>
+    </div>
+  </section>
+
+  <!-- ══════════════ 06 DROITS ══════════════ -->
+  <section id="droits">
+    <div class="section-title">
+      <span class="section-num">06</span>
+      <h2>Droits &amp; Permissions — chmod / chown / chgrp</h2>
+    </div>
+    <div class="perm-box" style="margin-bottom:20px">
+      <div class="perm-group">
+        <div class="perm-bits"><div class="perm-bit perm-type">d</div></div>
+        <div class="perm-label">type</div>
+      </div>
+      <div class="perm-sep">│</div>
+      <div class="perm-group">
+        <div class="perm-bits">
+          <div class="perm-bit perm-on">r</div>
+          <div class="perm-bit perm-on">w</div>
+          <div class="perm-bit perm-on">x</div>
+        </div>
+        <div class="perm-label">propriétaire</div>
+      </div>
+      <div class="perm-sep">│</div>
+      <div class="perm-group">
+        <div class="perm-bits">
+          <div class="perm-bit perm-on">r</div>
+          <div class="perm-bit perm-off">-</div>
+          <div class="perm-bit perm-on">x</div>
+        </div>
+        <div class="perm-label">groupe</div>
+      </div>
+      <div class="perm-sep">│</div>
+      <div class="perm-group">
+        <div class="perm-bits">
+          <div class="perm-bit perm-on">r</div>
+          <div class="perm-bit perm-off">-</div>
+          <div class="perm-bit perm-on">x</div>
+        </div>
+        <div class="perm-label">autres</div>
+      </div>
+      <div style="align-self:center; font-family:var(--mono); font-size:13px; color:#6a9ef5; margin-left:20px">
+        drwxr-xr-x = <strong style="color:#f0c060; font-size:18px">755</strong>
+      </div>
+    </div>
+    <div class="grid2" style="margin-bottom:20px">
+      <div class="tbl-wrap" style="margin-bottom:0">
+        <table class="cmd-table">
+          <thead><tr><th>Droit</th><th>Lettre</th><th>Valeur</th><th>Fichier</th><th>Dossier</th></tr></thead>
+          <tbody>
+            <tr><td>Read</td><td style="font-family:var(--mono);color:var(--green)">r</td><td style="font-family:var(--mono);color:var(--green)">4</td><td>Lire</td><td>Lister</td></tr>
+            <tr><td>Write</td><td style="font-family:var(--mono);color:var(--orange)">w</td><td style="font-family:var(--mono);color:var(--green)">2</td><td>Modifier</td><td>Créer/supprimer fichiers</td></tr>
+            <tr><td>Execute</td><td style="font-family:var(--mono);color:var(--blue)">x</td><td style="font-family:var(--mono);color:var(--green)">1</td><td>Exécuter</td><td>Se déplacer (cd)</td></tr>
+            <tr><td>None</td><td style="font-family:var(--mono);color:var(--red)">-</td><td style="font-family:var(--mono);color:var(--green)">0</td><td colspan="2">Pas de permission</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <div class="chmod-nums">
+          <div class="chmod-n"><div class="val">7</div><div class="sym">rwx</div></div>
+          <div class="chmod-n"><div class="val">6</div><div class="sym">rw-</div></div>
+          <div class="chmod-n"><div class="val">5</div><div class="sym">r-x</div></div>
+          <div class="chmod-n"><div class="val">4</div><div class="sym">r--</div></div>
+          <div class="chmod-n"><div class="val">2</div><div class="sym">-w-</div></div>
+          <div class="chmod-n"><div class="val">0</div><div class="sym">---</div></div>
+        </div>
+        <div class="info info-tip" style="margin-top:12px">
+          <span>💡</span>
+          <p><strong>755</strong> = rwxr-xr-x<br><strong>644</strong> = rw-r--r-- (fichier normal)<br><strong>600</strong> = rw------- (privé)</p>
+        </div>
+      </div>
+    </div>
+    <div class="code">
+      <div><span class="c-comment"># chmod — modifier les droits</span></div>
+      <div><span class="c-cmd">chmod</span> <span class="c-arg">755</span> <span class="c-path">fichier</span>              <span class="c-comment"># numérique</span></div>
+      <div><span class="c-cmd">chmod</span> <span class="c-arg">u+x</span> <span class="c-path">script.sh</span>           <span class="c-comment"># ajouter execute au proprio</span></div>
+      <div><span class="c-cmd">chmod</span> <span class="c-arg">go-w</span> <span class="c-path">fichier</span>             <span class="c-comment"># enlever write groupe et autres</span></div>
+      <div><span class="c-cmd">chmod</span> <span class="c-flag">-R</span> <span class="c-arg">755</span> <span class="c-path">dossier/</span>         <span class="c-comment"># récursif</span></div>
+      <div style="margin-top:12px"><span class="c-comment"># chown — changer le propriétaire</span></div>
+      <div><span class="c-cmd">sudo chown</span> <span class="c-arg">bob</span> <span class="c-path">fichier.txt</span>     <span class="c-comment"># changer proprio</span></div>
+      <div><span class="c-cmd">sudo chown</span> <span class="c-arg">bob:bob</span> <span class="c-path">fichier.txt</span>   <span class="c-comment"># proprio + groupe</span></div>
+      <div style="margin-top:12px"><span class="c-comment"># chgrp — changer le groupe propriétaire</span></div>
+      <div><span class="c-cmd">sudo chgrp</span> <span class="c-arg">technicien</span> <span class="c-path">fichier.txt</span> <span class="c-comment"># changer le groupe</span></div>
+      <div style="margin-top:12px"><span class="c-comment"># passwd — changer mot de passe</span></div>
+      <div><span class="c-cmd">passwd</span> <span class="c-arg">bob</span>                      <span class="c-comment"># changer le mot de passe de bob</span></div>
+    </div>
+    <div class="grid3" style="margin-top:16px">
+      <div class="card">
+        <div class="card-head" style="color:var(--purple)">u g o a</div>
+        <ul>
+          <li><code>u</code> = user (proprio)</li>
+          <li><code>g</code> = group</li>
+          <li><code>o</code> = other</li>
+          <li><code>a</code> = all (tous)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-head" style="color:var(--green)">+ - =</div>
+        <ul>
+          <li><code>+</code> = ajouter le droit</li>
+          <li><code>-</code> = supprimer le droit</li>
+          <li><code>=</code> = affecter exactement</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-head" style="color:var(--orange)">Fichiers clés</div>
+        <ul>
+          <li><code>/etc/passwd</code> — users</li>
+          <li><code>/etc/shadow</code> — mots de passe</li>
+          <li><code>/etc/group</code> — groupes</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════ 07 USERS ══════════════ -->
+  <section id="users">
+    <div class="section-title">
+      <span class="section-num">07</span>
+      <h2>Gestion des utilisateurs &amp; groupes</h2>
+    </div>
+    <div class="tbl-wrap">
+    <table class="cmd-table">
+      <thead><tr><th>Commande</th><th>Syntaxe</th><th>Description</th><th>Exemple</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="cmd-badge cb-green">adduser</span></td>
+          <td class="cmd-args">nom</td>
+          <td class="cmd-desc">Crée un utilisateur + répertoire home (interactif, Debian/Ubuntu)</td>
+          <td class="cmd-ex">sudo adduser bob</td>
+        </tr>
+        <tr>
+          <td><span class="cmd-badge cb-red">deluser</span></td>
+          <td class="cmd-args">nom</td>
+          <td class="cmd-desc">Supprime un utilisateur (Debian/Ubuntu)</td>
+          <td class="cmd-ex">sudo deluser bob</td>
+        </tr>
+        <tr>
+          <td><span class="cmd-badge cb-green">addgroup</span></td>
+          <td class="cmd-args">nom</td>
+          <td class="cmd-desc">Crée un groupe (Debian/Ubuntu) = <code>groupadd</code></td>
+          <td class="cmd-ex">sudo addgroup technicien</td>
+        </tr>
+        <tr>
+          <td><span class="cmd-badge cb-red">delgroup</span></td>
+          <td class="cmd-args">nom</td>
+          <td class="cmd-desc">Supprime un groupe (Debian/Ubuntu) = <code>groupdel</code></td>
+          <td class="cmd-ex">sudo delgroup technicien</td>
+        </tr>
+        <tr>
+          <td><span class="cmd-badge cb-blue">usermod</span></td>
+          <td class="cmd-args">-aG -g -l</td>
+          <td class="cmd-desc">Modifie un utilisateur. <code>-aG</code>=ajouter à un groupe, <code>-g</code>=groupe principal, <code>-l</code>=renommer</td>
+          <td class="cmd-ex">sudo usermod -aG bob technicien</td>
+        </tr>
+        <tr>
+          <td><span class="cmd-badge cb-blue">passwd</span></td>
+          <td class="cmd-args">nom</td>
+          <td class="cmd-desc">Changer le mot de passe d'un utilisateur</td>
+          <td class="cmd-ex">sudo passwd bob</td>
+        </tr>
+        <tr>
+          <td><span class="cmd-badge cb-orange">groups</span></td>
+          <td class="cmd-args">nom</td>
+          <td class="cmd-desc">Affiche les groupes auxquels appartient un utilisateur</td>
+          <td class="cmd-ex">groups bob</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="info info-warn">
+      <span>⚠️</span>
+      <div><strong>adduser vs useradd :</strong> Sur Ubuntu/Debian, <code>adduser</code> est plus pratique (crée home, demande mdp interactivement). <code>useradd</code> est universel mais basique. Pareil pour <code>addgroup</code> / <code>groupadd</code>.</div>
+    </div>
+  </section>
+
+  <!-- ══════════════ 08 WILDCARDS ══════════════ -->
+  <section id="wildcards">
+    <div class="section-title">
+      <span class="section-num">08</span>
+      <h2>Wildcards (masques)</h2>
+    </div>
+    <table class="plain-table" style="margin-bottom:16px">
+      <tr><td class="sym-cell sym-blue">*</td><td class="desc-cell">Remplace <strong>0 ou plusieurs</strong> caractères quelconques</td><td class="ex-cell">ls *.txt</td></tr>
+      <tr><td class="sym-cell sym-blue">?</td><td class="desc-cell">Remplace <strong>exactement 1</strong> caractère quelconque</td><td class="ex-cell">ls file?.txt</td></tr>
+      <tr><td class="sym-cell sym-blue">[]</td><td class="desc-cell">Un caractère <strong>parmi un ensemble</strong> donné</td><td class="ex-cell">ls file[123].txt</td></tr>
+      <tr><td class="sym-cell sym-blue">[!]</td><td class="desc-cell">Un caractère <strong>sauf</strong> ceux listés</td><td class="ex-cell">ls [!A-Z]*</td></tr>
+    </table>
+    <div class="code">
+      <div><span class="c-comment"># Exemples du TP03</span></div>
+      <div><span class="c-cmd">cat</span> <span class="c-arg">e*</span>           <span class="c-comment"># fichiers dont le nom commence par "e"</span></div>
+      <div><span class="c-cmd">cat</span> <span class="c-arg">*s*</span>          <span class="c-comment"># fichiers contenant au moins 1 "s"</span></div>
+      <div><span class="c-cmd">cat</span> <span class="c-arg">*.txt</span>         <span class="c-comment"># fichiers se terminant par ".txt"</span></div>
+      <div><span class="c-cmd">cat</span> <span class="c-arg">e*s*.txt</span>      <span class="c-comment"># commence par e + contient s + .txt</span></div>
+      <div><span class="c-cmd">cat</span> <span class="c-arg">??s*</span>          <span class="c-comment"># "s" en 3ème caractère (2 chars avant)</span></div>
+      <div><span class="c-cmd">cp</span>  <span class="c-arg">*.txt</span> <span class="c-path">DIR1/</span>  <span class="c-comment"># copier tous les .txt dans DIR1</span></div>
+      <div><span class="c-cmd">rm</span>  <span class="c-arg">????.txt</span>       <span class="c-comment"># exactement 4 chars + .txt</span></div>
+      <div><span class="c-cmd">ls</span>  <span class="c-arg">[A-Z]*</span>        <span class="c-comment"># commence par une majuscule</span></div>
+      <div><span class="c-cmd">ls</span>  <span class="c-arg">*.[ch]</span>        <span class="c-comment"># fichiers .c ou .h</span></div>
+    </div>
+  </section>
+
+  <!-- ══════════════ 09 ARBORESCENCE ══════════════ -->
+  <section id="arbo">
+    <div class="section-title">
+      <span class="section-num">09</span>
+      <h2>Arborescence Linux</h2>
+    </div>
+    <div class="tree">
+      <div><span class="t-dir">/</span><span class="t-note">← racine de tout le système</span></div>
+      <div>├── <span class="t-dir">bin/</span><span class="t-note">commandes essentielles (ls, cp, mv, rm…)</span></div>
+      <div>├── <span class="t-dir">sbin/</span><span class="t-note">commandes système (root seulement)</span></div>
+      <div>├── <span class="t-dir">etc/</span><span class="t-note">fichiers de configuration (/etc/passwd, /etc/group…)</span></div>
+      <div>├── <span class="t-dir">home/</span><span class="t-note">répertoires des utilisateurs</span></div>
+      <div>│&nbsp;&nbsp; └── <span class="t-dir">liam/</span><span class="t-note">← c'est ton ~ (home)</span></div>
+      <div>├── <span class="t-dir">root/</span><span class="t-note">home du super-admin root</span></div>
+      <div>├── <span class="t-dir">usr/</span><span class="t-note">programmes installés (apt…)</span></div>
+      <div>├── <span class="t-dir">var/</span><span class="t-note">données variables (logs…)</span></div>
+      <div>├── <span class="t-special">tmp/</span><span class="t-note">fichiers temporaires — sticky bit actif</span></div>
+      <div>├── <span class="t-dir">dev/</span><span class="t-note">périphériques (disques, terminaux…)</span></div>
+      <div>│&nbsp;&nbsp; └── <span class="t-special">null</span><span class="t-note">← poubelle : 2&gt; /dev/null</span></div>
+      <div>├── <span class="t-dir">proc/</span><span class="t-note">informations sur les processus (virtuel)</span></div>
+      <div>└── <span class="t-dir">lib/</span><span class="t-note">bibliothèques partagées</span></div>
+    </div>
+  </section>
+
+  <!-- ══════════════ 10 SSH ══════════════ -->
+  <section id="ssh">
+    <div class="section-title">
+      <span class="section-num">10</span>
+      <h2>Connexion SSH</h2>
+    </div>
+    <div class="code">
+      <div><span class="c-comment"># Sur Ubuntu — activer SSH</span></div>
+      <div><span class="c-cmd">sudo nano</span> <span class="c-path">/etc/ssh/sshd_config</span></div>
+      <div><span class="c-comment"># → enlever le # devant : PasswordAuthentication yes</span></div>
+      <div><span class="c-cmd">sudo systemctl restart</span> <span class="c-arg">ssh</span></div>
+      <div><span class="c-cmd">sudo systemctl status</span> <span class="c-arg">ssh</span>        <span class="c-comment"># vérifier</span></div>
+      <div style="margin-top:12px"><span class="c-comment"># Trouver son adresse IP</span></div>
+      <div><span class="c-cmd">ip a</span></div>
+      <div style="margin-top:12px"><span class="c-comment"># Sur Windows — se connecter</span></div>
+      <div><span class="c-out">C:\Users\liam&gt;</span> <span class="c-cmd">ssh</span> <span class="c-arg">liam@192.168.x.x</span></div>
+    </div>
+    <div class="info info-tip" style="margin-top:16px">
+      <span>💡</span>
+      <p><strong>Raccourcis VMware :</strong> <kbd>Ctrl+Alt</kbd> pour récupérer la souris · <kbd>Ctrl+Alt+Enter</kbd> pour le plein écran</p>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  Basé sur les cours de <strong>Schalkwijk L.</strong> &nbsp;·&nbsp; TP01, TP02, TP03 &nbsp;·&nbsp; Interro mardi 3 mars 2026 &nbsp;·&nbsp; Bonne chance ! 🍀
+</footer>
+
+
+</body>
+</html>

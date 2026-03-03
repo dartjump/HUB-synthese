@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Synthèse DOS — T1012 TechOrdi</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c10;
+    --surface: #111520;
+    --surface2: #161b28;
+    --border: #1e2a3a;
+    --accent: #00e5ff;
+    --accent2: #7c3aed;
+    --accent3: #f59e0b;
+    --green: #22c55e;
+    --red: #ef4444;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --prompt: #00e5ff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Scanline effect */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,229,255,0.015) 2px,
+      rgba(0,229,255,0.015) 4px
+    );
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* Header */
+  header {
+    padding: 3rem 2rem 2rem;
+    text-align: center;
+    position: relative;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, rgba(0,229,255,0.05) 0%, transparent 100%);
+  }
+
+  .badge {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 0.25rem 0.75rem;
+    border-radius: 2px;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    animation: pulse 3s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+
+  h1 {
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+  }
+
+  h1 span.dos { color: var(--accent); }
+  h1 span.line { display: block; color: var(--muted); font-size: 0.45em; font-weight: 400; letter-spacing: 0.05em; margin-top: 0.3em; }
+
+  .header-meta {
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  .header-meta span { color: var(--accent3); }
+
+  /* Nav tabs */
+  nav {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1.5rem 2rem;
+    flex-wrap: wrap;
+    position: sticky;
+    top: 0;
+    background: rgba(10,12,16,0.95);
+    backdrop-filter: blur(10px);
+    z-index: 100;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .tab {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    padding: 0.4rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: transparent;
+    color: var(--muted);
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  .tab:hover, .tab.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(0,229,255,0.08);
+  }
+
+  /* Main layout */
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  /* Sections */
+  .section {
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .section.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Section title */
+  .section-title {
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .section-title .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 0.1rem 0.5rem;
+    border-radius: 2px;
+  }
+
+  .section-desc {
+    color: var(--muted);
+    margin-bottom: 2.5rem;
+    font-size: 0.9rem;
+    border-left: 3px solid var(--accent2);
+    padding-left: 1rem;
+  }
+
+  /* Cards grid */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .grid-2 {
+    grid-template-columns: repeat(auto-fill, minmax(480px, 1fr));
+  }
+
+  /* Command card */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1.25rem;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .card:hover {
+    border-color: var(--accent2);
+    transform: translateY(-2px);
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .cmd-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--bg);
+    background: var(--accent);
+    padding: 0.2rem 0.6rem;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+
+  .cmd-badge.purple { background: var(--accent2); color: white; }
+  .cmd-badge.yellow { background: var(--accent3); color: var(--bg); }
+  .cmd-badge.green { background: var(--green); color: var(--bg); }
+  .cmd-badge.red { background: var(--red); color: white; }
+
+  .card-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .card-desc {
+    font-size: 0.8rem;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 0.75rem;
+  }
+
+  /* Code block */
+  .code-block {
+    background: #0d1117;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.6rem 0.8rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--accent);
+    overflow-x: auto;
+    white-space: pre;
+    margin-top: 0.5rem;
+  }
+
+  .code-block .comment { color: var(--muted); }
+  .code-block .kw { color: var(--accent3); }
+  .code-block .var { color: #a78bfa; }
+  .code-block .str { color: var(--green); }
+  .code-block .op { color: var(--red); }
+
+  /* Terminal demo */
+  .terminal {
+    background: #0d1117;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+  }
+
+  .terminal-bar {
+    background: var(--surface2);
+    padding: 0.5rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .terminal-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-red { background: #ff5f57; }
+  .dot-yellow { background: #febc2e; }
+  .dot-green { background: #28c840; }
+
+  .terminal-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-left: 0.5rem;
+  }
+
+  .terminal-body {
+    padding: 1rem 1.25rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    line-height: 1.8;
+  }
+
+  .t-prompt { color: var(--accent3); }
+  .t-cmd { color: white; }
+  .t-output { color: #94a3b8; }
+  .t-ok { color: var(--green); }
+  .t-err { color: var(--red); }
+  .t-hl { color: var(--accent); }
+
+  /* Table */
+  .cmd-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 2rem;
+    font-size: 0.82rem;
+  }
+
+  .cmd-table th {
+    background: var(--surface2);
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.6rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .cmd-table td {
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid rgba(30,42,58,0.5);
+    vertical-align: top;
+  }
+
+  .cmd-table tr:hover td { background: rgba(0,229,255,0.03); }
+
+  .cmd-table td:first-child {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--accent);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .cmd-table td:nth-child(2) { color: var(--muted); }
+
+  /* Tip box */
+  .tip {
+    background: rgba(124,58,237,0.1);
+    border: 1px solid rgba(124,58,237,0.3);
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.83rem;
+    line-height: 1.7;
+  }
+
+  .tip strong { color: var(--accent2); display: block; margin-bottom: 0.3rem; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; }
+
+  .warn {
+    background: rgba(245,158,11,0.1);
+    border: 1px solid rgba(245,158,11,0.3);
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.83rem;
+    line-height: 1.7;
+  }
+
+  .warn strong { color: var(--accent3); display: block; margin-bottom: 0.3rem; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; }
+
+  /* Sub-section */
+  .subsection {
+    margin-bottom: 2.5rem;
+  }
+
+  .subsection h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--accent3);
+    margin-bottom: 1rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid var(--border);
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.05em;
+  }
+
+  /* Batch step list */
+  .steps {
+    counter-reset: step;
+    list-style: none;
+  }
+
+  .steps li {
+    counter-increment: step;
+    display: flex;
+    gap: 1rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(30,42,58,0.5);
+    font-size: 0.83rem;
+    align-items: flex-start;
+  }
+
+  .steps li::before {
+    content: counter(step, decimal-leading-zero);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent);
+    background: rgba(0,229,255,0.1);
+    border: 1px solid rgba(0,229,255,0.2);
+    border-radius: 3px;
+    padding: 0.1rem 0.4rem;
+    min-width: 2rem;
+    text-align: center;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+  }
+
+  .steps li .step-cmd {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--accent);
+    font-size: 0.78rem;
+    display: block;
+    margin-top: 0.25rem;
+  }
+
+  /* Shortcuts */
+  .kbd {
+    display: inline-block;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 0.1rem 0.4rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--accent3);
+  }
+
+  /* Operators */
+  .op-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .op-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 0.85rem 1rem;
+  }
+
+  .op-sym {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.1rem;
+    color: var(--accent3);
+    font-weight: 700;
+  }
+
+  .op-desc {
+    font-size: 0.77rem;
+    color: var(--muted);
+    margin-top: 0.25rem;
+  }
+
+  .op-ex {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--accent);
+    margin-top: 0.4rem;
+    background: #0d1117;
+    padding: 0.25rem 0.5rem;
+    border-radius: 3px;
+  }
+
+  /* Footer */
+  footer {
+    text-align: center;
+    padding: 2rem;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    border-top: 1px solid var(--border);
+    margin-top: 3rem;
+  }
+</style>
+
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style id="theme-system">
+/* ════════════════════════════════════════════
+   SHARED DESIGN SYSTEM — light & dark
+   ════════════════════════════════════════════ */
+:root {
+  /* ── Light (default) ── */
+  --bg:          #f5f6fa;
+  --surface:     #ffffff;
+  --surface2:    #f0f1f7;
+  --border:      #e2e4ef;
+  --border2:     #c8cbdc;
+  --text:        #111827;
+  --text2:       #374151;
+  --muted:       #6b7280;
+  --dim:         #9ca3af;
+
+  /* ── Accents ── */
+  --blue:        #2563eb;
+  --blue-bg:     #eff6ff;
+  --blue-bd:     #bfdbfe;
+  --purple:      #7c3aed;
+  --purple-bg:   #f5f3ff;
+  --teal:        #0891b2;
+  --teal-bg:     #ecfeff;
+  --teal-bd:     #a5f3fc;
+  --green:       #16a34a;
+  --green-bg:    #f0fdf4;
+  --green-bd:    #bbf7d0;
+  --orange:      #d97706;
+  --orange-bg:   #fffbeb;
+  --orange-bd:   #fde68a;
+  --red:         #dc2626;
+  --red-bg:      #fef2f2;
+  --red-bd:      #fecaca;
+  --yellow:      #ca8a04;
+  --yellow-bg:   #fefce8;
+
+  /* ── Shadows ── */
+  --shadow-sm:   0 1px 3px rgba(0,0,0,.08);
+  --shadow:      0 4px 16px rgba(0,0,0,.08);
+  --shadow-lg:   0 8px 32px rgba(0,0,0,.1);
+
+  /* ── Radius ── */
+  --r-sm: 8px;
+  --r:    12px;
+  --r-lg: 18px;
+  --r-xl: 24px;
+}
+
+[data-theme="dark"] {
+  /* ── Navy/slate blue-night palette ── */
+  --bg:          #0d1117;   /* deep navy-black, like GitHub dark */
+  --surface:     #161b22;   /* card surface — slate navy */
+  --surface2:    #1c2333;   /* elevated elements */
+  --border:      #2d3748;   /* slate border, visible but subtle */
+  --border2:     #4a5568;   /* stronger border for hover/focus */
+  --text:        #e2e8f0;   /* soft white, easy on eyes */
+  --text2:       #a0aec0;   /* secondary text — slate-400 */
+  --muted:       #718096;   /* muted — slate-500 */
+  --dim:         #2d3748;   /* very dim — slate-700 */
+
+  /* ── Accents tuned for navy backgrounds ── */
+  --blue:        #63b3ed;   /* sky blue — readable on navy */
+  --blue-bg:     #1a2744;   /* navy-tinted blue bg */
+  --blue-bd:     #2c4a7c;   /* blue border */
+  --purple:      #b794f4;   /* soft purple */
+  --purple-bg:   #1e1a3a;
+  --teal:        #4fd1c5;   /* teal — pops on navy */
+  --teal-bg:     #0e2a2e;
+  --teal-bd:     #1a4a50;
+  --green:       #68d391;   /* mint green */
+  --green-bg:    #0e2a1a;
+  --green-bd:    #1a4a2e;
+  --orange:      #f6ad55;   /* warm amber */
+  --orange-bg:   #2a1e0e;
+  --orange-bd:   #4a3418;
+  --red:         #fc8181;   /* soft red */
+  --red-bg:      #2a1414;
+  --red-bd:      #4a2020;
+  --yellow:      #f6e05e;
+  --yellow-bg:   #2a2400;
+
+  --shadow-sm:   0 1px 4px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.03);
+  --shadow:      0 4px 20px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.04);
+  --shadow-lg:   0 12px 48px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.05);
+}
+
+/* ── Base reset ── */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: 'Bricolage Grotesque', 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+/* ── Toggle button ── */
+#theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 100px;
+  padding: 7px 14px 7px 10px;
+  cursor: pointer;
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s;
+  user-select: none;
+}
+#theme-toggle:hover {
+  color: var(--text);
+  border-color: var(--border2);
+  box-shadow: var(--shadow);
+}
+#theme-toggle .t-icon { font-size: 15px; transition: transform 0.3s; }
+[data-theme="dark"] #theme-toggle .t-icon { transform: rotate(180deg); }
+</style>
+
+<style id="theme-override">
+[data-theme="light"] {
+  --bg: #f5f6fa; --surface: #ffffff; --surface2: #f0f1f7;
+  --border: #e2e4ef; --accent: #2563eb; --accent2: #7c3aed; --accent3: #d97706;
+  --green: #16a34a; --red: #dc2626; --text: #111827; --muted: #6b7280; --prompt: #2563eb;
+}
+[data-theme="dark"] {
+  --bg: #0d1117; --surface: #161b22; --surface2: #1c2333;
+  --border: #2d3748; --accent: #63b3ed; --accent2: #b794f4; --accent3: #f6ad55;
+  --green: #68d391; --red: #fc8181; --text: #e2e8f0; --muted: #718096; --prompt: #63b3ed;
+}
+body { background: var(--bg) !important; color: var(--text) !important; }
+.tab-bar { background: var(--surface) !important; border-color: var(--border) !important; }
+.tab { color: var(--muted) !important; border-color: transparent !important; }
+.tab.active, .tab:hover { color: var(--accent) !important; border-color: var(--accent) !important; background: var(--surface2) !important; }
+.panel { background: var(--bg) !important; }
+.console-win, .code, pre, .cmd-example, .tree, .perm-box {
+  background: var(--surface2) !important; border-color: var(--border) !important; color: var(--text) !important;
+}
+.console-bar { background: var(--surface) !important; border-color: var(--border) !important; }
+.prompt { color: var(--prompt) !important; }
+.cmd-table { background: var(--surface) !important; }
+.cmd-table thead tr { background: var(--surface2) !important; }
+th, td { border-color: var(--border) !important; color: var(--text) !important; }
+.cmd-table tr:hover td { background: var(--surface2) !important; }
+.card, .info-card, .tip-card, .warn-card, .note-card {
+  background: var(--surface) !important; border-color: var(--border) !important;
+}
+h2 { color: var(--accent) !important; }
+h3 { color: var(--text) !important; }
+.section-label { color: var(--accent2) !important; }
+.badge { background: var(--surface2) !important; color: var(--muted) !important; border-color: var(--border) !important; }
+</style>
+
+<style id="back-btn-style">
+.hub-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 100px;
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: all .2s;
+  position: relative;
+  z-index: 200;
+}
+.hub-back:hover { color: var(--text); border-color: var(--border2); box-shadow: var(--shadow); transform: translateX(-2px); }
+.hub-back-bar {
+  position: sticky;
+  top: 0;
+  z-index: 500;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.hub-back-bar .breadcrumb {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.hub-back-bar .breadcrumb a {
+  color: var(--muted);
+  text-decoration: none;
+  transition: color .15s;
+}
+.hub-back-bar .breadcrumb a:hover { color: var(--text); }
+.hub-back-bar .breadcrumb span { color: var(--dim); }
+</style>
+
+</head>
+<body>
+
+<div class="hub-back-bar">
+  <a href="index.html" class="hub-back">← Retour</a>
+  <div class="breadcrumb">
+    <a href="index.html">Hub</a>
+    <span>›</span>
+    <span>Systèmes & OS</span>
+    <span>›</span>
+    <span>DOS</span>
+  </div>
+</div>
+
+<button id="theme-toggle" onclick="toggleTheme()" aria-label="Changer le thème">
+  <span class="t-icon">☀️</span>
+  <span class="t-label">Thème</span>
+</button>
+<script>
+(function(){
+  const saved = localStorage.getItem('theme') || 'light';
+  document.documentElement.setAttribute('data-theme', saved);
+  document.addEventListener('DOMContentLoaded', function(){
+    const lbl = document.querySelector('#theme-toggle .t-label');
+    const icon = document.querySelector('#theme-toggle .t-icon');
+    const t = document.documentElement.getAttribute('data-theme');
+    if(lbl) lbl.textContent = t === 'dark' ? 'Clair' : 'Sombre';
+    if(icon) icon.textContent = t === 'dark' ? '🌙' : '☀️';
+  });
+})();
+function toggleTheme(){
+  const html = document.documentElement;
+  const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+  const lbl = document.querySelector('#theme-toggle .t-label');
+  const icon = document.querySelector('#theme-toggle .t-icon');
+  if(lbl) lbl.textContent = next === 'dark' ? 'Clair' : 'Sombre';
+  if(icon) icon.textContent = next === 'dark' ? '🌙' : '☀️';
+}
+</script>
+
+
+<header>
+  <div class="badge">T1012 TechOrdi · Synthèse</div>
+  <h1>
+    <span class="dos">DOS</span> Command Line
+    <span class="line">Labos 1 · 2 · 5 — Référence complète</span>
+  </h1>
+  <div class="header-meta">
+    <div>Labo 1 — <span>Observation PC</span></div>
+    <div>Labo 2 — <span>Commandes DOS & Batch</span></div>
+    <div>Labo 5 — <span>Réseaux & VMware</span></div>
+  </div>
+</header>
+
+<nav>
+  <a class="tab active" onclick="show('console')" href="#">🖥 Console</a>
+  <a class="tab" onclick="show('commandes')" href="#">⌨ Commandes</a>
+  <a class="tab" onclick="show('fichiers')" href="#">📁 Fichiers & Dirs</a>
+  <a class="tab" onclick="show('reseau')" href="#">🌐 Réseau</a>
+  <a class="tab" onclick="show('batch')" href="#">⚙ Batch & Variables</a>
+  <a class="tab" onclick="show('labo5')" href="#">🔗 Labo 5</a>
+</nav>
+
+<main>
+
+<!-- ===================== CONSOLE ===================== -->
+<div class="section active" id="console">
+  <div class="section-title"><span class="num">01</span> La Console DOS</div>
+  <div class="section-desc">Démarrage, configuration et raccourcis de la console Windows (cmd.exe)</div>
+
+  <div class="subsection">
+    <h3>// Démarrer la console</h3>
+    <div class="grid">
+      <div class="card">
+        <div class="card-header"><span class="cmd-badge">Méthode 1</span><span class="card-title">Recherche Windows</span></div>
+        <div class="card-desc">Taper <strong>cmd</strong> dans la barre de recherche Windows ou dans Exécuter (Win+R)</div>
+        <div class="code-block">Win + R → cmd → Entrée</div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="cmd-badge">Méthode 2</span><span class="card-title">Explorateur</span></div>
+        <div class="card-desc">Dans la barre d'adresse de l'explorateur, taper <strong>cmd</strong></div>
+        <div class="code-block">Barre adresse → cmd → Entrée</div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="cmd-badge yellow">Admin</span><span class="card-title">Mode Administrateur</span></div>
+        <div class="card-desc">Clic droit sur cmd → <strong>Exécuter en tant qu'administrateur</strong></div>
+        <div class="code-block">Recherche → cmd → Clic droit
+→ "Exécuter en tant qu'admin"</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3>// Propriétés de la console</h3>
+    <div class="grid">
+      <div class="card">
+        <div class="card-header"><span class="cmd-badge purple">Layout</span><span class="card-title">Taille de la fenêtre</span></div>
+        <div class="card-desc">Clic droit sur la barre de titre → Propriétés → onglet <strong>Disposition</strong></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="cmd-badge purple">Couleurs</span><span class="card-title">Couleur fond/texte</span></div>
+        <div class="card-desc">Propriétés → onglet <strong>Couleurs</strong> → choisir fond et texte</div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="cmd-badge purple">Options</span><span class="card-title">Lignes mémorisées</span></div>
+        <div class="card-desc">Propriétés → onglet <strong>Options</strong> → "Taille du tampon"</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3>// Raccourcis essentiels</h3>
+    <div class="op-grid">
+      <div class="op-card">
+        <div class="op-sym"><kbd class="kbd">TAB</kbd></div>
+        <div class="op-desc">Autocomplétion des noms de fichiers/dossiers</div>
+      </div>
+      <div class="op-card">
+        <div class="op-sym"><kbd class="kbd">↑</kbd> / <kbd class="kbd">↓</kbd></div>
+        <div class="op-desc">Naviguer dans l'historique des commandes</div>
+      </div>
+      <div class="op-card">
+        <div class="op-sym"><kbd class="kbd">Ctrl+C</kbd></div>
+        <div class="op-desc">Arrêter une commande en cours d'exécution</div>
+      </div>
+      <div class="op-card">
+        <div class="op-sym">Copier</div>
+        <div class="op-desc">Sélectionner + Entrée (ou clic droit → Copier)</div>
+      </div>
+      <div class="op-card">
+        <div class="op-sym">Coller</div>
+        <div class="op-desc">Clic droit dans la console → Coller</div>
+      </div>
+      <div class="op-card">
+        <div class="op-sym"><kbd class="kbd">Pause</kbd></div>
+        <div class="op-desc">Suspendre l'affichage momentanément</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <strong>💡 Astuce</strong>
+    DOS signifie <strong>Disk Operating System</strong>. C'est un système d'exploitation en ligne de commande utilisé avant Windows. Dans Windows moderne, on utilise cmd.exe qui émule le DOS.
+  </div>
+</div>
+
+<!-- ===================== COMMANDES ===================== -->
+<div class="section" id="commandes">
+  <div class="section-title"><span class="num">02</span> Commandes DOS essentielles</div>
+  <div class="section-desc">Toutes les commandes du Labo 2 — navigation, affichage, gestion disques</div>
+
+  <div class="subsection">
+    <h3>// Aide & Informations système</h3>
+    <table class="cmd-table">
+      <tr><th>Commande</th><th>Description</th><th>Exemple</th></tr>
+      <tr><td>HELP</td><td>Affiche la liste de toutes les commandes DOS</td><td><code>help</code></td></tr>
+      <tr><td>HELP [cmd]</td><td>Aide sur une commande précise</td><td><code>help dir</code> ou <code>dir /?</code></td></tr>
+      <tr><td>DATE</td><td>Afficher ou modifier la date</td><td><code>date</code></td></tr>
+      <tr><td>TIME</td><td>Afficher ou modifier l'heure</td><td><code>time</code></td></tr>
+      <tr><td>CLS</td><td>Effacer l'écran</td><td><code>cls</code></td></tr>
+      <tr><td>VER</td><td>Afficher la version de Windows</td><td><code>ver</code></td></tr>
+      <tr><td>EXIT</td><td>Fermer la session DOS / console</td><td><code>exit</code></td></tr>
+      <tr><td>DOSKEY</td><td>Créer des macros, modifier commandes précédentes</td><td><code>doskey</code></td></tr>
+    </table>
+  </div>
+
+  <div class="subsection">
+    <h3>// Navigation & Affichage</h3>
+    <table class="cmd-table">
+      <tr><th>Commande</th><th>Description</th><th>Exemple</th></tr>
+      <tr><td>DIR</td><td>Afficher le contenu d'un répertoire</td><td><code>dir</code> / <code>dir /w</code></td></tr>
+      <tr><td>CD</td><td>Changer de répertoire courant</td><td><code>cd dossier</code> / <code>cd ..</code></td></tr>
+      <tr><td>CD \</td><td>Aller à la racine du disque courant</td><td><code>cd \</code></td></tr>
+      <tr><td>D:</td><td>Changer de disque (ex: passer à D:)</td><td><code>D:</code> puis Entrée</td></tr>
+      <tr><td>TREE</td><td>Afficher l'arborescence d'un répertoire</td><td><code>tree</code> / <code>tree /f</code></td></tr>
+      <tr><td>TYPE</td><td>Afficher le contenu d'un fichier texte</td><td><code>type fichier.txt</code></td></tr>
+      <tr><td>MORE</td><td>Afficher page par page (stopper le défilement)</td><td><code>type fich.txt | more</code></td></tr>
+    </table>
+  </div>
+
+  <div class="subsection">
+    <h3>// Gestion des disques & volumes</h3>
+    <table class="cmd-table">
+      <tr><th>Commande</th><th>Description</th><th>Exemple</th></tr>
+      <tr><td>LABEL</td><td>Afficher ou modifier le nom (label) d'un disque</td><td><code>label C: MonDisque</code></td></tr>
+      <tr><td>VOL</td><td>Afficher le numéro de série et le nom d'un volume</td><td><code>vol C:</code></td></tr>
+      <tr><td>FORMAT</td><td>Formater un disque ou une disquette</td><td><code>format D:</code></td></tr>
+      <tr><td>DISKCOPY</td><td>Copier un disque complet sur un autre</td><td><code>diskcopy A: B:</code></td></tr>
+      <tr><td>DISKCOMP</td><td>Comparer deux disques</td><td><code>diskcomp A: B:</code></td></tr>
+      <tr><td>CHKDSK</td><td>Vérifier un disque et afficher un état complet</td><td><code>chkdsk C:</code></td></tr>
+      <tr><td>SUBST</td><td>Attribuer une lettre disque à un chemin local</td><td><code>subst G: C:\monDossier</code></td></tr>
+      <tr><td>NET USE</td><td>Attribuer une lettre disque à un chemin réseau</td><td><code>net use X: \\server\partage</code></td></tr>
+    </table>
+  </div>
+
+  <div class="subsection">
+    <h3>// Jokers (wildcards)</h3>
+    <div class="grid">
+      <div class="card">
+        <div class="card-header"><span class="cmd-badge yellow">*</span><span class="card-title">Astérisque — plusieurs caractères</span></div>
+        <div class="card-desc">Remplace zéro, un ou plusieurs caractères dans un nom de fichier</div>
+        <div class="code-block">dir *.txt       <span class="comment">→ tous les .txt</span>
+dir rapport*    <span class="comment">→ commence par rapport</span>
+del *.tmp       <span class="comment">→ supprimer tous les .tmp</span></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="cmd-badge yellow">?</span><span class="card-title">Point d'interrogation — un seul caractère</span></div>
+        <div class="card-desc">Remplace exactement un seul caractère</div>
+        <div class="code-block">dir fichier?.txt  <span class="comment">→ fichier1.txt, fichierA.txt</span>
+dir ???.bat       <span class="comment">→ noms de 3 caractères</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3>// Autres commandes utiles</h3>
+    <table class="cmd-table">
+      <tr><th>Commande</th><th>Description</th></tr>
+      <tr><td>PRINT</td><td>Imprimer un fichier texte (.txt)</td></tr>
+      <tr><td>FC</td><td>Comparer deux (groupes de) fichiers</td></tr>
+      <tr><td>MOVE</td><td>Déplacer des fichiers</td></tr>
+      <tr><td>PATH</td><td>Afficher ou définir le chemin de recherche des exécutables</td></tr>
+      <tr><td>FIND</td><td>Rechercher une chaîne de caractères dans un ou des fichiers</td></tr>
+      <tr><td>ATTRIB</td><td>Modifier les attributs d'un ou des fichiers (lecture seule, caché…)</td></tr>
+      <tr><td>SET</td><td>Afficher, définir ou supprimer des variables d'environnement</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ===================== FICHIERS & DIRS ===================== -->
+<div class="section" id="fichiers">
+  <div class="section-title"><span class="num">03</span> Fichiers & Répertoires</div>
+  <div class="section-desc">Créer, copier, déplacer, supprimer fichiers et dossiers</div>
+
+  <div class="subsection">
+    <h3>// Répertoires</h3>
+    <div class="grid">
+      <div class="card">
+        <div class="card-header"><span class="cmd-badge green">MD</span><span class="card-title">Make Directory — Créer un dossier</span></div>
+        <div class="card-desc">Crée un ou plusieurs répertoires. Alias : <code>MKDIR</code></div>
+        <div class="code-block">md MonDossier
+mkdir C:\T1012\Labo2
+<span class="comment">Crée les dossiers intermédiaires si besoin :</span>
+md ..\yolo\toto   <span class="comment">← crée yolo ET toto</span></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="cmd-badge red">RD</span><span class="card-title">Remove Directory — Supprimer un dossier</span></div>
+        <div class="card-desc">Supprime un répertoire vide. Alias : <code>RMDIR</code>. Utiliser <code>/S</code> pour tout supprimer.</div>
+        <div class="code-block">rd MonDossier           <span class="comment">← vide seulement</span>
+rd MonDossier /S        <span class="comment">← avec tout le contenu</span>
+rd MonDossier /S /Q     <span class="comment">← sans confirmation</span></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="cmd-badge">CD</span><span class="card-title">Change Directory — Naviguer</span></div>
+        <div class="card-desc">Se déplacer dans l'arborescence</div>
+        <div class="code-block">cd NomDossier    <span class="comment">← descendre</span>
+cd ..            <span class="comment">← remonter d'un niveau</span>
+cd \             <span class="comment">← aller à la racine</span>
+cd C:\Users\moi  <span class="comment">← chemin absolu</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3>// Fichiers</h3>
+    <div class="grid">
+      <div class="card">
+        <div class="card-header"><span class="cmd-badge green">COPY</span><span class="card-title">Copier des fichiers</span></div>
+        <div class="card-desc">Copie un ou plusieurs fichiers vers une destination</div>
+        <div class="code-block">copy source.txt dest.txt
+copy *.txt D:\backup\
+copy C:\*.txt D:\     <span class="comment">← depuis C: vers D:</span></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="cmd-badge yellow">MOVE</span><span class="card-title">Déplacer des fichiers</span></div>
+        <div class="card-desc">Déplace ou renomme un fichier</div>
+        <div class="code-block">move fichier.txt D:\
+move ancien.txt nouveau.txt  <span class="comment">← renommer</span></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="cmd-badge red">DEL</span><span class="card-title">Delete — Supprimer des fichiers</span></div>
+        <div class="card-desc">Supprime un ou plusieurs fichiers. Alias : <code>ERASE</code></div>
+        <div class="code-block">del fichier.txt
+del *.tmp        <span class="comment">← tous les .tmp</span>
+del *.* /Q       <span class="comment">← sans confirmation</span></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="cmd-badge">REN</span><span class="card-title">Rename — Renommer</span></div>
+        <div class="card-desc">Renomme un fichier ou répertoire. Alias : <code>RENAME</code></div>
+        <div class="code-block">ren vieux.txt nouveau.txt
+ren *.txt *.texte  <span class="comment">← changer extension</span></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="cmd-badge">XCOPY</span><span class="card-title">Copie avancée (avec sous-dossiers)</span></div>
+        <div class="card-desc">Copie fichiers et arborescences entières</div>
+        <div class="code-block">xcopy source dest /S /E /I</div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="cmd-badge">ATTRIB</span><span class="card-title">Attributs de fichiers</span></div>
+        <div class="card-desc">Modifier les attributs : <code>R</code>=lecture seule, <code>H</code>=caché, <code>A</code>=archive</div>
+        <div class="code-block">attrib +R fichier.txt  <span class="comment">← lecture seule</span>
+attrib -H fichier.txt  <span class="comment">← enlever caché</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3>// Redirection & Opérateurs</h3>
+    <div class="op-grid">
+      <div class="op-card">
+        <div class="op-sym">&gt;</div>
+        <div class="op-desc">Rediriger la sortie vers un fichier (écrase)</div>
+        <div class="op-ex">dir > liste.txt</div>
+      </div>
+      <div class="op-card">
+        <div class="op-sym">&gt;&gt;</div>
+        <div class="op-desc">Rediriger et ajouter à la fin du fichier</div>
+        <div class="op-ex">dir >> liste.txt</div>
+      </div>
+      <div class="op-card">
+        <div class="op-sym">|</div>
+        <div class="op-desc">Pipe — envoyer la sortie vers une autre commande</div>
+        <div class="op-ex">dir | more</div>
+      </div>
+      <div class="op-card">
+        <div class="op-sym">&amp;</div>
+        <div class="op-desc">Exécuter deux commandes l'une après l'autre</div>
+        <div class="op-ex">cls & dir</div>
+      </div>
+      <div class="op-card">
+        <div class="op-sym">&amp;&amp;</div>
+        <div class="op-desc">Exécuter la 2e commande seulement si la 1re réussit</div>
+        <div class="op-ex">mkdir test && cd test</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="terminal-dot dot-red"></div>
+      <div class="terminal-dot dot-yellow"></div>
+      <div class="terminal-dot dot-green"></div>
+      <div class="terminal-title">Exemple — créer une arborescence et sauver</div>
+    </div>
+    <div class="terminal-body">
+<span class="t-prompt">C:\Users\Liam></span> <span class="t-cmd">cd \</span>
+<span class="t-prompt">C:\></span> <span class="t-cmd">md T1012\Labo2\exercices</span>
+<span class="t-prompt">C:\></span> <span class="t-cmd">cd T1012\Labo2</span>
+<span class="t-prompt">C:\T1012\Labo2></span> <span class="t-cmd">tree > arborescence.txt</span>
+<span class="t-prompt">C:\T1012\Labo2></span> <span class="t-cmd">type arborescence.txt</span>
+<span class="t-output">Folder PATH listing
+C:.
+└───exercices</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== RÉSEAU ===================== -->
+<div class="section" id="reseau">
+  <div class="section-title"><span class="num">04</span> Commandes Réseau</div>
+  <div class="section-desc">PING, IPCONFIG, TRACERT, NET — Labo 2.G et 2.J</div>
+
+  <div class="subsection">
+    <h3>// PING</h3>
+    <div class="card" style="margin-bottom:1rem">
+      <div class="card-desc">Teste la connectivité réseau vers une adresse IP ou un nom de domaine. Envoie des paquets ICMP et mesure le temps de réponse (TTL).</div>
+      <div class="code-block">ping 192.168.1.1        <span class="comment">← par adresse IP</span>
+ping google.com         <span class="comment">← par nom de domaine</span>
+ping 127.0.0.1          <span class="comment">← loopback (propre machine)</span>
+ping -t 192.168.1.1     <span class="comment">← en continu (Ctrl+C pour stopper)</span>
+ping -n 10 192.168.1.1  <span class="comment">← envoyer 10 paquets</span></div>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3>// IPCONFIG</h3>
+    <table class="cmd-table">
+      <tr><th>Commande</th><th>Description</th></tr>
+      <tr><td>ipconfig</td><td>Afficher la config réseau de base (IP, masque, passerelle)</td></tr>
+      <tr><td>ipconfig /all</td><td>Afficher toutes les infos (MAC, DHCP, DNS…)</td></tr>
+      <tr><td>ipconfig /release</td><td>Libérer l'adresse IP obtenue par DHCP</td></tr>
+      <tr><td>ipconfig /renew</td><td>Renouveler l'adresse IP auprès du serveur DHCP</td></tr>
+      <tr><td>ipconfig /displaydns</td><td>Afficher le cache DNS local</td></tr>
+      <tr><td>ipconfig /flushdns</td><td>Vider le cache DNS local</td></tr>
+    </table>
+  </div>
+
+  <div class="subsection">
+    <h3>// TRACERT</h3>
+    <div class="card" style="margin-bottom:1rem">
+      <div class="card-desc">Affiche la route suivie par les paquets jusqu'à une destination — chaque "saut" (routeur) est affiché avec son temps de réponse.</div>
+      <div class="code-block">tracert google.com
+tracert 8.8.8.8</div>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3>// NET — Commandes réseau avancées</h3>
+    <table class="cmd-table">
+      <tr><th>Commande</th><th>Description</th></tr>
+      <tr><td>net use</td><td>Afficher les connexions réseau actives</td></tr>
+      <tr><td>net use X: \\ip\partage</td><td>Connecter un lecteur réseau (lettre X:)</td></tr>
+      <tr><td>net use X: /delete</td><td>Supprimer un lecteur réseau</td></tr>
+      <tr><td>net view</td><td>Afficher les machines et partages visibles sur le réseau</td></tr>
+      <tr><td>net user</td><td>Gérer les comptes utilisateurs locaux</td></tr>
+      <tr><td>net config</td><td>Afficher la configuration du service serveur/station</td></tr>
+      <tr><td>net share</td><td>Afficher ou créer des partages réseau</td></tr>
+      <tr><td>net start / stop</td><td>Démarrer / arrêter un service Windows</td></tr>
+    </table>
+  </div>
+
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="terminal-dot dot-red"></div>
+      <div class="terminal-dot dot-yellow"></div>
+      <div class="terminal-dot dot-green"></div>
+      <div class="terminal-title">Exemple — connecter un lecteur réseau</div>
+    </div>
+    <div class="terminal-body">
+<span class="t-prompt">C:\></span> <span class="t-cmd">net use X: \\10.4.63.50\partage</span>
+<span class="t-ok">La commande s'est terminée correctement.</span>
+
+<span class="t-prompt">C:\></span> <span class="t-cmd">net use</span>
+<span class="t-output">Nouvelles connexions réseau mémorisées.
+
+Stat.  Local  Remote                    Réseau
+-----------------------------------------------------
+OK     X:     \\10.4.63.50\partage      Microsoft Windows Network</span>
+
+<span class="t-prompt">C:\></span> <span class="t-cmd">net use X: /delete</span>
+<span class="t-ok">X: supprimé avec succès.</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== BATCH & VARIABLES ===================== -->
+<div class="section" id="batch">
+  <div class="section-title"><span class="num">05</span> Batch & Variables</div>
+  <div class="section-desc">Fichiers .bat — automatiser des séquences de commandes DOS</div>
+
+  <div class="subsection">
+    <h3>// Qu'est-ce qu'un fichier batch ?</h3>
+    <div class="tip">
+      <strong>📄 Définition</strong>
+      Un fichier <strong>.bat</strong> (ou <strong>.cmd</strong>) est un fichier texte contenant une suite de commandes DOS qui s'exécutent automatiquement dans l'ordre. C'est la base de l'automatisation sous Windows.
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3>// Instructions de base dans un batch</h3>
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="card-header"><span class="cmd-badge purple">@ECHO OFF</span><span class="card-title">Masquer l'affichage des commandes</span></div>
+        <div class="card-desc">Mettre en première ligne pour ne pas afficher chaque commande exécutée</div>
+        <div class="code-block"><span class="kw">@echo off</span>
+<span class="comment">REM les commandes s'exécutent sans s'afficher</span></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="cmd-badge purple">REM</span><span class="card-title">Commentaires</span></div>
+        <div class="card-desc">Ajouter des commentaires dans le batch (non exécutés)</div>
+        <div class="code-block"><span class="comment">REM Ceci est un commentaire
+REM Auteur : Liam
+REM Date : 2025</span></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="cmd-badge purple">ECHO</span><span class="card-title">Afficher un message</span></div>
+        <div class="card-desc">Afficher du texte dans la console</div>
+        <div class="code-block"><span class="kw">echo</span> Bonjour !
+<span class="kw">echo</span>.           <span class="comment">← ligne vide</span>
+<span class="kw">echo</span> Fin du script</div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="cmd-badge purple">PAUSE</span><span class="card-title">Attendre une touche</span></div>
+        <div class="card-desc">Suspendre l'exécution jusqu'à ce que l'utilisateur appuie sur une touche</div>
+        <div class="code-block"><span class="kw">pause</span>
+<span class="comment">REM affiche "Appuyez sur une touche..."</span></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="cmd-badge purple">COLOR</span><span class="card-title">Changer la couleur de la console</span></div>
+        <div class="card-desc">Code : 2 chiffres hex — fond puis texte. 0=noir, F=blanc, A=vert, E=jaune…</div>
+        <div class="code-block"><span class="kw">color</span> F0  <span class="comment">← fond blanc, texte noir</span>
+<span class="kw">color</span> 0A  <span class="comment">← fond noir, texte vert</span>
+<span class="kw">color</span> 1E  <span class="comment">← fond bleu, texte jaune</span></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="cmd-badge purple">PROMPT</span><span class="card-title">Changer l'invite de commande</span></div>
+        <div class="card-desc"><code>$D</code>=date, <code>$T</code>=heure, <code>$P</code>=chemin, <code>$G</code>=signe ></div>
+        <div class="code-block"><span class="kw">prompt</span> $D $P$G
+<span class="comment">→ 03/03/2026 C:\T1012></span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3>// Variables d'environnement</h3>
+    <div class="card" style="margin-bottom:1rem">
+      <div class="card-desc">Les variables sont entourées de <code>%</code>. On les utilise avec <code>SET</code>.</div>
+      <div class="code-block"><span class="comment">REM Afficher toutes les variables :</span>
+<span class="kw">set</span>
+
+<span class="comment">REM Définir une variable :</span>
+<span class="kw">set</span> <span class="var">MONVAR</span>=bonjour
+<span class="kw">echo</span> <span class="var">%MONVAR%</span>
+
+<span class="comment">REM Variables prédéfinies importantes :</span>
+<span class="kw">echo</span> <span class="var">%USERPROFILE%</span>    <span class="comment">← C:\Users\Liam</span>
+<span class="kw">echo</span> <span class="var">%USERNAME%</span>        <span class="comment">← Liam</span>
+<span class="kw">echo</span> <span class="var">%HOMEDRIVE%</span>       <span class="comment">← C:</span>
+<span class="kw">echo</span> <span class="var">%HOMEPATH%</span>        <span class="comment">← \Users\Liam</span>
+<span class="kw">echo</span> <span class="var">%TEMP%</span>            <span class="comment">← dossier temporaire</span>
+<span class="kw">echo</span> <span class="var">%PATH%</span>            <span class="comment">← chemins des exécutables</span>
+<span class="kw">echo</span> <span class="var">%COMPUTERNAME%</span>    <span class="comment">← nom du PC</span></div>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3>// Modifier le PATH</h3>
+    <div class="warn">
+      <strong>⚠ Attention</strong>
+      La modification du PATH dans un batch n'est valide que pour la console en cours. À la fermeture, le PATH initial est restauré. Pour une modification permanente : Propriétés système → Variables d'environnement.
+    </div>
+    <div class="code-block"><span class="comment">REM Ajouter un chemin au PATH existant :</span>
+<span class="kw">set</span> <span class="var">PATH</span>=<span class="var">%PATH%</span>;<span class="var">%HOMEDRIVE%%HOMEPATH%</span>\Mes documents\Mes Batch
+
+<span class="comment">REM Vérifier :</span>
+<span class="kw">echo</span> <span class="var">%PATH%</span></div>
+  </div>
+
+  <div class="subsection">
+    <h3>// Exemple de batch complet — MonBatch.bat</h3>
+    <div class="terminal">
+      <div class="terminal-bar">
+        <div class="terminal-dot dot-red"></div>
+        <div class="terminal-dot dot-yellow"></div>
+        <div class="terminal-dot dot-green"></div>
+        <div class="terminal-title">MonBatch.bat</div>
+      </div>
+      <div class="terminal-body">
+<span class="comment">REM MonBatch.bat — Batch de démonstration Labo 2</span>
+<span class="kw">@echo off</span>
+<span class="kw">cls</span>
+<span class="kw">color</span> F0
+<span class="kw">echo</span> ========================================
+<span class="kw">echo</span>   Informations réseau de la machine
+<span class="kw">echo</span> ========================================
+<span class="kw">echo</span>.
+<span class="kw">ipconfig</span> /all
+<span class="kw">echo</span>.
+<span class="kw">prompt</span> $D $P$G
+<span class="kw">echo</span> Votre dossier de profil est : <span class="var">%USERPROFILE%</span>
+<span class="kw">echo</span>.
+<span class="kw">pause</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== LABO 5 ===================== -->
+<div class="section" id="labo5">
+  <div class="section-title"><span class="num">06</span> Labo 5 — VMware & Batch avancé</div>
+  <div class="section-desc">Partages réseau, lecteurs réseau, batch automatique au démarrage</div>
+
+  <div class="tip">
+    <strong>💡 Prérequis</strong>
+    Le labo 5 se fait dans une <strong>machine virtuelle VMware</strong>. Session administrateur avec mot de passe <code>EphecEphec</code>. Créer un dossier <code>partage</code> dans Mes documents et le partager.
+  </div>
+
+  <div class="subsection">
+    <h3>// 5.B.2 — Batch : connecter deux lecteurs réseau</h3>
+    <div class="terminal">
+      <div class="terminal-bar">
+        <div class="terminal-dot dot-red"></div>
+        <div class="terminal-dot dot-yellow"></div>
+        <div class="terminal-dot dot-green"></div>
+        <div class="terminal-title">connecter.bat</div>
+      </div>
+      <div class="terminal-body">
+<span class="kw">@echo off</span>
+<span class="comment">REM Connexion de deux lecteurs réseau</span>
+<span class="kw">net use</span> X: \\<span class="var">ip1</span>\partage
+<span class="kw">net use</span> Y: \\<span class="var">ip2</span>\partage
+<span class="kw">echo</span> Lecteurs X: et Y: connectés !
+<span class="kw">pause</span>
+      </div>
+    </div>
+    <div class="code-block"><span class="comment">Vérifier dans la console :</span>
+net use
+<span class="comment">Vérifier dans l'explorateur → Ce PC → lecteurs X: et Y: visibles</span></div>
+  </div>
+
+  <div class="subsection">
+    <h3>// 5.B.3 — Batch : supprimer les lecteurs réseau</h3>
+    <div class="terminal">
+      <div class="terminal-bar">
+        <div class="terminal-dot dot-red"></div>
+        <div class="terminal-dot dot-yellow"></div>
+        <div class="terminal-dot dot-green"></div>
+        <div class="terminal-title">deconnecter.bat</div>
+      </div>
+      <div class="terminal-body">
+<span class="kw">@echo off</span>
+<span class="comment">REM Suppression des lecteurs réseau X: et Y:</span>
+<span class="kw">net use</span> X: /delete
+<span class="kw">net use</span> Y: /delete
+<span class="kw">echo</span> Lecteurs supprimés.
+<span class="kw">pause</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3>// 5.B.4 — contenu.bat — lister les fichiers dans un .txt</h3>
+    <div class="terminal">
+      <div class="terminal-bar">
+        <div class="terminal-dot dot-red"></div>
+        <div class="terminal-dot dot-yellow"></div>
+        <div class="terminal-dot dot-green"></div>
+        <div class="terminal-title">contenu.bat</div>
+      </div>
+      <div class="terminal-body">
+<span class="kw">@echo off</span>
+<span class="comment">REM Crée contenu.txt dans le profil utilisateur</span>
+<span class="comment">REM avec uniquement les noms de fichiers du répertoire courant</span>
+<span class="kw">dir</span> /b > <span class="var">%USERPROFILE%</span>\contenu.txt
+<span class="kw">echo</span> Fichier contenu.txt créé dans <span class="var">%USERPROFILE%</span>
+<span class="kw">pause</span>
+      </div>
+    </div>
+    <div class="tip">
+      <strong>💡 Option /b de DIR</strong>
+      <code>dir /b</code> affiche uniquement les noms des fichiers (format "bare"), sans informations supplémentaires.
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3>// 5.B.5 — Batch qui ajoute un dossier au PATH</h3>
+    <div class="terminal">
+      <div class="terminal-bar">
+        <div class="terminal-dot dot-red"></div>
+        <div class="terminal-dot dot-yellow"></div>
+        <div class="terminal-dot dot-green"></div>
+        <div class="terminal-title">setpath.bat</div>
+      </div>
+      <div class="terminal-body">
+<span class="kw">@echo off</span>
+<span class="comment">REM Ajoute "Mes Batch" au PATH en utilisant HOMEDRIVE et HOMEPATH</span>
+<span class="kw">set</span> <span class="var">PATH</span>=<span class="var">%PATH%</span>;<span class="var">%HOMEDRIVE%%HOMEPATH%</span>\Mes documents\Mes Batch
+<span class="kw">echo</span> PATH mis à jour.
+<span class="kw">echo</span> Nouveau PATH : <span class="var">%PATH%</span>
+<span class="kw">pause</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3>// 5.D — Batch examen complet (15 étapes)</h3>
+    <ul class="steps">
+      <li><span>Effacer la console</span><span class="step-cmd">cls</span></li>
+      <li><span>Changer la couleur (fond blanc, texte noir)</span><span class="step-cmd">color F0</span></li>
+      <li><span>Afficher les informations réseau</span><span class="step-cmd">ipconfig /all</span></li>
+      <li><span>Changer le prompt (date + chemin)</span><span class="step-cmd">prompt $D $P$G</span></li>
+      <li><span>Afficher le dossier de profil</span><span class="step-cmd">echo Votre dossier : %USERPROFILE%</span></li>
+      <li><span>Créer un répertoire à la racine C:</span><span class="step-cmd">md C:\T101 TechOrdi</span></li>
+      <li><span>Créer un disque de substitution B:</span><span class="step-cmd">subst B: "C:\T101 TechOrdi"</span></li>
+      <li><span>Connecter le disque réseau T:</span><span class="step-cmd">net use T: \\machin\partage\mes fichiers</span></li>
+      <li><span>Copier les .txt de T: vers B:</span><span class="step-cmd">copy T:\*.txt B:\</span></li>
+      <li><span>Renommer les .txt en .texte</span><span class="step-cmd">ren B:\*.txt *.texte</span></li>
+      <li><span>Créer l'arborescence T1012\TP05 en une fois</span><span class="step-cmd">md B:\T1012 TechOrdi TP\TP05 Batch</span></li>
+      <li><span>Sauver l'arborescence de C:\Windows\Temp</span><span class="step-cmd">tree C:\windows\temp > B:\arbreWindowsTemp.txt</span></li>
+      <li><span>Attendre une touche</span><span class="step-cmd">pause</span></li>
+      <li><span>Afficher le fichier page par page</span><span class="step-cmd">type B:\arbreWindowsTemp.txt | more</span></li>
+      <li><span>Afficher un message de fin</span><span class="step-cmd">echo Au revoir</span></li>
+    </ul>
+  </div>
+
+  <div class="subsection">
+    <h3>// Démarrage automatique d'un batch</h3>
+    <div class="tip">
+      <strong>🚀 Méthode</strong>
+      Pour exécuter un batch automatiquement au démarrage de session : placer le fichier .bat (ou un raccourci vers lui) dans le menu <strong>Démarrer → Programmes → Démarrage</strong>.<br><br>
+      Chemin : <code>C:\Documents and Settings\Administrateur\Menu Démarrer\Programmes\Démarrage</code>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<footer>
+  T1012 TechOrdi · Synthèse DOS · Labos 1, 2 & 5 · 2025-2026
+</footer>
+
+<script>
+  function show(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    event.target.classList.add('active');
+    window.scrollTo({top: 0, behavior: 'smooth'});
+    return false;
+  }
+</script>
+
+</body>
+</html>
