@@ -1,4 +1,284 @@
 <!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>T109 — Trigonométrie</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0e1a2b;--paper:#faf8f3;--accent:#c0392b;--gold:#c8870a;--teal:#0e6e72;--muted:#6b7280;--rule:#ddd8cc;--card:#ffffff;--hl:#fff8e6;}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);line-height:1.8;font-size:15px;}
+header{background:var(--ink);color:white;padding:56px 40px 48px;position:relative;overflow:hidden;}
+header::after{content:'sin · cos · tan';position:absolute;bottom:-10px;right:20px;font-family:'DM Serif Display',serif;font-size:100px;opacity:.05;pointer-events:none;white-space:nowrap;}
+.badge{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#c8870a;margin-bottom:14px;}
+header h1{font-family:'DM Serif Display',serif;font-size:clamp(2.2rem,5vw,3.6rem);font-weight:400;line-height:1.1;margin-bottom:10px;}
+header p{color:rgba(255,255,255,.5);font-size:.9rem;}
+nav{background:var(--card);border-bottom:2px solid var(--rule);padding:0 32px;display:flex;gap:2px;overflow-x:auto;position:sticky;top:0;z-index:100;box-shadow:0 1px 8px rgba(0,0,0,.06);}
+nav a{padding:13px 14px;font-size:11px;font-weight:600;color:var(--muted);text-decoration:none;white-space:nowrap;border-bottom:3px solid transparent;transition:all .2s;font-family:'JetBrains Mono',monospace;letter-spacing:.5px;}
+nav a:hover{color:var(--accent);border-color:var(--accent);}
+main{max-width:860px;margin:0 auto;padding:48px 24px 100px;}
+section{margin-bottom:60px;}
+.stitle{display:flex;align-items:center;gap:12px;margin-bottom:26px;padding-bottom:10px;border-bottom:2px solid var(--rule);}
+.stag{font-family:'JetBrains Mono',monospace;background:var(--accent);color:white;font-size:10px;font-weight:700;padding:4px 10px;border-radius:4px;letter-spacing:.5px;}
+.stitle h2{font-family:'DM Serif Display',serif;font-size:1.5rem;font-weight:400;}
+h3{font-size:.95rem;font-weight:700;color:var(--teal);margin:20px 0 10px;display:flex;align-items:center;gap:8px;}
+h3::before{content:'';display:inline-block;width:3px;height:16px;background:var(--gold);border-radius:2px;}
+p{margin-bottom:10px;}
+.tbl{width:100%;border-collapse:collapse;margin:14px 0;background:var(--card);border-radius:10px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.07);}
+.tbl th{background:var(--ink);color:white;padding:10px 12px;font-size:12px;font-weight:600;text-align:center;}
+.tbl td{padding:10px 12px;text-align:center;border-bottom:1px solid var(--rule);font-size:13.5px;}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tr:nth-child(even) td{background:#f7f5f0;}
+.tbl td:first-child{font-weight:700;color:var(--accent);font-family:'JetBrains Mono',monospace;font-size:12px;}
+.f{background:var(--card);border-left:4px solid var(--teal);border-radius:0 8px 8px 0;padding:13px 18px;margin:8px 0;overflow-x:auto;}
+.f.r{border-color:var(--accent);background:#fff5f5;}
+.f.g{border-color:var(--gold);background:var(--hl);}
+.f.d{border-color:#aaa;background:#f5f5f3;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:12px 0;}
+.card{background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:14px;box-shadow:0 1px 4px rgba(0,0,0,.04);}
+.clabel{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal);font-weight:700;margin-bottom:8px;}
+.tip,.warn{display:flex;gap:10px;padding:11px 15px;border-radius:8px;margin:10px 0;font-size:.88rem;}
+.tip{background:#f0faf5;border:1px solid #a7d7b5;color:#1a5c34;}
+.warn{background:#fff8f0;border:1px solid #f5c58a;color:#7a4000;}
+.sol{background:var(--hl);border:1px solid #e8d88a;border-radius:8px;padding:14px 18px;margin:10px 0;font-size:.88rem;line-height:1.9;}
+.sol-lbl{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:8px;}
+.steps{margin:12px 0;}
+.step{display:flex;gap:12px;align-items:flex-start;padding:10px 14px;margin-bottom:8px;background:var(--card);border:1px solid var(--rule);border-radius:8px;}
+.sn{background:var(--gold);color:var(--ink);font-weight:800;font-size:11px;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.step p{margin:0;font-size:.88rem;}
+.qgrid{display:grid;grid-template-columns:1fr 1fr;gap:0;border:2px solid var(--ink);border-radius:6px;overflow:hidden;width:260px;margin:16px auto;}
+.q{padding:18px 14px;text-align:center;}
+.q:nth-child(1){background:#fff0f0;border-right:1px solid var(--ink);border-bottom:1px solid var(--ink);}
+.q:nth-child(2){background:#f0fff4;border-bottom:1px solid var(--ink);}
+.q:nth-child(3){background:#f0f4ff;border-right:1px solid var(--ink);}
+.q:nth-child(4){background:#fffff0;}
+.q .ql{font-size:10px;font-weight:700;color:var(--muted);margin-bottom:4px;}
+.q .qv{font-family:'DM Serif Display',serif;font-size:1.2rem;color:var(--accent);}
+@media(max-width:640px){.g2,.g3{grid-template-columns:1fr;}header{padding:36px 18px 28px;}main{padding:24px 14px 60px;}nav{padding:0 8px;}}
+</style>
+</head>
+<body>
+<header>
+  <div class="badge">T109 · Mathématiques · Synthèse</div>
+  <h1>Trigonométrie</h1>
+  <p>Angles · Valeurs remarquables · Équations · Identités · Périodicité</p>
+</header>
+<nav>
+  <a href="#s1">Degrés/Radians</a>
+  <a href="#s2">Valeurs fondamentales</a>
+  <a href="#s3">Quadrants</a>
+  <a href="#s4">Angles spéciaux</a>
+  <a href="#s5">Équations</a>
+  <a href="#s6">Identités</a>
+  <a href="#s7">Formules somme</a>
+  <a href="#s8">Périodicité</a>
+</nav>
+<main>
+
+<section id="s1">
+  <div class="stitle"><span class="stag">§1</span><h2>Conversion Degrés ↔ Radians</h2></div>
+  <div class="g2">
+    <div class="card"><div class="clabel">Degrés → Radians</div><div class="f">\[\text{rad} = \text{degrés} \times \frac{\pi}{180}\]</div></div>
+    <div class="card"><div class="clabel">Radians → Degrés</div><div class="f">\[\text{degrés} = \text{rad} \times \frac{180}{\pi}\]</div></div>
+  </div>
+  <table class="tbl">
+    <thead><tr><th>Degrés</th><th>0°</th><th>30°</th><th>45°</th><th>60°</th><th>90°</th><th>120°</th><th>150°</th><th>180°</th><th>270°</th><th>360°</th></tr></thead>
+    <tbody><tr><td>Radians</td><td>\(0\)</td><td>\(\frac{\pi}{6}\)</td><td>\(\frac{\pi}{4}\)</td><td>\(\frac{\pi}{3}\)</td><td>\(\frac{\pi}{2}\)</td><td>\(\frac{2\pi}{3}\)</td><td>\(\frac{5\pi}{6}\)</td><td>\(\pi\)</td><td>\(\frac{3\pi}{2}\)</td><td>\(2\pi\)</td></tr></tbody>
+  </table>
+  <div class="sol">
+    <div class="sol-lbl">Solution Exercice 1</div>
+    (a) \(30° = \dfrac{\pi}{6}\) &ensp;·&ensp; (b) \(\dfrac{5\pi}{4} = 225°\) &ensp;·&ensp; (c) \(-\dfrac{3\pi}{2} = -270° = 90°\) &ensp;·&ensp; (d) \(120° = \dfrac{2\pi}{3}\)<br>
+    (e) \(\dfrac{7\pi}{6} = 210°\) &ensp;·&ensp; (f) \(\dfrac{\pi}{3} = 60°\) &ensp;·&ensp; (g) \(45° = \dfrac{\pi}{4}\) &ensp;·&ensp; (h) \(150° = \dfrac{5\pi}{6}\)
+  </div>
+</section>
+
+<section id="s2">
+  <div class="stitle"><span class="stag">§2</span><h2>Tableau des valeurs fondamentales</h2></div>
+  <table class="tbl">
+    <thead><tr><th>Angle</th><th>\(0\)</th><th>\(\frac{\pi}{6}\) (30°)</th><th>\(\frac{\pi}{4}\) (45°)</th><th>\(\frac{\pi}{3}\) (60°)</th><th>\(\frac{\pi}{2}\) (90°)</th></tr></thead>
+    <tbody>
+      <tr><td>\(\cos\theta\)</td><td>\(1\)</td><td>\(\frac{\sqrt{3}}{2}\)</td><td>\(\frac{\sqrt{2}}{2}\)</td><td>\(\frac{1}{2}\)</td><td>\(0\)</td></tr>
+      <tr><td>\(\sin\theta\)</td><td>\(0\)</td><td>\(\frac{1}{2}\)</td><td>\(\frac{\sqrt{2}}{2}\)</td><td>\(\frac{\sqrt{3}}{2}\)</td><td>\(1\)</td></tr>
+      <tr><td>\(\tan\theta\)</td><td>\(0\)</td><td>\(\frac{\sqrt{3}}{3}\)</td><td>\(1\)</td><td>\(\sqrt{3}\)</td><td>\(\pm\infty\)</td></tr>
+    </tbody>
+  </table>
+  <div class="tip"><span>💡</span><span><strong>Astuce sin :</strong> \(\sin 0°=\frac{\sqrt{0}}{2},\ \sin 30°=\frac{\sqrt{1}}{2},\ \sin 45°=\frac{\sqrt{2}}{2},\ \sin 60°=\frac{\sqrt{3}}{2},\ \sin 90°=\frac{\sqrt{4}}{2}\)</span></div>
+  <div class="sol">
+    <div class="sol-lbl">Solution Exercice 2 — valeurs (cos, sin, tan)</div>
+    (a) \(\frac{\pi}{3}\) : \(\frac{1}{2},\ \frac{\sqrt{3}}{2},\ \sqrt{3}\) &emsp;
+    (b) \(-\frac{\pi}{2}\) : \(0,\ -1,\ \pm\infty\) &emsp;
+    (c) \(270°\) : \(0,\ -1,\ \pm\infty\)<br>
+    (d) \(-60°\) : \(\frac{1}{2},\ \frac{-\sqrt{3}}{2},\ -\sqrt{3}\) &emsp;
+    (e) \(3{,}1415\ldots=\pi\) : \(-1,\ 0,\ 0\) &emsp;
+    (f) \(\frac{11\pi}{6}\) : \(\frac{\sqrt{3}}{2},\ \frac{-1}{2},\ \frac{-\sqrt{3}}{3}\)<br>
+    (g) \(330°\) : \(\frac{\sqrt{3}}{2},\ \frac{-1}{2},\ \frac{-\sqrt{3}}{3}\) &emsp;
+    (h) \(225°\) : \(-\frac{\sqrt{2}}{2},\ -\frac{\sqrt{2}}{2},\ 1\)<br>
+    (i) \(\frac{7\pi}{3}\) : \(\frac{1}{2},\ \frac{\sqrt{3}}{2},\ \sqrt{3}\) &emsp;
+    (j) \(\frac{5\pi}{4}\) : \(-\frac{\sqrt{2}}{2},\ -\frac{\sqrt{2}}{2},\ 1\)
+  </div>
+</section>
+
+<section id="s3">
+  <div class="stitle"><span class="stag">§3</span><h2>Signes par quadrant &amp; angles spéciaux</h2></div>
+  <div class="qgrid">
+    <div class="q"><div class="ql">Q2 · 90°→180°</div><div class="qv">sin +</div><div style="font-size:11px;color:var(--muted)">cos − · tan −</div></div>
+    <div class="q"><div class="ql">Q1 · 0°→90°</div><div class="qv" style="color:var(--teal)">Tout +</div><div style="font-size:11px;color:var(--muted)">cos + · sin + · tan +</div></div>
+    <div class="q"><div class="ql">Q3 · 180°→270°</div><div class="qv">tan +</div><div style="font-size:11px;color:var(--muted)">cos − · sin −</div></div>
+    <div class="q"><div class="ql">Q4 · 270°→360°</div><div class="qv">cos +</div><div style="font-size:11px;color:var(--muted)">sin − · tan −</div></div>
+  </div>
+  <p style="text-align:center;font-size:.82rem;color:var(--muted)">Mnémotechnique (anti-horaire) : <strong>T</strong>out · <strong>S</strong>in · <strong>T</strong>an · <strong>C</strong>os</p>
+  <h3>Angles négatifs</h3>
+  <div class="g3">
+    <div class="f d">\[\cos(-x) = \cos(x)\]</div>
+    <div class="f d">\[\sin(-x) = -\sin(x)\]</div>
+    <div class="f d">\[\tan(-x) = -\tan(x)\]</div>
+  </div>
+  <h3>Angles remarquables</h3>
+  <div class="g2">
+    <div class="f d">\[\cos(\pi - x) = -\cos(x)\]</div>
+    <div class="f d">\[\sin(\pi - x) = \sin(x)\]</div>
+    <div class="f d">\[\cos\!\left(\tfrac{\pi}{2}-x\right) = \sin(x)\]</div>
+    <div class="f d">\[\sin\!\left(\tfrac{\pi}{2}-x\right) = \cos(x)\]</div>
+  </div>
+</section>
+
+<section id="s4">
+  <div class="stitle"><span class="stag">§4</span><h2>Méthode — angles hors tableau</h2></div>
+  <div class="steps">
+    <div class="step"><div class="sn">1</div><p>Ramener dans \([0, 2\pi]\) : soustraire/ajouter des multiples de \(2\pi\)</p></div>
+    <div class="step"><div class="sn">2</div><p>Identifier le quadrant et trouver l'<strong>angle de référence</strong> \(\in [0, \frac{\pi}{2}]\)</p></div>
+    <div class="step"><div class="sn">3</div><p>Lire la valeur dans le tableau, puis appliquer le <strong>signe du quadrant</strong></p></div>
+  </div>
+  <div class="f g">\(\dfrac{11\pi}{6}\) → Q4, réf. \(\dfrac{\pi}{6}\) → \(\cos\dfrac{11\pi}{6} = +\dfrac{\sqrt{3}}{2}\), \(\sin\dfrac{11\pi}{6} = -\dfrac{1}{2}\)</div>
+  <div class="f g">\(\dfrac{7\pi}{3} = \dfrac{\pi}{3} + 2\pi\) → même que \(\dfrac{\pi}{3}\) → \(\cos = \dfrac{1}{2},\ \sin = \dfrac{\sqrt{3}}{2}\)</div>
+  <div class="f g">\(225° = 180°+45°\) → Q3 → \(\cos 225° = -\dfrac{\sqrt{2}}{2},\ \sin 225° = -\dfrac{\sqrt{2}}{2}\)</div>
+</section>
+
+<section id="s5">
+  <div class="stitle"><span class="stag">§5</span><h2>Équations trigonométriques</h2></div>
+  <div class="g3">
+    <div class="card">
+      <div class="clabel">sin(x) = k</div>
+      <div class="f r">\[x = \arcsin k + 2k\pi\]</div>
+      <div class="f r">\[x = \pi - \arcsin k + 2k\pi\]</div>
+      <p style="font-size:.8rem;color:var(--muted)">2 familles de solutions</p>
+    </div>
+    <div class="card">
+      <div class="clabel">cos(x) = k</div>
+      <div class="f">\[x = \pm\arccos k + 2k\pi\]</div>
+      <p style="font-size:.8rem;color:var(--muted)">2 solutions (± même angle)</p>
+    </div>
+    <div class="card">
+      <div class="clabel">tan(x) = k</div>
+      <div class="f d">\[x = \arctan k + k\pi\]</div>
+      <p style="font-size:.8rem;color:var(--muted)">1 famille (période π)</p>
+    </div>
+  </div>
+  <div class="warn"><span>⚠️</span><span>Pour \(\sin(nx)=k\) : poser \(u=nx\), résoudre, diviser par \(n\). Période → \(\frac{2\pi}{n}\) pour sin/cos, \(\frac{\pi}{n}\) pour tan.</span></div>
+  <div class="sol">
+    <div class="sol-lbl">Solutions Exercice 3</div>
+    (a) \(\sin x=\frac{1}{2}\) : \(x = \frac{\pi}{6}+2k\pi\) et \(\frac{5\pi}{6}+2k\pi\)<br>
+    (b) \(\sin x=0\) : \(x = k\pi\)<br>
+    (c) \(\sin x=-1\) : \(x = -\frac{\pi}{2}+2k\pi\)<br>
+    (d) \(\cos x=\frac{\sqrt{2}}{2}\) : \(x = \pm\frac{\pi}{4}+2k\pi\)<br>
+    (e) \(\cos x=-\frac{\sqrt{2}}{2}\) : \(x = \pm\frac{3\pi}{4}+2k\pi\)<br>
+    (f) \(\sin 2x=\frac{\sqrt{3}}{2}\) : \(x = \frac{\pi}{6}+k\pi\) et \(\frac{\pi}{3}+k\pi\)<br>
+    (g) \(2\cos 2x+1=0\) : \(x = \pm\frac{\pi}{3}+k\pi\)<br>
+    (h) \(\sin 2x=-1\) : \(x = -\frac{\pi}{4}+k\pi\)<br>
+    (i) \(\tan 3x=-1\) : \(x = -\frac{\pi}{4}+\frac{k\pi}{3} = \frac{\pi}{4}+\frac{k\pi}{3}\)<br>
+    (j) \(\cos(3x+\pi)=0\) : \(x = \frac{\pi}{6}+\frac{k\pi}{3}\)
+  </div>
+  <div class="sol" style="margin-top:10px">
+    <div class="sol-lbl">Solutions Exercice 4</div>
+    (a) \(2\cos(2x+\frac{\pi}{3})=\sqrt{2}\) : \(x = \frac{17\pi}{24}+k\pi\) et \(\frac{23\pi}{24}+k\pi\)<br>
+    (b) \(2\sin^2 x-\sin x-1=0\) (poser \(u=\sin x\)) : \(x = \frac{\pi}{2}+2k\pi\) et \(-\frac{\pi}{6}+2k\pi\) et \(-\frac{5\pi}{6}+2k\pi\)<br>
+    (c) \(\cos^2 x=\frac{1}{4}\) : \(x = \pm\frac{\pi}{3}+k\pi\)<br>
+    (d) \(1-\cos 3x=1\) : \(x = \frac{\pi}{6}+\frac{k\pi}{3}\)
+  </div>
+</section>
+
+<section id="s6">
+  <div class="stitle"><span class="stag">§6</span><h2>Identités trigonométriques</h2></div>
+  <div class="g2">
+    <div>
+      <h3>Identité fondamentale</h3>
+      <div class="f r">\[\cos^2 x + \sin^2 x = 1\]</div>
+      <div class="f">\[\tan x = \frac{\sin x}{\cos x} \qquad \cot x = \frac{\cos x}{\sin x}\]</div>
+    </div>
+    <div>
+      <h3>Double angle</h3>
+      <div class="f">\[\cos 2x = \cos^2 x - \sin^2 x = 1-2\sin^2 x = 2\cos^2 x - 1\]</div>
+      <div class="f">\[\sin 2x = 2\sin x\cos x\]</div>
+    </div>
+  </div>
+  <div class="sol">
+    <div class="sol-lbl">Solutions Exercice 5</div>
+    (a) \(\sin 7a-\sin 5a = 2\sin a\cos 6a\)<br>
+    (b) \(\sin u-\sin 2u+\sin 3u = \sin 2u(2\cos u-1)\)<br>
+    (c) \(2\cos(-2b)\cos(3b)+2\cos(-2b)\cos(5b) = 4\cos b\cos 2b\cos 4b\)<br>
+    (d) \(\cos x-\cos x\sin^2 x = \cos^3 x\)<br>
+    (e) \((\sin x+\cos x)(\sin x-\cos x)+2\cos^2 x = 1\)<br>
+    (f) \(\dfrac{1-\sin^4 x}{1+\sin^2 x} = \cos^2 x\)
+  </div>
+  <div class="sol" style="margin-top:8px">
+    <div class="sol-lbl">Solution Exercice 6</div>
+    \(\cos(3a) = \cos^3 a - 3\cos a\sin^2 a\)
+  </div>
+  <div class="sol" style="margin-top:8px">
+    <div class="sol-lbl">Solutions Exercice 7</div>
+    (a) \(\sin 15° = \dfrac{\sqrt{6}-\sqrt{2}}{4}\) &ensp;·&ensp;
+    (b) \(\cos 75° = \dfrac{\sqrt{6}-\sqrt{2}}{4}\) &ensp;·&ensp;
+    (c) \(\cos 105° = \dfrac{\sqrt{2}-\sqrt{6}}{4}\)<br>
+    (d) \(\cos\dfrac{3\pi}{4} = -\dfrac{\sqrt{2}}{2}\) &ensp;·&ensp;
+    (e) \(\sin\dfrac{11\pi}{12} = \dfrac{\sqrt{6}-\sqrt{2}}{4}\)
+  </div>
+</section>
+
+<section id="s7">
+  <div class="stitle"><span class="stag">§7</span><h2>Formules de somme et différence</h2></div>
+  <div class="g2">
+    <div class="f">\[\cos(a\pm b)=\cos a\cos b\mp\sin a\sin b\]</div>
+    <div class="f">\[\sin(a\pm b)=\sin a\cos b\pm\cos a\sin b\]</div>
+  </div>
+  <div class="tip"><span>💡</span><span>Ces formules servent à calculer \(\sin 15°\), \(\cos 75°\) etc. en décomposant l'angle : \(15°=45°-30°\), \(75°=45°+30°\)…</span></div>
+</section>
+
+<section id="s8">
+  <div class="stitle"><span class="stag">§8</span><h2>Périodicité &amp; forme générale \(A\sin(\omega t + \varphi)\)</h2></div>
+  <div class="f r">\[f(t) = A\sin(\omega t + \varphi)\]</div>
+  <div class="g3">
+    <div class="card"><div class="clabel">Amplitude A</div><p style="font-size:.88rem">valeur max de \(|f(t)|\)</p></div>
+    <div class="card"><div class="clabel">Pulsation ω / Période T</div><p style="font-size:.88rem">\(\omega = \dfrac{2\pi}{T}\) → \(T=\dfrac{2\pi}{\omega}\)</p></div>
+    <div class="card"><div class="clabel">Déphasage φ</div><p style="font-size:.88rem">décalage horizontal. Cos→sin : \(\varphi+\dfrac{\pi}{2}\)</p></div>
+  </div>
+  <div class="tip"><span>💡</span><span>\(\cos(x+\alpha) = \sin\!\left(x+\alpha+\dfrac{\pi}{2}\right)\) — on décale de \(+\dfrac{\pi}{2}\) pour passer de cos à sin.</span></div>
+  <div class="sol">
+    <div class="sol-lbl">Solutions Exercice 9</div>
+    (a) \(\cos\!\left(x+\frac{\pi}{4}\right) = \sin\!\left(x+\frac{3\pi}{4}\right)\)<br>
+    (b) \(\cos\!\left(2x+\frac{2\pi}{3}\right) = \sin\!\left(2x+\frac{7\pi}{6}\right)\)
+  </div>
+  <div class="sol" style="margin-top:8px">
+    <div class="sol-lbl">Solutions Exercice 10</div>
+    (a) Amplitude 0,5 · période \(2\pi\) · déphasage cos nul : \(f(t)=0{,}5\sin\!\left(t+\frac{\pi}{2}\right)\)<br>
+    (b) Amplitude 1 · fréquence \(\frac{1}{\pi}\) → \(\omega=2\) · déphasage cos \(\frac{\pi}{3}\) : \(f(t)=\sin\!\left(2t+\frac{5\pi}{6}\right)\)<br>
+    (c) Amplitude 2 · pulsation 2 · passe par (0,0) : \(f(t)=2\sin(2t)\)
+  </div>
+  <div class="sol" style="margin-top:8px">
+    <div class="sol-lbl">Solutions Exercice 11 (lecture de graphes)</div>
+    (a) \(f(t)=5\sin\!\left(\dfrac{\pi}{2}t\right)\)<br>
+    (b) \(f(t)=0{,}2\sin\!\left(\dfrac{\pi}{3}t-\dfrac{\pi}{3}\right)\)<br>
+    (c) \(f(t)=3\sin\!\left(\dfrac{5\pi}{3}t-\dfrac{7\pi}{6}\right)\)<br>
+    (d) \(f(t)=5\sin\!\left(\dfrac{2\pi}{3}t-\dfrac{6\pi}{5}\right)\)
+  </div>
+</section>
+
+</main>
+</body>
+</html><!DOCTYPE html>
 <html lang="fr" data-theme="light">
 <head>
 <meta charset="UTF-8">
