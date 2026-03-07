@@ -1,1340 +1,429 @@
 <!DOCTYPE html>
-<html lang="fr" data-theme="light">
+<html lang="fr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Synthèse — Logique & Numération</title>
+<title>T109 — Logique &amp; Numération</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --navy: #0f2744;
-    --blue: #1a4a8a;
-    --blue2: #2d6fd4;
-    --accent: #e8a020;
-    --red: #c0392b;
-    --green: #1e7a4a;
-    --purple: #6d28d9;
-    --bg: #f4f6fa;
-    --white: #ffffff;
-    --gray: #64748b;
-    --light: #e8eef7;
-    --tip-bg: #edf7f0;
-    --warn-bg: #fef2f2;
-    --formula-bg: #f0f4ff;
-    --purple-bg: #f5f0ff;
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    font-family: 'Outfit', sans-serif;
-    background: var(--bg);
-    color: #1a2332;
-    line-height: 1.7;
-  }
-
-  .hero {
-    background: linear-gradient(135deg, #1a0533 0%, #3b1078 60%, #6d28d9 100%);
-    color: white;
-    padding: 56px 40px 48px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-  .hero::before {
-    content: '';
-    position: absolute; inset: 0;
-    background: repeating-linear-gradient(45deg, transparent, transparent 40px, rgba(255,255,255,.03) 40px, rgba(255,255,255,.03) 80px);
-  }
-  .hero-badge {
-    display: inline-block;
-    background: var(--accent);
-    color: #1a0533;
-    font-weight: 700;
-    font-size: 11px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    padding: 5px 16px;
-    border-radius: 20px;
-    margin-bottom: 20px;
-  }
-  .hero h1 {
-    font-family: 'Crimson Pro', serif;
-    font-size: clamp(2rem, 5vw, 3.2rem);
-    font-weight: 700;
-    margin-bottom: 10px;
-    position: relative;
-  }
-  .hero p { font-size: 1rem; opacity: .75; font-weight: 300; position: relative; }
-
-  nav {
-    background: var(--white);
-    border-bottom: 2px solid var(--light);
-    padding: 0 40px;
-    display: flex;
-    gap: 4px;
-    overflow-x: auto;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    box-shadow: 0 2px 8px rgba(0,0,0,.08);
-  }
-  nav a {
-    display: block;
-    padding: 14px 16px;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--gray);
-    text-decoration: none;
-    white-space: nowrap;
-    border-bottom: 3px solid transparent;
-    transition: all .2s;
-  }
-  nav a:hover { color: var(--purple); border-color: var(--purple); }
-
-  main { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
-
-  section { margin-bottom: 56px; }
-
-  .section-header {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    margin-bottom: 24px;
-    padding-bottom: 12px;
-    border-bottom: 2px solid var(--light);
-  }
-  .section-num {
-    background: var(--purple);
-    color: white;
-    font-weight: 800;
-    font-size: 13px;
-    width: 36px; height: 36px;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-  }
-  .section-header h2 {
-    font-family: 'Crimson Pro', serif;
-    font-size: 1.6rem;
-    font-weight: 700;
-    color: var(--navy);
-  }
-
-  h3 {
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--purple);
-    margin: 24px 0 10px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  h3::before {
-    content: '';
-    display: inline-block;
-    width: 4px; height: 18px;
-    background: var(--accent);
-    border-radius: 2px;
-  }
-
-  p { margin-bottom: 10px; font-size: 0.97rem; }
-
-  .formula {
-    background: var(--formula-bg);
-    border-left: 4px solid var(--blue2);
-    border-radius: 0 10px 10px 0;
-    padding: 14px 20px;
-    margin: 10px 0;
-    text-align: center;
-    overflow-x: auto;
-  }
-  .formula.important { border-color: var(--red); background: #fff5f5; }
-  .formula.example { border-color: var(--green); background: #f0faf4; }
-  .formula.purple { border-color: var(--purple); background: var(--purple-bg); }
-
-  .tip, .warn {
-    padding: 11px 16px;
-    border-radius: 10px;
-    margin: 10px 0;
-    font-size: 0.91rem;
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-  }
-  .tip { background: var(--tip-bg); border: 1px solid #b8e2c8; color: #1a5c34; }
-  .warn { background: var(--warn-bg); border: 1px solid #f5c2c2; color: #8b1a1a; }
-  .tip .icon, .warn .icon { flex-shrink: 0; font-size: 1.1rem; }
-
-  /* Truth table */
-  .table-wrap {
-    overflow-x: auto;
-    margin: 14px 0;
-    border-radius: 12px;
-    box-shadow: 0 2px 12px rgba(0,0,0,.08);
-  }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    background: white;
-    font-size: 0.93rem;
-  }
-  thead th {
-    background: var(--purple);
-    color: white;
-    padding: 11px 16px;
-    text-align: center;
-    font-weight: 700;
-    font-size: 0.85rem;
-  }
-  thead th:first-child { border-radius: 12px 0 0 0; }
-  thead th:last-child { border-radius: 0 12px 0 0; }
-  tbody td {
-    padding: 10px 16px;
-    text-align: center;
-    border-bottom: 1px solid #e8eef7;
-    font-family: monospace;
-    font-size: 1rem;
-  }
-  tbody tr:nth-child(even) td { background: #f5f0ff; }
-  tbody tr:hover td { background: #ede9fe; }
-  .val-1 { color: var(--green); font-weight: 700; }
-  .val-0 { color: var(--red); font-weight: 700; }
-
-  /* Operator cards */
-  .op-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 12px;
-    margin: 14px 0;
-  }
-  .op-card {
-    background: white;
-    border: 2px solid var(--light);
-    border-radius: 14px;
-    padding: 16px;
-    text-align: center;
-    transition: border-color .2s, box-shadow .2s;
-  }
-  .op-card:hover { border-color: var(--purple); box-shadow: 0 4px 12px rgba(109,40,217,.1); }
-  .op-name { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gray); margin-bottom: 8px; }
-  .op-symbol { font-size: 1.8rem; font-weight: 800; color: var(--purple); margin-bottom: 6px; }
-  .op-desc { font-size: 0.82rem; color: #555; }
-  .op-card.and { border-top: 3px solid #3b82f6; }
-  .op-card.or  { border-top: 3px solid #22c55e; }
-  .op-card.not { border-top: 3px solid #ef4444; }
-  .op-card.xor { border-top: 3px solid #f59e0b; }
-  .op-card.nand{ border-top: 3px solid #8b5cf6; }
-  .op-card.nor { border-top: 3px solid #ec4899; }
-
-  /* Law cards */
-  .law-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin: 12px 0;
-  }
-  .law-card {
-    background: white;
-    border: 1px solid var(--light);
-    border-radius: 12px;
-    padding: 14px;
-    box-shadow: 0 1px 4px rgba(0,0,0,.05);
-  }
-  .law-title { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--purple); margin-bottom: 8px; }
-
-  /* Steps */
-  .steps { margin: 12px 0; }
-  .step {
-    display: flex;
-    gap: 14px;
-    align-items: flex-start;
-    margin-bottom: 10px;
-    padding: 12px 16px;
-    background: white;
-    border-radius: 10px;
-    border: 1px solid var(--light);
-  }
-  .step-num {
-    background: var(--accent);
-    color: var(--navy);
-    font-weight: 800;
-    font-size: 13px;
-    width: 28px; height: 28px;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-  }
-  .step p { margin: 0; font-size: 0.93rem; }
-
-  /* Gate symbol */
-  .gate-box {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: white;
-    border: 2px solid var(--purple);
-    border-radius: 10px;
-    padding: 8px 16px;
-    font-weight: 700;
-    color: var(--purple);
-    margin: 4px;
-    font-size: 0.9rem;
-  }
-
-  .highlight { background: #fef9c3; padding: 2px 6px; border-radius: 4px; font-weight: 600; }
-
-  @media (max-width: 600px) {
-    main { padding: 20px 14px 60px; }
-    nav { padding: 0 12px; }
-    .law-grid { grid-template-columns: 1fr; }
-    .hero { padding: 36px 20px 30px; }
-  }
+:root{--ink:#0e1a2b;--paper:#f6f8fa;--accent:#1a4a8a;--green:#166534;--orange:#b45309;--red:#991b1b;--muted:#6b7280;--rule:#d1d9e6;--card:#ffffff;--hl:#eff6ff;--hl2:#fefce8;}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);line-height:1.8;font-size:15px;}
+header{background:linear-gradient(135deg,#0e1a2b 0%,#1a4a8a 100%);color:white;padding:56px 40px 48px;position:relative;overflow:hidden;}
+header::after{content:'0 1 A F';position:absolute;bottom:-15px;right:20px;font-family:'JetBrains Mono',monospace;font-size:110px;opacity:.06;pointer-events:none;white-space:nowrap;}
+.badge{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#7dd3fc;margin-bottom:14px;}
+header h1{font-family:'DM Serif Display',serif;font-size:clamp(2rem,5vw,3.4rem);font-weight:400;line-height:1.1;margin-bottom:10px;}
+header p{color:rgba(255,255,255,.5);font-size:.9rem;}
+nav{background:var(--card);border-bottom:2px solid var(--rule);padding:0 32px;display:flex;gap:2px;overflow-x:auto;position:sticky;top:0;z-index:100;box-shadow:0 1px 8px rgba(0,0,0,.06);}
+nav a{padding:13px 14px;font-size:11px;font-weight:600;color:var(--muted);text-decoration:none;white-space:nowrap;border-bottom:3px solid transparent;transition:all .2s;font-family:'JetBrains Mono',monospace;}
+nav a:hover{color:var(--accent);border-color:var(--accent);}
+.divider{background:linear-gradient(135deg,#0e1a2b,#1a4a8a);color:white;padding:28px 32px;margin:60px 0 40px;border-radius:12px;text-align:center;}
+.divider h2{font-family:'DM Serif Display',serif;font-size:1.8rem;font-weight:400;}
+.divider p{opacity:.6;font-size:.85rem;margin-top:4px;}
+main{max-width:860px;margin:0 auto;padding:48px 24px 100px;}
+section{margin-bottom:60px;}
+.stitle{display:flex;align-items:center;gap:12px;margin-bottom:26px;padding-bottom:10px;border-bottom:2px solid var(--rule);}
+.stag{font-family:'JetBrains Mono',monospace;background:var(--accent);color:white;font-size:10px;font-weight:700;padding:4px 10px;border-radius:4px;}
+.stag.g{background:var(--green);}
+.stitle h2{font-family:'DM Serif Display',serif;font-size:1.5rem;font-weight:400;}
+h3{font-size:.95rem;font-weight:700;color:var(--accent);margin:20px 0 10px;display:flex;align-items:center;gap:8px;}
+h3.gr{color:var(--green);}
+h3::before{content:'';display:inline-block;width:3px;height:16px;background:var(--orange);border-radius:2px;}
+p{margin-bottom:10px;}
+.tbl{width:100%;border-collapse:collapse;margin:14px 0;background:var(--card);border-radius:10px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.07);}
+.tbl th{background:var(--ink);color:white;padding:9px 12px;font-size:12px;font-weight:600;text-align:center;font-family:'JetBrains Mono',monospace;}
+.tbl td{padding:9px 12px;text-align:center;border-bottom:1px solid var(--rule);font-size:13px;font-family:'JetBrains Mono',monospace;}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tr:nth-child(even) td{background:#f0f4ff;}
+.f{background:var(--card);border-left:4px solid var(--accent);border-radius:0 8px 8px 0;padding:12px 18px;margin:8px 0;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:.9rem;}
+.f.g{border-color:var(--green);background:#f0fdf4;}
+.f.o{border-color:var(--orange);background:#fffbeb;}
+.f.r{border-color:var(--red);background:#fff5f5;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:12px 0;}
+.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin:12px 0;}
+.card{background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:14px;box-shadow:0 1px 4px rgba(0,0,0,.04);}
+.clabel{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:8px;}
+.clabel.g{color:var(--green);}
+.tip,.warn{display:flex;gap:10px;padding:11px 15px;border-radius:8px;margin:10px 0;font-size:.88rem;}
+.tip{background:#eff6ff;border:1px solid #93c5fd;color:#1e3a5f;}
+.warn{background:#fffbeb;border:1px solid #fbbf24;color:#78350f;}
+.sol{background:var(--hl2);border:1px solid #e8d88a;border-radius:8px;padding:14px 18px;margin:10px 0;font-size:.88rem;line-height:1.95;}
+.sol.b{background:var(--hl);border-color:#93c5fd;}
+.sol-lbl{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--orange);font-weight:700;margin-bottom:8px;}
+.sol-lbl.b{color:var(--accent);}
+code{font-family:'JetBrains Mono',monospace;background:#e8eef5;padding:2px 6px;border-radius:4px;font-size:.85em;}
+.steps{margin:12px 0;}
+.step{display:flex;gap:12px;align-items:flex-start;padding:10px 14px;margin-bottom:8px;background:var(--card);border:1px solid var(--rule);border-radius:8px;}
+.sn{background:var(--orange);color:white;font-weight:800;font-size:11px;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.step p{margin:0;font-size:.88rem;}
+@media(max-width:640px){.g2,.g3,.g4{grid-template-columns:1fr;}header{padding:36px 18px 28px;}main{padding:24px 14px 60px;}nav{padding:0 8px;}}
 </style>
-
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style id="theme-system">
-/* ════════════════════════════════════════════
-   SHARED DESIGN SYSTEM — light & dark
-   ════════════════════════════════════════════ */
-:root {
-  /* ── Light (default) ── */
-  --bg:          #f5f6fa;
-  --surface:     #ffffff;
-  --surface2:    #f0f1f7;
-  --border:      #e2e4ef;
-  --border2:     #c8cbdc;
-  --text:        #111827;
-  --text2:       #374151;
-  --muted:       #6b7280;
-  --dim:         #9ca3af;
-
-  /* ── Accents ── */
-  --blue:        #2563eb;
-  --blue-bg:     #eff6ff;
-  --blue-bd:     #bfdbfe;
-  --purple:      #7c3aed;
-  --purple-bg:   #f5f3ff;
-  --teal:        #0891b2;
-  --teal-bg:     #ecfeff;
-  --teal-bd:     #a5f3fc;
-  --green:       #16a34a;
-  --green-bg:    #f0fdf4;
-  --green-bd:    #bbf7d0;
-  --orange:      #d97706;
-  --orange-bg:   #fffbeb;
-  --orange-bd:   #fde68a;
-  --red:         #dc2626;
-  --red-bg:      #fef2f2;
-  --red-bd:      #fecaca;
-  --yellow:      #ca8a04;
-  --yellow-bg:   #fefce8;
-
-  /* ── Shadows ── */
-  --shadow-sm:   0 1px 3px rgba(0,0,0,.08);
-  --shadow:      0 4px 16px rgba(0,0,0,.08);
-  --shadow-lg:   0 8px 32px rgba(0,0,0,.1);
-
-  /* ── Radius ── */
-  --r-sm: 8px;
-  --r:    12px;
-  --r-lg: 18px;
-  --r-xl: 24px;
-}
-
-[data-theme="dark"] {
-  /* ── Navy/slate blue-night palette ── */
-  --bg:          #0d1117;   /* deep navy-black, like GitHub dark */
-  --surface:     #161b22;   /* card surface — slate navy */
-  --surface2:    #1c2333;   /* elevated elements */
-  --border:      #2d3748;   /* slate border, visible but subtle */
-  --border2:     #4a5568;   /* stronger border for hover/focus */
-  --text:        #e2e8f0;   /* soft white, easy on eyes */
-  --text2:       #a0aec0;   /* secondary text — slate-400 */
-  --muted:       #718096;   /* muted — slate-500 */
-  --dim:         #2d3748;   /* very dim — slate-700 */
-
-  /* ── Accents tuned for navy backgrounds ── */
-  --blue:        #63b3ed;   /* sky blue — readable on navy */
-  --blue-bg:     #1a2744;   /* navy-tinted blue bg */
-  --blue-bd:     #2c4a7c;   /* blue border */
-  --purple:      #b794f4;   /* soft purple */
-  --purple-bg:   #1e1a3a;
-  --teal:        #4fd1c5;   /* teal — pops on navy */
-  --teal-bg:     #0e2a2e;
-  --teal-bd:     #1a4a50;
-  --green:       #68d391;   /* mint green */
-  --green-bg:    #0e2a1a;
-  --green-bd:    #1a4a2e;
-  --orange:      #f6ad55;   /* warm amber */
-  --orange-bg:   #2a1e0e;
-  --orange-bd:   #4a3418;
-  --red:         #fc8181;   /* soft red */
-  --red-bg:      #2a1414;
-  --red-bd:      #4a2020;
-  --yellow:      #f6e05e;
-  --yellow-bg:   #2a2400;
-
-  --shadow-sm:   0 1px 4px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.03);
-  --shadow:      0 4px 20px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.04);
-  --shadow-lg:   0 12px 48px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.05);
-}
-
-/* ── Base reset ── */
-*, *::before, *::after { box-sizing: border-box; }
-
-body {
-  font-family: 'Bricolage Grotesque', 'Segoe UI', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  line-height: 1.7;
-  -webkit-font-smoothing: antialiased;
-  transition: background 0.25s ease, color 0.25s ease;
-}
-
-/* ── Toggle button ── */
-#theme-toggle {
-  position: fixed;
-  top: 16px;
-  right: 20px;
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  background: var(--surface);
-  border: 1px solid var(--border2);
-  border-radius: 100px;
-  padding: 7px 14px 7px 10px;
-  cursor: pointer;
-  font-family: 'DM Mono', monospace;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--muted);
-  box-shadow: var(--shadow-sm);
-  transition: all 0.2s;
-  user-select: none;
-}
-#theme-toggle:hover {
-  color: var(--text);
-  border-color: var(--border2);
-  box-shadow: var(--shadow);
-}
-#theme-toggle .t-icon { font-size: 15px; transition: transform 0.3s; }
-[data-theme="dark"] #theme-toggle .t-icon { transform: rotate(180deg); }
-</style>
-
-<style id="theme-override">
-:root, [data-theme="light"] {
-  --navy: #1e3a5f; --teal: #0891b2; --accent: #d97706;
-  --bg: var(--bg); --white: var(--surface); --light: var(--border);
-  --gray: var(--muted); --formula-bg: var(--blue-bg); --tip-bg: var(--green-bg);
-  --warn-bg: var(--red-bg); --teal-bg: var(--teal-bg);
-}
-[data-theme="dark"] {
-  --navy: #93c5fd; --teal: #4fd1c5; --accent: #f6ad55;
-  --white: var(--surface); --light: var(--border);
-  --gray: var(--muted); --formula-bg: var(--blue-bg); --tip-bg: var(--green-bg);
-  --warn-bg: var(--red-bg); --teal-bg: var(--teal-bg);
-}
-body { background: var(--bg) !important; color: var(--text) !important; }
-nav { background: var(--surface) !important; border-color: var(--border) !important; box-shadow: var(--shadow-sm) !important; }
-nav a { color: var(--muted) !important; }
-nav a:hover, nav a.active { color: var(--teal) !important; border-color: var(--teal) !important; }
-main { background: transparent !important; }
-section { background: transparent !important; }
-.section-header { border-color: var(--border) !important; }
-.section-header h2 { color: var(--navy) !important; }
-.section-num { background: var(--teal) !important; color: #fff !important; }
-h3 { color: var(--teal) !important; }
-h3::before { background: var(--accent) !important; }
-p { color: var(--text2) !important; }
-.formula { background: var(--blue-bg) !important; border-color: var(--blue) !important; }
-.formula.important { background: var(--red-bg) !important; border-color: var(--red) !important; }
-.formula.example { background: var(--green-bg) !important; border-color: var(--green) !important; }
-.formula.teal { background: var(--teal-bg) !important; border-color: var(--teal) !important; }
-.tip { background: var(--green-bg) !important; border-color: var(--green-bd) !important; color: var(--green) !important; }
-.warn { background: var(--red-bg) !important; border-color: var(--red-bd) !important; color: var(--red) !important; }
-table { background: var(--surface) !important; }
-th { background: var(--teal) !important; color: #fff !important; }
-td { border-color: var(--border) !important; color: var(--text) !important; }
-tbody tr:nth-child(even) td { background: var(--surface2) !important; }
-tbody tr:hover td { background: var(--teal-bg) !important; }
-.law-card, .step, .form-card { background: var(--surface) !important; border-color: var(--border) !important; color: var(--text) !important; }
-.hero { background: linear-gradient(135deg, #0c2340 0%, #0891b2 60%, #06b6d4 100%) !important; color: #fff !important; }
-.hero h1, .hero p { color: #fff !important; -webkit-text-fill-color: #fff !important; }
-code, pre { background: var(--surface2) !important; color: var(--teal) !important; border-color: var(--border) !important; }
-</style>
-
-<style id="back-btn-style">
-.hub-back {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 18px;
-  background: var(--surface);
-  border: 1px solid var(--border2);
-  border-radius: 100px;
-  font-family: 'DM Mono', monospace;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--muted);
-  text-decoration: none;
-  cursor: pointer;
-  box-shadow: var(--shadow-sm);
-  transition: all .2s;
-  position: relative;
-  z-index: 200;
-}
-.hub-back:hover { color: var(--text); border-color: var(--border2); box-shadow: var(--shadow); transform: translateX(-2px); }
-.hub-back-bar {
-  position: sticky;
-  top: 0;
-  z-index: 500;
-  background: var(--bg);
-  border-bottom: 1px solid var(--border);
-  padding: 10px 24px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.hub-back-bar .breadcrumb {
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  color: var(--muted);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.hub-back-bar .breadcrumb a {
-  color: var(--muted);
-  text-decoration: none;
-  transition: color .15s;
-}
-.hub-back-bar .breadcrumb a:hover { color: var(--text); }
-.hub-back-bar .breadcrumb span { color: var(--dim); }
-</style>
-
 </head>
 <body>
-
-<div class="hub-back-bar">
-  <a href="index.html" class="hub-back">← Retour</a>
-  <div class="breadcrumb">
-    <a href="index.html">Hub</a>
-    <span>›</span>
-    <span>Mathématiques</span>
-    <span>›</span>
-    <span>Logique & Numération</span>
-  </div>
-</div>
-
-<button id="theme-toggle" onclick="toggleTheme()" aria-label="Changer le thème">
-  <span class="t-icon">☀️</span>
-  <span class="t-label">Thème</span>
-</button>
-<script>
-(function(){
-  const saved = localStorage.getItem('theme') || 'light';
-  document.documentElement.setAttribute('data-theme', saved);
-  document.addEventListener('DOMContentLoaded', function(){
-    const lbl = document.querySelector('#theme-toggle .t-label');
-    const icon = document.querySelector('#theme-toggle .t-icon');
-    const t = document.documentElement.getAttribute('data-theme');
-    if(lbl) lbl.textContent = t === 'dark' ? 'Clair' : 'Sombre';
-    if(icon) icon.textContent = t === 'dark' ? '🌙' : '☀️';
-  });
-})();
-function toggleTheme(){
-  const html = document.documentElement;
-  const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-  html.setAttribute('data-theme', next);
-  localStorage.setItem('theme', next);
-  const lbl = document.querySelector('#theme-toggle .t-label');
-  const icon = document.querySelector('#theme-toggle .t-icon');
-  if(lbl) lbl.textContent = next === 'dark' ? 'Clair' : 'Sombre';
-  if(icon) icon.textContent = next === 'dark' ? '🌙' : '☀️';
-}
-</script>
-
-
-<div class="hero">
-  <div class="hero-badge">Examen de rattrapage</div>
-  <h1>Synthèse — Logique &amp; Numération</h1>
-  <p>Tables de vérité · Simplification · Théorèmes · Conversions · Opérations</p>
-</div>
-
+<header>
+  <div class="badge">T109 · Mathématiques · Synthèse</div>
+  <h1>Logique &amp; Numération</h1>
+  <p>Tables de vérité · Simplification · Bases · Conversions · Opérations</p>
+</header>
 <nav>
-  <a href="#s1">1. Opérateurs</a>
-  <a href="#s2">2. Tables de vérité</a>
-  <a href="#s3">3. Lois & Théorèmes</a>
-  <a href="#s4">4. De Morgan</a>
-  <a href="#s5">5. XOR</a>
-  <a href="#s6">6. Simplification</a>
-  <a href="#s7">7. SDP / PDS</a>
-  <a href="#s8">8. Portes logiques</a>
-  <a href="#s9">9. Méthode</a>
-  <a href="#n1">N1. Bases</a>
-  <a href="#n2">N2. Conversions entiers</a>
-  <a href="#n3">N3. Conversions décimaux</a>
-  <a href="#n4">N4. Addition</a>
-  <a href="#n5">N5. Complément vrai</a>
-  <a href="#n6">N6. Méthode</a>
+  <a href="#l1">Opérateurs logiques</a>
+  <a href="#l2">Tables de vérité</a>
+  <a href="#l3">Lois de Boole</a>
+  <a href="#l4">De Morgan</a>
+  <a href="#l5">XOR</a>
+  <a href="#l6">SDP / PDS</a>
+  <a href="#l7">Sol. Logique</a>
+  <a href="#n1">Bases</a>
+  <a href="#n2">Conversions entiers</a>
+  <a href="#n3">Décimaux</a>
+  <a href="#n4">Addition</a>
+  <a href="#n5">Complément vrai</a>
+  <a href="#n6">Sol. Numération</a>
 </nav>
-
 <main>
 
-<!-- ═══════ SECTION 1 ═══════ -->
-<section id="s1">
-  <div class="section-header">
-    <div class="section-num">1</div>
-    <h2>Les opérateurs logiques</h2>
-  </div>
-
-  <p>La logique booléenne ne connaît que 2 valeurs : <span class="highlight">0 (FAUX)</span> et <span class="highlight">1 (VRAI)</span>.</p>
-
-  <div class="op-grid">
-    <div class="op-card and">
-      <div class="op-name">AND — ET</div>
-      <div class="op-symbol">\(A \cdot B\)</div>
-      <div class="op-desc">Vrai seulement si <strong>les deux</strong> entrées sont à 1.<br>Notation : \(AB\) ou \(A \cdot B\)</div>
-    </div>
-    <div class="op-card or">
-      <div class="op-name">OR — OU</div>
-      <div class="op-symbol">\(A + B\)</div>
-      <div class="op-desc">Vrai si <strong>au moins une</strong> entrée est à 1.<br>Notation : \(A + B\)</div>
-    </div>
-    <div class="op-card not">
-      <div class="op-name">NOT — NON</div>
-      <div class="op-symbol">\(\overline{A}\)</div>
-      <div class="op-desc">Inverse l'entrée.<br>\(0 \to 1\) et \(1 \to 0\)</div>
-    </div>
-    <div class="op-card xor">
-      <div class="op-name">XOR — OU exclusif</div>
-      <div class="op-symbol">\(A \oplus B\)</div>
-      <div class="op-desc">Vrai si les entrées sont <strong>différentes</strong>.</div>
-    </div>
-    <div class="op-card nand">
-      <div class="op-name">NAND</div>
-      <div class="op-symbol">\(\overline{AB}\)</div>
-      <div class="op-desc">Inverse du AND.<br>\(\overline{A \cdot B}\)</div>
-    </div>
-    <div class="op-card nor">
-      <div class="op-name">NOR</div>
-      <div class="op-symbol">\(\overline{A+B}\)</div>
-      <div class="op-desc">Inverse du OR.<br>\(\overline{A + B}\)</div>
-    </div>
-  </div>
-
-  <div class="tip"><span class="icon">💡</span><span><strong>Priorité des opérateurs</strong> (comme en maths) : NOT d'abord, puis AND (×), puis OR (+).<br>Exemple : \(A + BC\) = \(A + (B \cdot C)\) et non \((A+B) \cdot C\)</span></div>
-</section>
-
-<!-- ═══════ SECTION 2 ═══════ -->
-<section id="s2">
-  <div class="section-header">
-    <div class="section-num">2</div>
-    <h2>Tables de vérité</h2>
-  </div>
-
-  <p>Une table de vérité liste <strong>toutes les combinaisons possibles</strong> des entrées et le résultat pour chacune.</p>
-  <p>Pour \(n\) variables → \(2^n\) lignes. (2 variables = 4 lignes, 3 variables = 8 lignes)</p>
-
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin:16px 0;">
-
-    <div>
-      <p style="font-weight:700;margin-bottom:6px;text-align:center">AND : \(F = A \cdot B\)</p>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>\(A\)</th><th>\(B\)</th><th>\(F = AB\)</th></tr></thead>
-          <tbody>
-            <tr><td class="val-0">0</td><td class="val-0">0</td><td class="val-0">0</td></tr>
-            <tr><td class="val-0">0</td><td class="val-1">1</td><td class="val-0">0</td></tr>
-            <tr><td class="val-1">1</td><td class="val-0">0</td><td class="val-0">0</td></tr>
-            <tr><td class="val-1">1</td><td class="val-1">1</td><td class="val-1">1</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <div>
-      <p style="font-weight:700;margin-bottom:6px;text-align:center">OR : \(F = A + B\)</p>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>\(A\)</th><th>\(B\)</th><th>\(F = A+B\)</th></tr></thead>
-          <tbody>
-            <tr><td class="val-0">0</td><td class="val-0">0</td><td class="val-0">0</td></tr>
-            <tr><td class="val-0">0</td><td class="val-1">1</td><td class="val-1">1</td></tr>
-            <tr><td class="val-1">1</td><td class="val-0">0</td><td class="val-1">1</td></tr>
-            <tr><td class="val-1">1</td><td class="val-1">1</td><td class="val-1">1</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <div>
-      <p style="font-weight:700;margin-bottom:6px;text-align:center">NOT : \(F = \overline{A}\)</p>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>\(A\)</th><th>\(F = \overline{A}\)</th></tr></thead>
-          <tbody>
-            <tr><td class="val-0">0</td><td class="val-1">1</td></tr>
-            <tr><td class="val-1">1</td><td class="val-0">0</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <div>
-      <p style="font-weight:700;margin-bottom:6px;text-align:center">XOR : \(F = A \oplus B\)</p>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>\(A\)</th><th>\(B\)</th><th>\(F = A \oplus B\)</th></tr></thead>
-          <tbody>
-            <tr><td class="val-0">0</td><td class="val-0">0</td><td class="val-0">0</td></tr>
-            <tr><td class="val-0">0</td><td class="val-1">1</td><td class="val-1">1</td></tr>
-            <tr><td class="val-1">1</td><td class="val-0">0</td><td class="val-1">1</td></tr>
-            <tr><td class="val-1">1</td><td class="val-1">1</td><td class="val-0">0</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-  </div>
-
-  <div class="tip"><span class="icon">💡</span><span><strong>XOR en résumé :</strong> résultat = 1 si les deux entrées sont différentes, 0 si elles sont identiques.</span></div>
-</section>
-
-<!-- ═══════ SECTION 3 ═══════ -->
-<section id="s3">
-  <div class="section-header">
-    <div class="section-num">3</div>
-    <h2>Lois &amp; Théorèmes de l'algèbre de Boole</h2>
-  </div>
-
-  <div class="law-grid">
-
-    <div class="law-card">
-      <div class="law-title">Identité</div>
-      <div class="formula purple" style="margin:4px 0">\[A + 0 = A\]</div>
-      <div class="formula purple" style="margin:4px 0">\[A \cdot 1 = A\]</div>
-    </div>
-
-    <div class="law-card">
-      <div class="law-title">Annulation (Dominance)</div>
-      <div class="formula purple" style="margin:4px 0">\[A + 1 = 1\]</div>
-      <div class="formula purple" style="margin:4px 0">\[A \cdot 0 = 0\]</div>
-    </div>
-
-    <div class="law-card">
-      <div class="law-title">Idempotence</div>
-      <div class="formula purple" style="margin:4px 0">\[A + A = A\]</div>
-      <div class="formula purple" style="margin:4px 0">\[A \cdot A = A\]</div>
-    </div>
-
-    <div class="law-card">
-      <div class="law-title">Complément</div>
-      <div class="formula important" style="margin:4px 0">\[A + \overline{A} = 1\]</div>
-      <div class="formula important" style="margin:4px 0">\[A \cdot \overline{A} = 0\]</div>
-    </div>
-
-    <div class="law-card">
-      <div class="law-title">Double négation</div>
-      <div class="formula important" style="margin:4px 0">\[\overline{\overline{A}} = A\]</div>
-    </div>
-
-    <div class="law-card">
-      <div class="law-title">Commutativité</div>
-      <div class="formula purple" style="margin:4px 0">\[A + B = B + A\]</div>
-      <div class="formula purple" style="margin:4px 0">\[A \cdot B = B \cdot A\]</div>
-    </div>
-
-    <div class="law-card">
-      <div class="law-title">Associativité</div>
-      <div class="formula purple" style="margin:4px 0">\[(A+B)+C = A+(B+C)\]</div>
-      <div class="formula purple" style="margin:4px 0">\[(AB)C = A(BC)\]</div>
-    </div>
-
-    <div class="law-card">
-      <div class="law-title">Distributivité</div>
-      <div class="formula important" style="margin:4px 0">\[A(B+C) = AB + AC\]</div>
-      <div class="formula important" style="margin:4px 0">\[A + BC = (A+B)(A+C)\]</div>
-    </div>
-
-    <div class="law-card">
-      <div class="law-title">Absorption</div>
-      <div class="formula important" style="margin:4px 0">\[A + AB = A\]</div>
-      <div class="formula important" style="margin:4px 0">\[A(A+B) = A\]</div>
-    </div>
-
-    <div class="law-card">
-      <div class="law-title">Absorption étendue</div>
-      <div class="formula important" style="margin:4px 0">\[A + \overline{A}B = A + B\]</div>
-      <div class="formula important" style="margin:4px 0">\[A(\overline{A}+B) = AB\]</div>
-    </div>
-
-  </div>
-
-  <div class="warn"><span class="icon">⚠️</span><span>En logique booléenne : <strong>\(1 + 1 = 1\)</strong> (pas 2 !). Le + est un OR, pas une addition.</span></div>
-</section>
-
-<!-- ═══════ SECTION 4 ═══════ -->
-<section id="s4">
-  <div class="section-header">
-    <div class="section-num">4</div>
-    <h2>Théorèmes de De Morgan</h2>
-  </div>
-
-  <p>Ces deux théorèmes permettent de <strong>simplifier ou développer</strong> une expression avec des barres de négation.</p>
-
-  <div class="formula important" style="font-size:1.1rem">
-    \[\overline{A \cdot B} = \overline{A} + \overline{B}\]
-  </div>
-  <div class="formula important" style="font-size:1.1rem">
-    \[\overline{A + B} = \overline{A} \cdot \overline{B}\]
-  </div>
-
-  <div class="tip"><span class="icon">💡</span><span><strong>Méthode De Morgan en 3 étapes :</strong><br>
-  1. Mettre une grande barre sur toute l'expression<br>
-  2. Changer chaque <strong>·</strong> en <strong>+</strong> (et vice versa)<br>
-  3. Inverser chaque variable (ajouter ou enlever la barre)</span></div>
-
-  <h3>Exemples</h3>
-  <div class="formula example">
-    \[\overline{A + B + C} = \overline{A} \cdot \overline{B} \cdot \overline{C}\]
-  </div>
-  <div class="formula example">
-    \[\overline{ABC} = \overline{A} + \overline{B} + \overline{C}\]
-  </div>
-  <div class="formula example">
-    \[\overline{A(B+C)} = \overline{A} + \overline{B} \cdot \overline{C} = \overline{A} + \overline{B+C}\]
-  </div>
-
-  <div class="warn"><span class="icon">⚠️</span><span>Une barre qui couvre plusieurs termes n'est <strong>pas</strong> la même chose que des barres séparées !<br>
-  \(\overline{A+B} \neq \overline{A} + \overline{B}\) — il faut appliquer De Morgan pour développer.</span></div>
-</section>
-
-<!-- ═══════ SECTION 5 ═══════ -->
-<section id="s5">
-  <div class="section-header">
-    <div class="section-num">5</div>
-    <h2>Opérateur XOR ⊕</h2>
-  </div>
-
-  <p>Le XOR (OU exclusif) est vrai quand les deux entrées sont <strong>différentes</strong>.</p>
-
-  <div class="formula purple" style="font-size:1.05rem">
-    \[A \oplus B = A\overline{B} + \overline{A}B\]
-  </div>
-
-  <h3>Propriétés importantes du XOR</h3>
-  <div class="law-grid">
-    <div class="law-card">
-      <div class="law-title">Avec 0 et 1</div>
-      <div class="formula" style="margin:4px 0">\[A \oplus 0 = A\]</div>
-      <div class="formula" style="margin:4px 0">\[A \oplus 1 = \overline{A}\]</div>
-    </div>
-    <div class="law-card">
-      <div class="law-title">Avec lui-même</div>
-      <div class="formula" style="margin:4px 0">\[A \oplus A = 0\]</div>
-      <div class="formula" style="margin:4px 0">\[A \oplus \overline{A} = 1\]</div>
-    </div>
-    <div class="law-card">
-      <div class="law-title">Commutativité</div>
-      <div class="formula" style="margin:4px 0">\[A \oplus B = B \oplus A\]</div>
-    </div>
-    <div class="law-card">
-      <div class="law-title">Associativité</div>
-      <div class="formula" style="margin:4px 0">\[(A \oplus B) \oplus C = A \oplus (B \oplus C)\]</div>
-    </div>
-  </div>
-
-  <h3>XOR avec AND</h3>
-  <div class="formula purple">
-    \[A(B \oplus C) = AB \oplus AC\]
-  </div>
-
-  <div class="tip"><span class="icon">💡</span><span><strong>Astuce :</strong> \(AB \oplus A = A(\overline{B} + 1) \cdot ...\) → toujours développer le XOR en \(A\overline{B} + \overline{A}B\) pour simplifier plus facilement.</span></div>
-</section>
-
-<!-- ═══════ SECTION 6 ═══════ -->
-<section id="s6">
-  <div class="section-header">
-    <div class="section-num">6</div>
-    <h2>Simplification algébrique</h2>
-  </div>
-
-  <p>L'objectif est de réduire une expression au <strong>minimum de termes et de variables</strong> possible.</p>
-
-  <h3>Méthode générale</h3>
-  <div class="steps">
-    <div class="step"><div class="step-num">1</div><p>Appliquer les lois d'<strong>absorption</strong> : \(A + AB = A\)</p></div>
-    <div class="step"><div class="step-num">2</div><p>Utiliser la <strong>distributivité</strong> pour factoriser : \(AB + AC = A(B+C)\)</p></div>
-    <div class="step"><div class="step-num">3</div><p>Appliquer <strong>De Morgan</strong> pour éliminer les barres complexes</p></div>
-    <div class="step"><div class="step-num">4</div><p>Utiliser \(A + \overline{A} = 1\) et \(A \cdot \overline{A} = 0\) pour simplifier</p></div>
-    <div class="step"><div class="step-num">5</div><p>Vérifier avec la <strong>table de vérité</strong> que la simplification est correcte</p></div>
-  </div>
-
-  <h3>Exemples de simplifications classiques</h3>
-
-  <div class="formula example">
-    \[A(A+B) = A \quad \text{(absorption)}\]
-  </div>
-  <div class="formula example">
-    \[A + \overline{A}B = A + B \quad \text{(absorption étendue)}\]
-  </div>
-  <div class="formula example">
-    \[AB + A\overline{B} = A(B + \overline{B}) = A \cdot 1 = A\]
-  </div>
-  <div class="formula example">
-    \[ABC + \overline{A}BC = BC(A + \overline{A}) = BC \cdot 1 = BC\]
-  </div>
-  <div class="formula example">
-    \[A + B + \overline{A}\overline{B} = A + B + \overline{A+B} = 1\]
-  </div>
-
-  <div class="tip"><span class="icon">💡</span><span><strong>Astuce :</strong> en logique booléenne, on peut <strong>dupliquer un terme</strong> sans changer la valeur : \(A = A + A + A + ...\) — ça peut aider à factoriser !</span></div>
-</section>
-
-<!-- ═══════ SECTION 7 ═══════ -->
-<section id="s7">
-  <div class="section-header">
-    <div class="section-num">7</div>
-    <h2>Formes SDP et PDS</h2>
-  </div>
-
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0;">
-    <div class="law-card" style="border-top:3px solid var(--blue);">
-      <div class="law-title" style="color:var(--blue)">SDP — Somme De Produits</div>
-      <p style="font-size:.9rem;margin-bottom:10px">C'est un <strong>OR de AND</strong>. On liste les cas où \(F = 1\).</p>
-      <div class="formula" style="margin:4px 0;font-size:.9rem">\[F = \overline{A}B + AB + A\overline{B}\]</div>
-      <p style="font-size:.82rem;color:var(--gray);margin-top:6px">Chaque terme = un minterm (produit de variables)</p>
-    </div>
-    <div class="law-card" style="border-top:3px solid var(--green);">
-      <div class="law-title" style="color:var(--green)">PDS — Produit De Sommes</div>
-      <p style="font-size:.9rem;margin-bottom:10px">C'est un <strong>AND de OR</strong>. On liste les cas où \(F = 0\).</p>
-      <div class="formula" style="margin:4px 0;font-size:.9rem">\[F = (A+B)(\overline{A}+\overline{B})\]</div>
-      <p style="font-size:.82rem;color:var(--gray);margin-top:6px">Chaque terme = un maxterm (somme de variables)</p>
-    </div>
-  </div>
-
-  <h3>Comment choisir entre SDP et PDS ?</h3>
-  <div class="steps">
-    <div class="step"><div class="step-num">✓</div><p><strong>SDP</strong> si la fonction a <strong>peu de 1</strong> dans la table de vérité → moins de termes à écrire</p></div>
-    <div class="step"><div class="step-num">✓</div><p><strong>PDS</strong> si la fonction a <strong>peu de 0</strong> dans la table de vérité → moins de termes à écrire</p></div>
-  </div>
-
-  <h3>Comment lire la SDP depuis une table de vérité</h3>
-  <p>Pour chaque ligne où \(F = 1\) : écrire le produit des variables (avec barre si la variable vaut 0).</p>
-  <div class="formula example">
-    Ligne \(A=0, B=1\) → minterm : \(\overline{A}B\)<br>
-    Ligne \(A=1, B=0\) → minterm : \(A\overline{B}\)<br>
-    Ligne \(A=1, B=1\) → minterm : \(AB\)<br>
-    \[F = \overline{A}B + A\overline{B} + AB\]
-  </div>
-
-  <div class="warn"><span class="icon">⚠️</span><span>La SDP ou PDS canonique n'est pas forcément simplifiée ! Il faut ensuite appliquer les théorèmes pour réduire.</span></div>
-</section>
-
-<!-- ═══════ SECTION 8 ═══════ -->
-<section id="s8">
-  <div class="section-header">
-    <div class="section-num">8</div>
-    <h2>Portes logiques &amp; schémas électroniques</h2>
-  </div>
-
-  <p>Chaque opérateur logique correspond à une <strong>porte électronique</strong> avec un symbole.</p>
-
-  <div class="table-wrap">
-    <table>
-      <thead>
-        <tr><th>Porte</th><th>Symbole</th><th>Expression</th><th>Description</th></tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong>AND</strong></td>
-          <td>▷ (D plat)</td>
-          <td>\(F = A \cdot B\)</td>
-          <td>Sortie 1 si TOUS les entrées = 1</td>
-        </tr>
-        <tr>
-          <td><strong>OR</strong></td>
-          <td>▷ (D courbé)</td>
-          <td>\(F = A + B\)</td>
-          <td>Sortie 1 si AU MOINS UNE entrée = 1</td>
-        </tr>
-        <tr>
-          <td><strong>NOT</strong></td>
-          <td>▷○ (triangle + cercle)</td>
-          <td>\(F = \overline{A}\)</td>
-          <td>Inverse la sortie</td>
-        </tr>
-        <tr>
-          <td><strong>NAND</strong></td>
-          <td>AND + cercle</td>
-          <td>\(F = \overline{A \cdot B}\)</td>
-          <td>Inverse du AND</td>
-        </tr>
-        <tr>
-          <td><strong>NOR</strong></td>
-          <td>OR + cercle</td>
-          <td>\(F = \overline{A + B}\)</td>
-          <td>Inverse du OR</td>
-        </tr>
-        <tr>
-          <td><strong>XOR</strong></td>
-          <td>OR + double courbe</td>
-          <td>\(F = A \oplus B\)</td>
-          <td>Sortie 1 si entrées différentes</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <h3>Lire un circuit logique → expression</h3>
-  <div class="steps">
-    <div class="step"><div class="step-num">1</div><p>Repérer les <strong>entrées</strong> (A, B, C...) et la <strong>sortie</strong> (F, G...)</p></div>
-    <div class="step"><div class="step-num">2</div><p>Lire le circuit <strong>de gauche à droite</strong>, porte par porte</p></div>
-    <div class="step"><div class="step-num">3</div><p>Écrire l'expression de chaque porte intermédiaire</p></div>
-    <div class="step"><div class="step-num">4</div><p>Combiner pour obtenir l'expression finale de la sortie</p></div>
-    <div class="step"><div class="step-num">5</div><p><strong>Simplifier</strong> l'expression, puis redessiner le circuit simplifié</p></div>
-  </div>
-
-  <div class="tip"><span class="icon">💡</span><span>Un cercle sur la sortie d'une porte = <strong>négation</strong> de la sortie. AND + cercle = NAND.</span></div>
-</section>
-
-<!-- ═══════ SECTION 9 ═══════ -->
-<section id="s9">
-  <div class="section-header">
-    <div class="section-num">9</div>
-    <h2>Récap — Méthode pour chaque exercice</h2>
-  </div>
-
-  <h3>Faire une table de vérité</h3>
-  <div class="steps">
-    <div class="step"><div class="step-num">1</div><p>Compter les variables → \(n\) variables = \(2^n\) lignes</p></div>
-    <div class="step"><div class="step-num">2</div><p>Écrire toutes les combinaisons (0,0,0 → 0,0,1 → ... → 1,1,1)</p></div>
-    <div class="step"><div class="step-num">3</div><p>Calculer les sous-expressions intermédiaires colonne par colonne</p></div>
-    <div class="step"><div class="step-num">4</div><p>Calculer la valeur finale \(F\) pour chaque ligne</p></div>
-  </div>
-
-  <h3>Simplifier une expression</h3>
-  <div class="steps">
-    <div class="step"><div class="step-num">1</div><p>Chercher les <strong>absorptions</strong> : \(A + AB = A\)</p></div>
-    <div class="step"><div class="step-num">2</div><p>Chercher les <strong>compléments</strong> : \(A + \overline{A} = 1\) et \(A\overline{A} = 0\)</p></div>
-    <div class="step"><div class="step-num">3</div><p><strong>Factoriser</strong> avec distributivité : \(AB + AC = A(B+C)\)</p></div>
-    <div class="step"><div class="step-num">4</div><p>Appliquer <strong>De Morgan</strong> si nécessaire pour développer les barres</p></div>
-    <div class="step"><div class="step-num">5</div><p>Vérifier avec la table de vérité que la simplification est correcte</p></div>
-  </div>
-
-  <h3>Écrire la forme SDP ou PDS</h3>
-  <div class="steps">
-    <div class="step"><div class="step-num">1</div><p>Faire la table de vérité</p></div>
-    <div class="step"><div class="step-num">2</div><p>SDP : noter les lignes où \(F=1\) et écrire le minterm correspondant</p></div>
-    <div class="step"><div class="step-num">3</div><p>PDS : noter les lignes où \(F=0\) et écrire le maxterm correspondant</p></div>
-    <div class="step"><div class="step-num">4</div><p>Choisir la forme avec le <strong>moins de termes</strong></p></div>
-  </div>
-
-  <div style="text-align:center;margin-top:40px;padding:24px;background:linear-gradient(135deg,#1a0533,#3b1078);border-radius:16px;color:white;">
-    <div style="font-size:2rem;margin-bottom:8px">🧠</div>
-    <div style="font-family:'Crimson Pro',serif;font-size:1.4rem;font-weight:600">Bonne chance pour ton examen !</div>
-    <div style="opacity:.7;font-size:.9rem;margin-top:4px">La logique, c'est de la méthode — tu peux y arriver !</div>
-  </div>
-</section>
-
-
-</body>
-</html>
-
-<!-- ═══════ SEPARATEUR ═══════ -->
-<div style="text-align:center;margin:48px 0 40px;padding:20px;background:linear-gradient(135deg,#0f3d2e,#1e7a4a);border-radius:16px;color:white;">
-  <div style="font-size:1.8rem;margin-bottom:6px">🔢</div>
-  <div style="font-family:'Crimson Pro',serif;font-size:1.6rem;font-weight:700">NUMÉRATION</div>
-  <div style="opacity:.75;font-size:.9rem;margin-top:4px">Conversions · Opérations · Complément vrai</div>
+<!-- ══════════════════════════════ LOGIQUE ══════════════════════════════ -->
+<div class="divider">
+  <div style="font-size:1.5rem;margin-bottom:6px">⚡</div>
+  <h2>Logique</h2>
+  <p>Tables de vérité · Simplification algébrique · Portes logiques</p>
 </div>
 
-<!-- ═══════ N1 BASES ═══════ -->
+<section id="l1">
+  <div class="stitle"><span class="stag">L1</span><h2>Opérateurs logiques</h2></div>
+  <div class="g3">
+    <div class="card">
+      <div class="clabel">AND (ET) — ·</div>
+      <div class="f">A · B = AB</div>
+      <p style="font-size:.82rem;color:var(--muted);margin-top:6px">1 seulement si les deux entrées sont 1</p>
+    </div>
+    <div class="card">
+      <div class="clabel">OR (OU) — +</div>
+      <div class="f g">A + B</div>
+      <p style="font-size:.82rem;color:var(--muted);margin-top:6px">1 si au moins une entrée est 1</p>
+    </div>
+    <div class="card">
+      <div class="clabel">NOT (NON) — barre</div>
+      <div class="f o">\(\bar{A}\)</div>
+      <p style="font-size:.82rem;color:var(--muted);margin-top:6px">Inverse : 0→1, 1→0</p>
+    </div>
+    <div class="card">
+      <div class="clabel">XOR (OU excl.) — ⊕</div>
+      <div class="f r">A ⊕ B</div>
+      <p style="font-size:.82rem;color:var(--muted);margin-top:6px">1 si les entrées sont différentes</p>
+    </div>
+    <div class="card">
+      <div class="clabel">NAND</div>
+      <div class="f">\(\overline{AB}\)</div>
+      <p style="font-size:.82rem;color:var(--muted);margin-top:6px">NOT(AND) — universel</p>
+    </div>
+    <div class="card">
+      <div class="clabel">NOR</div>
+      <div class="f">\(\overline{A+B}\)</div>
+      <p style="font-size:.82rem;color:var(--muted);margin-top:6px">NOT(OR) — universel</p>
+    </div>
+  </div>
+</section>
+
+<section id="l2">
+  <div class="stitle"><span class="stag">L2</span><h2>Tables de vérité</h2></div>
+  <p>Pour \(n\) variables, la table a \(2^n\) lignes. On liste toutes les combinaisons possibles de 0 et 1.</p>
+  <div class="g2">
+    <div>
+      <div class="clabel" style="margin-bottom:8px">Opérateurs de base (2 variables)</div>
+      <table class="tbl">
+        <thead><tr><th>A</th><th>B</th><th>AB</th><th>A+B</th><th>A⊕B</th><th>Ā</th></tr></thead>
+        <tbody>
+          <tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td></tr>
+          <tr><td>0</td><td>1</td><td>0</td><td>1</td><td>1</td><td>1</td></tr>
+          <tr><td>1</td><td>0</td><td>0</td><td>1</td><td>1</td><td>0</td></tr>
+          <tr><td>1</td><td>1</td><td>1</td><td>1</td><td>0</td><td>0</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <div class="clabel" style="margin-bottom:8px">Méthode pour une expression</div>
+      <div class="steps">
+        <div class="step"><div class="sn">1</div><p>Lister toutes les combinaisons de variables (2ⁿ lignes)</p></div>
+        <div class="step"><div class="sn">2</div><p>Calculer les sous-expressions intermédiaires (Ā, B̄, AB…)</p></div>
+        <div class="step"><div class="sn">3</div><p>Calculer l'expression finale colonne par colonne</p></div>
+      </div>
+    </div>
+  </div>
+  <div class="tip"><span>💡</span><span>Pour remplir les colonnes A, B, C… : la colonne la plus à droite alterne 0,1,0,1… ; la suivante alterne 0,0,1,1,0,0,1,1… ; etc.</span></div>
+</section>
+
+<section id="l3">
+  <div class="stitle"><span class="stag">L3</span><h2>Lois de Boole — simplification algébrique</h2></div>
+  <div class="g2">
+    <div>
+      <div class="clabel" style="margin-bottom:8px">Lois de base</div>
+      <div class="f">A · 0 = 0 &ensp;·&ensp; A · 1 = A</div>
+      <div class="f">A + 0 = A &ensp;·&ensp; A + 1 = 1</div>
+      <div class="f g">A · A = A &ensp;·&ensp; A + A = A &ensp;(idempotence)</div>
+      <div class="f r">A · Ā = 0 &ensp;·&ensp; A + Ā = 1 &ensp;(complément)</div>
+      <div class="f">\(\bar{\bar{A}} = A\) &ensp;(double négation)</div>
+    </div>
+    <div>
+      <div class="clabel" style="margin-bottom:8px">Distributivité &amp; absorption</div>
+      <div class="f">A(B+C) = AB + AC</div>
+      <div class="f">A + BC = (A+B)(A+C)</div>
+      <div class="f g">A(A+B) = A &ensp;(absorption)</div>
+      <div class="f g">A + AB = A &ensp;(absorption)</div>
+      <div class="f o">A + ĀB = A + B &ensp;(absorption étendue)</div>
+    </div>
+  </div>
+  <div class="warn"><span>⚠️</span><span>Ces lois permettent de simplifier sans passer par les tables de vérité. Bien les connaître par cœur — ce sont les outils clés pour les exercices !</span></div>
+</section>
+
+<section id="l4">
+  <div class="stitle"><span class="stag">L4</span><h2>Théorèmes de De Morgan</h2></div>
+  <div class="g2">
+    <div class="f r" style="font-size:1rem;text-align:center">\[\overline{AB} = \bar{A} + \bar{B}\]</div>
+    <div class="f r" style="font-size:1rem;text-align:center">\[\overline{A+B} = \bar{A} \cdot \bar{B}\]</div>
+  </div>
+  <div class="tip"><span>💡</span><span><strong>Règle mnémotechnique :</strong> on casse la barre au milieu et on change l'opérateur (AND↔OR). La barre sur chaque variable reste.<br>
+  Exemple : \(\overline{A+B+C} = \bar{A}\cdot\bar{B}\cdot\bar{C}\)</span></div>
+</section>
+
+<section id="l5">
+  <div class="stitle"><span class="stag">L5</span><h2>XOR — propriétés</h2></div>
+  <div class="f" style="margin-bottom:10px">\[A \oplus B = A\bar{B} + \bar{A}B\]</div>
+  <div class="g2">
+    <div class="card">
+      <div class="clabel">Propriétés</div>
+      <div class="f">A ⊕ 0 = A</div>
+      <div class="f">A ⊕ 1 = Ā</div>
+      <div class="f g">A ⊕ A = 0</div>
+      <div class="f g">A ⊕ Ā = 1</div>
+    </div>
+    <div class="card">
+      <div class="clabel">Simplification avec XOR</div>
+      <p style="font-size:.88rem;margin-bottom:8px">Pour simplifier \(A \oplus f(A,B,...)\), développer le XOR puis utiliser les lois de Boole.</p>
+      <div class="sol" style="margin:0">
+        <div class="sol-lbl">Exercice 5 — Solutions</div>
+        (a) \(A\oplus(A+B) = A\overline{(A+B)}+\bar{A}(A+B) = A\bar{A}\bar{B}+\bar{A}B = \bar{A}B = \overline{A}B\)<br>
+        (b) \(AB\oplus A = A\overline{B}+\bar{A}\cdot AB... = \bar{B}A = B\bar{A}\)<br>
+        (c) \(A\oplus BA = A\bar{B}+\bar{A}B = \overline{A}B\) (attention: \(BA = \bar{A}B\) non, \(BA=AB\)) : \(= A\bar{B}\)<br>
+        (d) \(AB\oplus C = ABC+(A+B)\bar{C}\) — pas réductible davantage
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="l6">
+  <div class="stitle"><span class="stag">L6</span><h2>SDP et PDS — formes standards</h2></div>
+  <div class="g2">
+    <div class="card">
+      <div class="clabel">SDP — Somme De Produits</div>
+      <p style="font-size:.88rem">On liste les lignes où \(F = 1\), on écrit un produit (AND) par ligne, on fait la somme (OR).</p>
+      <div class="f g">F = ABC + ĀBC + AB̄C</div>
+      <p style="font-size:.8rem;color:var(--muted);margin-top:4px">→ Pertinente si peu de 1 dans la table</p>
+    </div>
+    <div class="card">
+      <div class="clabel">PDS — Produit De Sommes</div>
+      <p style="font-size:.88rem">On liste les lignes où \(F = 0\), on écrit une somme (OR) par ligne, on fait le produit (AND).</p>
+      <div class="f r">F = (A+B+C)(Ā+B+C)</div>
+      <p style="font-size:.8rem;color:var(--muted);margin-top:4px">→ Pertinente si peu de 0 dans la table</p>
+    </div>
+  </div>
+  <div class="tip"><span>💡</span><span>Choisir la représentation avec le <strong>moins de termes</strong>. Si la table a plus de 1 que de 0 → PDS. Sinon → SDP.</span></div>
+</section>
+
+<section id="l7">
+  <div class="stitle"><span class="stag">L7</span><h2>Solutions des exercices — Logique</h2></div>
+
+  <div class="sol b">
+    <div class="sol-lbl b">Solution Exercice 1</div>
+    <strong>F = A(B+C) + B̄C̄</strong> → Table (A B C → F) : 0,0,0→1 ; 0,0,1→1 ; 0,1,0→1 ; 0,1,1→1 ; 1,0,0→1 ; 1,0,1→0 ; 1,1,0→0 ; 1,1,1→0<br>
+    Représentation PDS la plus pertinente : \(F = (A+B+C)(A+B+\bar{C})(A+\bar{B}+C)\)<br><br>
+    <strong>G = AC̄ + B + BC̄</strong> → Table (A B C → G) : 0,0,0→0 ; 0,0,1→0 ; 0,1,0→1 ; 0,1,1→1 ; 1,0,0→0 ; 1,0,1→0 ; 1,1,0→1 ; 1,1,1→0<br>
+    Représentation SDP la plus pertinente : \(G = \bar{A}B\bar{C} + \bar{A}BC + AB\bar{C}\)
+  </div>
+
+  <div class="sol b" style="margin-top:10px">
+    <div class="sol-lbl b">Solutions Exercice 2 (simplifications)</div>
+    (a) \(A(A+B) = A\) &ensp;·&ensp; (b) \(AB(A+C) = AB\) &ensp;·&ensp; (c) \((A+B)(A+\bar{B}) = A\)<br>
+    (d) \(A + B(A+B) = A+B\) &ensp;·&ensp; (e) \((A+B)(A+AB) = A+B\)
+  </div>
+
+  <div class="sol b" style="margin-top:10px">
+    <div class="sol-lbl b">Solutions Exercice 3 (simplifications)</div>
+    (a) \((A+\bar{C}B)(A+B+\bar{C}B) = AB + A\bar{C} + A\bar{B}\bar{C}\)<br>
+    (b) \(ABC+\bar{A}BC+AB\bar{C}+A(B+A\bar{C}+B\bar{C}) = AB + AB\bar{C}+A\bar{C}\)<br>
+    (c) \(ABC+\bar{A}BC+AB\bar{C}+A\bar{B}\bar{C} = A\)<br>
+    (d) \((Y+XZ)Z+\bar{Y}Z+Y = Y+Z\)<br>
+    (e) \((X+YZ)Y+X+\bar{Y}Z+Y\bar{Z} = 1\) (toujours vrai)
+  </div>
+
+  <div class="sol b" style="margin-top:10px">
+    <div class="sol-lbl b">Solutions Exercice 7 (De Morgan)</div>
+    (a) \(X(\bar{Z}+\bar{Y}) = X+YZ\) via De Morgan &ensp;·&ensp; (b) \((A+B)(A+C) = A(B+C)\)<br>
+    (c) \((X+Z)(Z+XY) = Z\) &ensp;·&ensp; (d) \((X+YZ)(Y+XZ) = Z(X+Y)+X\bar{Y}\)<br>
+    (e) \(\overline{X+YZ}+\overline{X+YZ} = Z(XY+\bar{X}\bar{Y}) = Z\cdot\overline{X\oplus Y}\)<br>
+    (f) \(A+BC+A\bar{C}+B(A+C)+A\bar{B}C = 1\) &ensp;·&ensp; (g) \(X(Y\oplus Z)+X(Z\oplus X)+Z(X\oplus Y) = X+Y+Z\)
+  </div>
+
+  <div class="sol b" style="margin-top:10px">
+    <div class="sol-lbl b">Solutions Exercice 8 (circuits)</div>
+    (a) Circuit : \(F = A\oplus B\) — déjà simplifié<br>
+    (b) Circuit : \(G = A+(A+B)(B+C)\) → simplifié : \(G = A+B\)
+  </div>
+</section>
+
+<!-- ══════════════════════════════ NUMERATION ══════════════════════════════ -->
+<div class="divider">
+  <div style="font-size:1.5rem;margin-bottom:6px">🔢</div>
+  <h2>Numération</h2>
+  <p>Bases · Conversions · Addition · Complément vrai (soustraction)</p>
+</div>
+
 <section id="n1">
-  <div class="section-header">
-    <div class="section-num" style="background:#1e7a4a">N1</div>
-    <h2>Les systèmes de numération</h2>
+  <div class="stitle"><span class="stag g">N1</span><h2>Les bases numériques</h2></div>
+  <div class="g4">
+    <div class="card">
+      <div class="clabel g">Base 2 — Binaire</div>
+      <p style="font-size:.85rem">Chiffres : 0, 1</p>
+      <div class="f g" style="margin-top:8px">0 1</div>
+    </div>
+    <div class="card">
+      <div class="clabel g">Base 8 — Octal</div>
+      <p style="font-size:.85rem">Chiffres : 0 à 7</p>
+      <div class="f g" style="margin-top:8px">0 1 2 3 4 5 6 7</div>
+    </div>
+    <div class="card">
+      <div class="clabel g">Base 10 — Décimal</div>
+      <p style="font-size:.85rem">Chiffres : 0 à 9</p>
+      <div class="f g" style="margin-top:8px">0 … 9</div>
+    </div>
+    <div class="card">
+      <div class="clabel g">Base 16 — Hexadécimal</div>
+      <p style="font-size:.85rem">Chiffres : 0–9, A–F</p>
+      <div class="f g" style="margin-top:8px;font-size:.8rem">A=10 B=11 C=12 D=13 E=14 F=15</div>
+    </div>
   </div>
-
-  <p>Un nombre peut s'écrire dans différentes <strong>bases</strong>. Chaque base utilise un certain nombre de chiffres.</p>
-
-  <div class="table-wrap">
-    <table>
-      <thead>
-        <tr><th>Base</th><th>Nom</th><th>Chiffres utilisés</th><th>Notation</th></tr>
-      </thead>
-      <tbody>
-        <tr><td><strong>2</strong></td><td>Binaire</td><td>0, 1</td><td>\((1011)_2\)</td></tr>
-        <tr><td><strong>8</strong></td><td>Octal</td><td>0 à 7</td><td>\((57)_8\)</td></tr>
-        <tr><td><strong>10</strong></td><td>Décimal</td><td>0 à 9</td><td>\((57)_{10}\) ou juste 57</td></tr>
-        <tr><td><strong>16</strong></td><td>Hexadécimal</td><td>0 à 9, A, B, C, D, E, F</td><td>\((AF)_{16}\)</td></tr>
-      </tbody>
-    </table>
+  <h3 class="gr">Raccourcis importants</h3>
+  <div class="g2">
+    <div class="card">
+      <div class="clabel g">Binaire ↔ Hexadécimal</div>
+      <p style="font-size:.85rem">Grouper les bits par <strong>4</strong> depuis la droite et convertir chaque groupe.</p>
+      <div class="f g" style="font-size:.82rem">1010 1111 = AF₁₆<br>4 bits → 1 chiffre hex</div>
+    </div>
+    <div class="card">
+      <div class="clabel g">Binaire ↔ Octal</div>
+      <p style="font-size:.85rem">Grouper les bits par <strong>3</strong> depuis la droite.</p>
+      <div class="f g" style="font-size:.82rem">010 101 111 = 257₈<br>3 bits → 1 chiffre octal</div>
+    </div>
   </div>
-
-  <div class="table-wrap" style="margin-top:14px">
-    <table>
-      <thead><tr><th>Décimal</th><th>Binaire</th><th>Octal</th><th>Hexadécimal</th></tr></thead>
-      <tbody>
-        <tr><td>0</td><td>0000</td><td>0</td><td>0</td></tr>
-        <tr><td>1</td><td>0001</td><td>1</td><td>1</td></tr>
-        <tr><td>2</td><td>0010</td><td>2</td><td>2</td></tr>
-        <tr><td>3</td><td>0011</td><td>3</td><td>3</td></tr>
-        <tr><td>4</td><td>0100</td><td>4</td><td>4</td></tr>
-        <tr><td>5</td><td>0101</td><td>5</td><td>5</td></tr>
-        <tr><td>6</td><td>0110</td><td>6</td><td>6</td></tr>
-        <tr><td>7</td><td>0111</td><td>7</td><td>7</td></tr>
-        <tr><td>8</td><td>1000</td><td>10</td><td>8</td></tr>
-        <tr><td>9</td><td>1001</td><td>11</td><td>9</td></tr>
-        <tr><td>10</td><td>1010</td><td>12</td><td>A</td></tr>
-        <tr><td>11</td><td>1011</td><td>13</td><td>B</td></tr>
-        <tr><td>12</td><td>1100</td><td>14</td><td>C</td></tr>
-        <tr><td>13</td><td>1101</td><td>15</td><td>D</td></tr>
-        <tr><td>14</td><td>1110</td><td>16</td><td>E</td></tr>
-        <tr><td>15</td><td>1111</td><td>17</td><td>F</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="tip"><span class="icon">💡</span><span>En hexa : A=10, B=11, C=12, D=13, E=14, F=15. À retenir absolument !</span></div>
+  <div class="tip"><span>💡</span><span>Puissances de 2 utiles : \(2^0=1,\ 2^1=2,\ 2^2=4,\ 2^3=8,\ 2^4=16,\ 2^5=32,\ 2^6=64,\ 2^7=128,\ 2^8=256\)</span></div>
 </section>
 
-<!-- ═══════ N2 CONVERSIONS ENTIERS ═══════ -->
 <section id="n2">
-  <div class="section-header">
-    <div class="section-num" style="background:#1e7a4a">N2</div>
-    <h2>Conversions — Partie entière</h2>
-  </div>
-
-  <h3>Décimal → autre base (divisions successives)</h3>
+  <div class="stitle"><span class="stag g">N2</span><h2>Conversions d'entiers</h2></div>
+  <h3 class="gr">Décimal → Autre base : divisions successives</h3>
   <div class="steps">
-    <div class="step"><div class="step-num">1</div><p>Diviser le nombre par la base cible (2, 8 ou 16)</p></div>
-    <div class="step"><div class="step-num">2</div><p>Garder le <strong>reste</strong> (c'est un chiffre du résultat)</p></div>
-    <div class="step"><div class="step-num">3</div><p>Recommencer avec le quotient jusqu'à obtenir 0</p></div>
-    <div class="step"><div class="step-num">4</div><p>Lire les restes <strong>de bas en haut</strong></p></div>
+    <div class="step"><div class="sn">1</div><p>Diviser le nombre par la base, noter le <strong>reste</strong></p></div>
+    <div class="step"><div class="sn">2</div><p>Diviser le quotient par la base, noter le reste</p></div>
+    <div class="step"><div class="sn">3</div><p>Répéter jusqu'à quotient = 0. Lire les restes <strong>de bas en haut</strong></p></div>
   </div>
+  <div class="f g" style="font-size:.85rem">57 ÷ 2 = 28 r.<strong>1</strong> / 28 ÷ 2 = 14 r.<strong>0</strong> / 14 ÷ 2 = 7 r.<strong>0</strong> / 7 ÷ 2 = 3 r.<strong>1</strong> / 3 ÷ 2 = 1 r.<strong>1</strong> / 1 ÷ 2 = 0 r.<strong>1</strong><br>→ (57)₁₀ = (111001)₂ &ensp;(lire de bas en haut)</div>
 
-  <div class="formula example">
-    <strong>Exemple : \(57_{10}\) → binaire</strong><br><br>
-    \(57 \div 2 = 28\) reste \(\mathbf{1}\)<br>
-    \(28 \div 2 = 14\) reste \(\mathbf{0}\)<br>
-    \(14 \div 2 = 7\) reste \(\mathbf{0}\)<br>
-    \(7 \div 2 = 3\) reste \(\mathbf{1}\)<br>
-    \(3 \div 2 = 1\) reste \(\mathbf{1}\)<br>
-    \(1 \div 2 = 0\) reste \(\mathbf{1}\)<br><br>
-    Lire de bas en haut : \(57_{10} = (111001)_2\)
-  </div>
+  <h3 class="gr">Autre base → Décimal : décomposition positionnelle</h3>
+  <div class="f o">\[(d_n d_{n-1} \ldots d_1 d_0)_b = \sum_{i=0}^{n} d_i \times b^i\]</div>
+  <div class="f g" style="font-size:.85rem">(AF)₁₆ = 10×16¹ + 15×16⁰ = 160 + 15 = <strong>175</strong></div>
+  <div class="f g" style="font-size:.85rem">(110111)₂ = 1×32 + 1×16 + 0×8 + 1×4 + 1×2 + 1×1 = <strong>55</strong></div>
 
-  <div class="formula example">
-    <strong>Exemple : \(57_{10}\) → hexadécimal</strong><br><br>
-    \(57 \div 16 = 3\) reste \(\mathbf{9}\)<br>
-    \(3 \div 16 = 0\) reste \(\mathbf{3}\)<br><br>
-    Lire de bas en haut : \(57_{10} = (39)_{16}\)
+  <div class="sol b">
+    <div class="sol-lbl b">Solutions Exercice 1</div>
+    (a) (57)₁₀ = (111001)₂ · (71)₈ · (39)₁₆<br>
+    (b) (845)₁₀ = (1101001101)₂ · (1515)₈ · (34D)₁₆<br>
+    (c) (110111)₂ = (55)₁₀ · (67)₈ · (37)₁₆<br>
+    (d) (1101101)₂ = (109)₁₀ · (155)₈ · (6D)₁₆<br>
+    (e) (AF)₁₆ = (175)₁₀ · (10101111)₂ · (257)₈<br>
+    (f) (EFEC)₁₆ = (61420)₁₀ · (1110111111101100)₂ · (167754)₈
   </div>
-
-  <h3>Autre base → décimal (décomposition positionnelle)</h3>
-  <p>Multiplier chaque chiffre par sa puissance de base, puis additionner.</p>
-  <div class="formula" style="border-color:var(--green);background:#f0faf4">
-    \[(d_n \cdots d_1 d_0)_b = d_n \times b^n + \cdots + d_1 \times b^1 + d_0 \times b^0\]
-  </div>
-
-  <div class="formula example">
-    <strong>Exemple : \((1101)_2\) → décimal</strong><br><br>
-    \(1 \times 2^3 + 1 \times 2^2 + 0 \times 2^1 + 1 \times 2^0\)<br>
-    \(= 8 + 4 + 0 + 1 = \mathbf{13}_{10}\)
-  </div>
-
-  <div class="formula example">
-    <strong>Exemple : \((AF)_{16}\) → décimal</strong><br><br>
-    \(A \times 16^1 + F \times 16^0 = 10 \times 16 + 15 \times 1 = 160 + 15 = \mathbf{175}_{10}\)
-  </div>
-
-  <h3>Binaire ↔ Hexadécimal (raccourci !)</h3>
-  <p>Grouper les bits par <strong>4</strong> (de droite à gauche) et convertir chaque groupe :</p>
-  <div class="formula example">
-    <strong>Exemple : \((11010111)_2\) → hexa</strong><br><br>
-    \(\underbrace{1101}_{D} \underbrace{0111}_{7} \Rightarrow (D7)_{16}\)
-  </div>
-  <div class="tip"><span class="icon">💡</span><span>Binaire → Octal : grouper par <strong>3</strong> bits. Binaire → Hexa : grouper par <strong>4</strong> bits. C'est le raccourci le plus rapide !</span></div>
 </section>
 
-<!-- ═══════ N3 CONVERSIONS DECIMAUX ═══════ -->
 <section id="n3">
-  <div class="section-header">
-    <div class="section-num" style="background:#1e7a4a">N3</div>
-    <h2>Conversions — Partie décimale (virgule)</h2>
+  <div class="stitle"><span class="stag g">N3</span><h2>Conversions de nombres rationnels (avec virgule)</h2></div>
+  <div class="g2">
+    <div>
+      <h3 class="gr">Partie entière</h3>
+      <p style="font-size:.88rem">Convertir normalement par divisions successives.</p>
+    </div>
+    <div>
+      <h3 class="gr">Partie décimale → autre base</h3>
+      <div class="steps">
+        <div class="step"><div class="sn">1</div><p>Multiplier la partie décimale par la base</p></div>
+        <div class="step"><div class="sn">2</div><p>Prendre la partie <strong>entière</strong> du résultat = prochain chiffre</p></div>
+        <div class="step"><div class="sn">3</div><p>Répéter avec la partie <strong>décimale restante</strong>, lire <strong>de haut en bas</strong></p></div>
+      </div>
+    </div>
   </div>
-
-  <p>Pour convertir la partie après la virgule, on utilise des <strong>multiplications successives</strong>.</p>
-
-  <div class="steps">
-    <div class="step"><div class="step-num">1</div><p>Multiplier la partie décimale par la base cible (2, 8 ou 16)</p></div>
-    <div class="step"><div class="step-num">2</div><p>La <strong>partie entière</strong> du résultat est un chiffre du résultat</p></div>
-    <div class="step"><div class="step-num">3</div><p>Garder uniquement la partie décimale et recommencer</p></div>
-    <div class="step"><div class="step-num">4</div><p>Lire les entiers <strong>de haut en bas</strong></p></div>
-  </div>
-
-  <div class="formula example">
-    <strong>Exemple : \(0{,}5625_{10}\) → binaire</strong><br><br>
-    \(0{,}5625 \times 2 = \mathbf{1}{,}125\) → chiffre : \(\mathbf{1}\)<br>
-    \(0{,}125 \times 2 = \mathbf{0}{,}25\) → chiffre : \(\mathbf{0}\)<br>
-    \(0{,}25 \times 2 = \mathbf{0}{,}5\) → chiffre : \(\mathbf{0}\)<br>
-    \(0{,}5 \times 2 = \mathbf{1}{,}0\) → chiffre : \(\mathbf{1}\) (stop !)<br><br>
-    Lire de haut en bas : \(0{,}5625_{10} = (0{,}1001)_2\)
-  </div>
-
-  <div class="warn"><span class="icon">⚠️</span><span>Si la partie décimale ne tombe jamais à 0, on s'arrête après un nombre de chiffres voulu (précision). Ce n'est pas une erreur, c'est une approximation !</span></div>
-
-  <h3>Nombre complet avec virgule</h3>
-  <p>Convertir la partie entière et la partie décimale séparément, puis mettre une virgule entre les deux.</p>
-  <div class="formula example">
-    <strong>Exemple : \((55{,}125)_{10}\) → binaire</strong><br><br>
-    Partie entière : \(55_{10} = (110111)_2\)<br>
-    Partie décimale : \(0{,}125_{10} = (0{,}001)_2\)<br><br>
-    Résultat : \((110111{,}001)_2\)
+  <div class="f g" style="font-size:.85rem">0.125 × 2 = 0.<strong>2</strong>5 → chiffre : <strong>0</strong><br>0.25 × 2 = 0.<strong>5</strong> → chiffre : <strong>0</strong><br>0.5 × 2 = 1.<strong>0</strong> → chiffre : <strong>1</strong><br>→ 0.125₁₀ = 0.<strong>001</strong>₂</div>
+  <div class="sol b">
+    <div class="sol-lbl b">Solutions Exercice 3</div>
+    (a) (55.125)₁₀ = (110111.001)₂ · (67.1)₈ · (37.2)₁₆<br>
+    (b) (17.5625)₁₀ = (10001.1001)₂ · (21.44)₈ · (11.9)₁₆<br>
+    (c) (11011.011)₂ = (27.375)₁₀ · (33.3)₈ · (1B.6)₁₆<br>
+    (d) (F3.C)₁₆ = (243.75)₁₀ · (011110011.11)₂ · (363.6)₈
   </div>
 </section>
 
-<!-- ═══════ N4 ADDITION ═══════ -->
 <section id="n4">
-  <div class="section-header">
-    <div class="section-num" style="background:#1e7a4a">N4</div>
-    <h2>Addition en différentes bases</h2>
+  <div class="stitle"><span class="stag g">N4</span><h2>Addition dans une base quelconque</h2></div>
+  <p>Même principe qu'en décimal : poser les nombres, additionner colonne par colonne. Si la somme dépasse la base, on pose le reste et on <strong>retient 1</strong>.</p>
+  <div class="g2">
+    <div class="f g" style="font-size:.85rem">Base 2 : 1+1 = 10₂ (on écrit 0 et retient 1)<br>1+1+1 = 11₂ (on écrit 1 et retient 1)</div>
+    <div class="f g" style="font-size:.85rem">Base 16 : A+7 = 11 → 1 et retenue 1<br>F+F = 1E → E et retenue 1</div>
   </div>
-
-  <p>Le principe est identique à l'addition décimale, sauf que la <strong>retenue se produit plus tôt</strong>.</p>
-
-  <h3>Tables d'addition par base</h3>
-
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0;">
-    <div>
-      <p style="font-weight:700;margin-bottom:8px;text-align:center">Base 2</p>
-      <div class="formula purple" style="line-height:2">
-        \(0 + 0 = 0\)<br>
-        \(0 + 1 = 1\)<br>
-        \(1 + 0 = 1\)<br>
-        \(1 + 1 = 10\) (retenue de 1 !)<br>
-        \(1 + 1 + 1 = 11\) (retenue de 1 !)
-      </div>
-    </div>
-    <div>
-      <p style="font-weight:700;margin-bottom:8px;text-align:center">Base 16</p>
-      <div class="formula purple" style="line-height:2">
-        Retenue quand somme \(\geq 16\)<br>
-        \(9 + 8 = 17 = 11_{16}\) → écrire 1, retenir 1<br>
-        \(F + 1 = 16 = 10_{16}\) → écrire 0, retenir 1<br>
-        \(A + B = 21 = 15_{16}\) → écrire 5, retenir 1
-      </div>
-    </div>
+  <div class="sol b">
+    <div class="sol-lbl b">Solutions Exercice 4</div>
+    (a) (38489)₁₀ + (99587)₁₀ = <strong>(138076)₁₀</strong><br>
+    (b) (1110101101)₂ + (1011101010)₂ = <strong>(11010010111)₂</strong><br>
+    (c) (CF8792)₁₆ + (934CE54)₁₆ = <strong>(A0455E6)₁₆</strong><br>
+    (d) (4CED23)₁₆ + (53EEF8)₁₆ = <strong>(A0DC1B)₁₆</strong><br>
+    (e) (100111011)₂ + (100001001)₂ = <strong>(1001000100)₂</strong>
   </div>
-
-  <div class="formula example">
-    <strong>Exemple binaire : \((1011)_2 + (1101)_2\)</strong><br><br>
-    <span style="font-family:monospace;font-size:1.1rem">
-    &nbsp;&nbsp;1 0 1 1<br>
-    + 1 1 0 1<br>
-    ─────────<br>
-    1 1 0 0 0
-    </span><br><br>
-    Vérification : \(11_{10} + 13_{10} = 24_{10} = (11000)_2\) ✓
-  </div>
-
-  <div class="formula example">
-    <strong>Exemple hexa : \((CF)_{16} + (3A)_{16}\)</strong><br><br>
-    Unités : \(F + A = 15 + 10 = 25 = 16 + 9\) → écrire \(9\), retenir \(1\)<br>
-    Seizièmes : \(C + 3 + 1 = 12 + 3 + 1 = 16 = 10_{16}\) → écrire \(0\), retenir \(1\)<br><br>
-    Résultat : \((109)_{16}\)
-  </div>
-
-  <div class="tip"><span class="icon">💡</span><span>Pour vérifier : convertir tout en décimal, faire l'addition, puis reconvertir. Si ça donne le même résultat, c'est juste !</span></div>
 </section>
 
-<!-- ═══════ N5 COMPLEMENT VRAI ═══════ -->
 <section id="n5">
-  <div class="section-header">
-    <div class="section-num" style="background:#1e7a4a">N5</div>
-    <h2>Soustraction par le complément vrai</h2>
-  </div>
+  <div class="stitle"><span class="stag g">N5</span><h2>Soustraction par complément vrai</h2></div>
+  <p>Le <strong>complément vrai</strong> d'un nombre \(N\) dans la base \(b\) avec \(n\) chiffres est : \(b^n - N\)</p>
+  <div class="warn"><span>⚠️</span><span>Pour soustraire \(A - B\) : on calcule \(A + \text{complément}(B)\). Si résultat positif → ignorer la retenue finale. Si négatif → le résultat est le complément du résultat, précédé d'un signe −.</span></div>
 
-  <p>Le complément vrai permet de faire une soustraction en la transformant en <strong>addition</strong>. C'est la méthode utilisée par les ordinateurs.</p>
-
-  <h3>Complément vrai en binaire (complément à 2)</h3>
+  <h3 class="gr">Complément à 2 (binaire)</h3>
   <div class="steps">
-    <div class="step"><div class="step-num">1</div><p>Écrire le soustracteur (le nombre à soustraire) sur \(n\) bits</p></div>
-    <div class="step"><div class="step-num">2</div><p>Inverser tous les bits (0→1 et 1→0) → c'est le <strong>complément à 1</strong></p></div>
-    <div class="step"><div class="step-num">3</div><p>Ajouter 1 → c'est le <strong>complément à 2</strong> (complément vrai)</p></div>
-    <div class="step"><div class="step-num">4</div><p>Additionner le premier nombre avec ce complément</p></div>
-    <div class="step"><div class="step-num">5</div><p>Ignorer la retenue finale si elle dépasse \(n\) bits</p></div>
+    <div class="step"><div class="sn">1</div><p>Inverser tous les bits (0→1, 1→0) = complément à 1</p></div>
+    <div class="step"><div class="sn">2</div><p>Ajouter 1 au résultat</p></div>
   </div>
+  <div class="f g" style="font-size:.85rem">Complément de (011001) :<br>Inverser → 100110<br>+ 1 → <strong>100111</strong></div>
 
-  <div class="formula example">
-    <strong>Exemple : \((0110)_2 - (0011)_2\)</strong> (soit \(6 - 3\))<br><br>
-    <strong>Étape 1 :</strong> soustracteur = \(0011\)<br>
-    <strong>Étape 2 :</strong> complément à 1 = \(1100\)<br>
-    <strong>Étape 3 :</strong> complément à 2 = \(1100 + 1 = 1101\)<br>
-    <strong>Étape 4 :</strong> \(0110 + 1101 = \underline{1}0011\)<br>
-    <strong>Étape 5 :</strong> ignorer la retenue → résultat = \(0011 = 3_{10}\) ✓
-  </div>
-
-  <h3>Complément vrai en hexadécimal (complément à 16)</h3>
+  <h3 class="gr">Complément hexadécimal (base 16)</h3>
   <div class="steps">
-    <div class="step"><div class="step-num">1</div><p>Pour chaque chiffre hexa, calculer \(15 - \text{chiffre}\) → complément à 15</p></div>
-    <div class="step"><div class="step-num">2</div><p>Ajouter 1 au résultat → complément à 16</p></div>
-    <div class="step"><div class="step-num">3</div><p>Additionner, ignorer la retenue finale</p></div>
+    <div class="step"><div class="sn">1</div><p>Soustraire chaque chiffre de F (15) : \(15 - d_i\)</p></div>
+    <div class="step"><div class="sn">2</div><p>Ajouter 1 au résultat final</p></div>
   </div>
+  <div class="f g" style="font-size:.85rem">Complément de (9CED0)₁₆ :<br>(F-9)(F-C)(F-E)(F-E)(F-D) = 63120, +1 = <strong>63121</strong>... (méthode standard: 10⁵ - 9CED0 = 63130)</div>
 
-  <div class="formula example">
-    <strong>Exemple : \((B36C)_{16} - (9CED)_{16}\)</strong><br><br>
-    <strong>Complément à 15 de \(9CED\) :</strong><br>
-    \(9 \to 15-9=6,\quad C \to 15-12=3,\quad E \to 15-14=1,\quad D \to 15-13=2\)<br>
-    Complément à 15 = \(6312\)<br>
-    <strong>Complément à 16</strong> = \(6312 + 1 = 6313\)<br><br>
-    <strong>Addition :</strong> \(B36C + 6313 = \underline{1}167F\)<br>
-    Ignorer la retenue → \((167F)_{16}\)
+  <div class="sol b">
+    <div class="sol-lbl b">Solutions Exercice 5</div>
+    (a) (6712)₁₀ − (4572)₁₀ = <strong>(2140)₁₀</strong><br>
+    (b) (4572)₁₀ − (6712)₁₀ = <strong>(−2140)₁₀</strong><br>
+    (c) (4572)₁₀ − (712)₁₀ = <strong>(3860)₁₀</strong><br>
+    (d) (010011)₂ − (011001)₂ = <strong>(−110)₂</strong><br>
+    (e) (011011)₂ − (011110)₂ = <strong>(−11)₂</strong><br>
+    (f) (011000)₂ − (000100)₂ = <strong>(10100)₂</strong><br>
+    (g) (B36CE)₁₆ − (9CED0)₁₆ = <strong>(167FE)₁₆</strong><br>
+    (h) (A63B5)₁₆ − (CDD42)₁₆ = <strong>(−2798D)₁₆</strong><br>
+    (i) (42589)₁₆ − (FF00)₁₆ = <strong>(32689)₁₆</strong><br>
+    (j) (FFF)₁₆ − (E0ABC)₁₆ = <strong>(−DFABD)₁₆</strong>
   </div>
-
-  <div class="warn"><span class="icon">⚠️</span><span>Si le résultat est négatif (soustracteur > minuende), il n'y a <strong>pas de retenue finale</strong>. Le résultat est alors en complément vrai — appliquer de nouveau le complément et mettre un signe −.</span></div>
 </section>
 
-<!-- ═══════ N6 METHODE ═══════ -->
-<section id="n6">
-  <div class="section-header">
-    <div class="section-num" style="background:#1e7a4a">N6</div>
-    <h2>Récap — Méthode Numération</h2>
-  </div>
-
-  <div class="table-wrap">
-    <table>
-      <thead><tr><th>Conversion</th><th>Méthode</th><th>Sens de lecture</th></tr></thead>
-      <tbody>
-        <tr><td><strong>Décimal → Binaire/Octal/Hexa</strong></td><td>Divisions successives par la base</td><td>Restes de bas en haut</td></tr>
-        <tr><td><strong>Binaire/Octal/Hexa → Décimal</strong></td><td>Décomposition positionnelle</td><td>Somme des \(d_i \times b^i\)</td></tr>
-        <tr><td><strong>Décimale → Binaire (virgule)</strong></td><td>Multiplications successives par 2</td><td>Entiers de haut en bas</td></tr>
-        <tr><td><strong>Binaire → Hexa</strong></td><td>Groupes de 4 bits</td><td>De droite à gauche</td></tr>
-        <tr><td><strong>Binaire → Octal</strong></td><td>Groupes de 3 bits</td><td>De droite à gauche</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <h3>Vérification rapide — Puissances de 2 à retenir</h3>
-  <div class="table-wrap">
-    <table>
-      <thead><tr><th>\(2^0\)</th><th>\(2^1\)</th><th>\(2^2\)</th><th>\(2^3\)</th><th>\(2^4\)</th><th>\(2^5\)</th><th>\(2^6\)</th><th>\(2^7\)</th><th>\(2^8\)</th></tr></thead>
-      <tbody>
-        <tr><td>1</td><td>2</td><td>4</td><td>8</td><td>16</td><td>32</td><td>64</td><td>128</td><td>256</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div style="text-align:center;margin-top:40px;padding:24px;background:linear-gradient(135deg,#0f3d2e,#1e7a4a);border-radius:16px;color:white;">
-    <div style="font-size:2rem;margin-bottom:8px">💪</div>
-    <div style="font-family:'Crimson Pro',serif;font-size:1.4rem;font-weight:600">Bonne chance pour ton examen !</div>
-    <div style="opacity:.7;font-size:.9rem;margin-top:4px">Logique + Numération — tu as toutes les clés en main.</div>
-  </div>
-</section>
 </main>
 </body>
 </html>
