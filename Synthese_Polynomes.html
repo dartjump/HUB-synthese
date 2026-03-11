@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>T109 — Polynômes</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1a1200;--paper:#fffdf5;--accent:#b45309;--blue:#1d4ed8;--green:#15803d;--red:#be123c;--muted:#6b7280;--rule:#e5dcc8;--card:#ffffff;--hl:#fffbeb;--hl2:#eff6ff;}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);line-height:1.8;font-size:15px;}
+header{background:linear-gradient(135deg,#1a1200 0%,#78350f 70%,#b45309 100%);color:white;padding:56px 40px 48px;position:relative;overflow:hidden;}
+header::after{content:'y = ax²+bx+c';position:absolute;bottom:-18px;right:16px;font-family:'DM Serif Display',serif;font-size:72px;opacity:.06;pointer-events:none;white-space:nowrap;}
+.badge{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#fcd34d;margin-bottom:14px;}
+header h1{font-family:'DM Serif Display',serif;font-size:clamp(2.2rem,5vw,3.6rem);font-weight:400;line-height:1.1;margin-bottom:10px;}
+header p{color:rgba(255,255,255,.5);font-size:.9rem;}
+nav{background:var(--card);border-bottom:2px solid var(--rule);padding:0 32px;display:flex;gap:2px;overflow-x:auto;position:sticky;top:0;z-index:100;box-shadow:0 1px 8px rgba(0,0,0,.06);}
+nav a{padding:13px 14px;font-size:11px;font-weight:600;color:var(--muted);text-decoration:none;white-space:nowrap;border-bottom:3px solid transparent;transition:all .2s;font-family:'JetBrains Mono',monospace;}
+nav a:hover{color:var(--accent);border-color:var(--accent);}
+main{max-width:860px;margin:0 auto;padding:48px 24px 100px;}
+section{margin-bottom:60px;}
+.stitle{display:flex;align-items:center;gap:12px;margin-bottom:26px;padding-bottom:10px;border-bottom:2px solid var(--rule);}
+.stag{font-family:'JetBrains Mono',monospace;background:var(--accent);color:white;font-size:10px;font-weight:700;padding:4px 10px;border-radius:4px;}
+.stag.b{background:var(--blue);}
+.stitle h2{font-family:'DM Serif Display',serif;font-size:1.5rem;font-weight:400;}
+h3{font-size:.95rem;font-weight:700;color:var(--accent);margin:20px 0 10px;display:flex;align-items:center;gap:8px;}
+h3.b{color:var(--blue);}
+h3::before{content:'';display:inline-block;width:3px;height:16px;background:var(--accent);border-radius:2px;}
+p{margin-bottom:10px;}
+.tbl{width:100%;border-collapse:collapse;margin:14px 0;background:var(--card);border-radius:10px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.07);}
+.tbl th{background:var(--ink);color:white;padding:10px 14px;font-size:12px;font-weight:600;text-align:center;}
+.tbl td{padding:10px 14px;text-align:center;border-bottom:1px solid var(--rule);font-size:13.5px;}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tr:nth-child(even) td{background:var(--hl);}
+.tbl td:first-child{text-align:left;font-weight:600;color:var(--accent);}
+.f{background:var(--card);border-left:4px solid var(--accent);border-radius:0 8px 8px 0;padding:13px 18px;margin:8px 0;overflow-x:auto;}
+.f.b{border-color:var(--blue);background:var(--hl2);}
+.f.g{border-color:var(--green);background:#f0fdf4;}
+.f.r{border-color:var(--red);background:#fff1f2;}
+.f.d{border-color:#aaa;background:#f5f5f5;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:12px 0;}
+.card{background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.04);}
+.clabel{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:8px;}
+.clabel.b{color:var(--blue);}
+.tip,.warn{display:flex;gap:10px;padding:11px 15px;border-radius:8px;margin:10px 0;font-size:.88rem;}
+.tip{background:var(--hl);border:1px solid #fcd34d;color:#78350f;}
+.warn{background:#fff1f2;border:1px solid #fca5a5;color:#7f1d1d;}
+.sol{background:var(--hl);border:1px solid #e8d08a;border-radius:8px;padding:14px 18px;margin:10px 0;font-size:.88rem;line-height:2;}
+.sol.b{background:var(--hl2);border-color:#93c5fd;}
+.sol-lbl{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:8px;}
+.sol-lbl.b{color:var(--blue);}
+.steps{margin:12px 0;}
+.step{display:flex;gap:12px;align-items:flex-start;padding:10px 14px;margin-bottom:8px;background:var(--card);border:1px solid var(--rule);border-radius:8px;}
+.sn{background:var(--accent);color:white;font-weight:800;font-size:11px;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sn.b{background:var(--blue);}
+.step p{margin:0;font-size:.88rem;}
+.divider{background:linear-gradient(135deg,#1e3a5f,#1d4ed8);color:white;padding:28px 32px;margin:60px 0 40px;border-radius:12px;text-align:center;}
+.divider h2{font-family:'DM Serif Display',serif;font-size:1.8rem;font-weight:400;}
+.divider p{opacity:.6;font-size:.85rem;margin-top:4px;}
+@media(max-width:640px){.g2,.g3{grid-template-columns:1fr;}header{padding:36px 18px 28px;}main{padding:24px 14px 60px;}nav{padding:0 8px;}}
+</style>
+</head>
+<body>
+<header>
+  <div class="badge">T109 · Mathématiques · Synthèse</div>
+  <h1>Polynômes</h1>
+  <p>Droites · Équations 1er degré · Second degré · Racines · Sommet · Distance</p>
+</header>
+<nav>
+  <a href="#p1">Équation de droite</a>
+  <a href="#p2">Distance point-droite</a>
+  <a href="#p3">Intersection droites</a>
+  <a href="#p4">Problèmes 1er degré</a>
+  <a href="#p5">Second degré</a>
+  <a href="#p6">Méthode parabole</a>
+  <a href="#p7">Intersection droite/parabole</a>
+  <a href="#p8">Sol. exercices</a>
+</nav>
+<main>
+
+<!-- ══════ P1 EQUATIONS DE DROITE ══════ -->
+<section id="p1">
+  <div class="stitle"><span class="stag">P1</span><h2>Équation de droite — 1er degré</h2></div>
+
+  <div class="f r" style="text-align:center;font-size:1rem">\[y = ax + b\]</div>
+  <p>où \(a\) est le <strong>coefficient angulaire (pente)</strong> et \(b\) est l'<strong>ordonnée à l'origine</strong>.</p>
+
+  <div class="g2">
+    <div class="card">
+      <div class="clabel">Pente entre deux points</div>
+      <div class="f">\[a = \frac{y_2 - y_1}{x_2 - x_1}\]</div>
+    </div>
+    <div class="card">
+      <div class="clabel">Trouver b</div>
+      <p style="font-size:.88rem">Substituer un point connu \((x_0, y_0)\) dans \(y = ax + b\) et résoudre pour \(b\).</p>
+    </div>
+  </div>
+
+  <h3>Cas particuliers</h3>
+  <div class="g3">
+    <div class="card">
+      <div class="clabel">Droites parallèles</div>
+      <p style="font-size:.85rem">Même pente \(a\), ordonnée \(b\) différente.</p>
+      <div class="f d" style="font-size:.85rem">\(y=2x+3\) ∥ \(y=2x-6\)</div>
+    </div>
+    <div class="card">
+      <div class="clabel">Droites perpendiculaires</div>
+      <div class="f r">\[a_1 \times a_2 = -1\]</div>
+      <p style="font-size:.82rem;margin-top:4px">Les pentes sont inverses et opposées.</p>
+    </div>
+    <div class="card">
+      <div class="clabel">Pente en %</div>
+      <p style="font-size:.85rem">100% de pente = coefficient angulaire de 1.<br>Donc \(y = 1\cdot x + b\).</p>
+    </div>
+  </div>
+
+  <div class="tip"><span>💡</span><span>Pour une droite passant par l'axe OX en \(x_0\) et l'axe OY en \(y_0\) :<br>
+  Deux points connus : \((x_0, 0)\) et \((0, y_0)\) → calculer la pente, puis \(b = y_0\).</span></div>
+
+  
+    (a) Passe par (0,0) et (4,−1) : \(a=\frac{-1}{4}\), \(b=0\) → \(d_1 : y = -\frac{1}{4}x\)<br>
+    (b) Point (2,2), pente \(\frac{1}{3}\) : \(2=\frac{1}{3}\cdot 2+b\) → \(b=\frac{4}{3}\) → \(d_2 : y = \frac{x+4}{3}\)<br>
+    (c) Point (1,2), pente 100% = 1 : \(2=1\cdot 1+b\) → \(b=1\) → \(d_3 : y = x+1\)<br>
+    (d) Points (1,2) et (−2,−1) : \(a=\frac{-1-2}{-2-1}=1\), \(b=1\) → \(d_4 : y = x+1\)<br>
+    (e) Points (0,1) et (1,3) : \(a=2\), \(b=1\) → \(d_5 : y = 2x+1\)<br>
+    (f) Passe par l'origine, \(a=1{,}5=\frac{3}{2}\) → \(d_6 : y = \frac{3}{2}x\)<br>
+    (g) Parallèle à \(y=2x+3\) → même pente \(a=2\). Point (2,−2) : \(-2=4+b\) → \(b=-6\) → \(d_7 : y = 2x-6\)<br>
+    (h) Perpendiculaire à \(y=-x+\frac{1}{2}\) (pente −1) → pente = 1. Point (−1,0) : \(0=−1+b\) → \(b=1\) → \(d_8 : y = x+1\)<br>
+    (i) Coupe OX en 5 (point (5,0)) et OY en −2 (point (0,−2)) : \(a=\frac{0-(-2)}{5-0}=\frac{2}{5}\), \(b=-2\) → \(d_9 : y = \frac{2}{5}x-2\)
+  </div>
+
+  
+    (a) Point (4,2) : \(2 = 4-2 = 2\) ✓ → <strong>Oui</strong>, le point appartient à la droite.<br>
+    (b) Point (4,1) : \(1 \neq 4-2 = 2\) → <strong>Non</strong>, le point n'appartient pas à la droite.
+  </div>
+</section>
+
+<!-- ══════ P2 DISTANCE ══════ -->
+<section id="p2">
+  <div class="stitle"><span class="stag">P2</span><h2>Distance — entre deux points et point-droite</h2></div>
+
+  <h3>Distance entre deux points</h3>
+  <div class="f b">\[d = \sqrt{(x_2-x_1)^2 + (y_2-y_1)^2}\]</div>
+
+  <h3>Distance d'un point \((x_0, y_0)\) à une droite \(ax + by + c = 0\)</h3>
+  <div class="f r">\[d = \frac{|ax_0 + by_0 + c|}{\sqrt{a^2+b^2}}\]</div>
+
+  <div class="tip"><span>💡</span><span>Pour utiliser la formule point-droite, il faut d'abord mettre la droite sous la forme \(ax+by+c=0\).<br>
+  Exemple : \(y = 2x-2\) → \(-2x+y+2=0\) → \(a=-2,\ b=1,\ c=2\)</span></div>
+
+  <div class="steps">
+    <div class="step"><div class="sn b">1</div><p>Réécrire la droite \(y=mx+p\) sous la forme \(-mx+y-p=0\)</p></div>
+    <div class="step"><div class="sn b">2</div><p>Identifier \(a=-m,\ b=1,\ c=-p\)</p></div>
+    <div class="step"><div class="sn b">3</div><p>Appliquer \(d = \dfrac{|ax_0+by_0+c|}{\sqrt{a^2+b^2}}\)</p></div>
+  </div>
+
+  
+    (a) (0,0) et (3,2) : \(d=\sqrt{9+4}=\sqrt{13}\)<br>
+    (b) (−1,3) et (2,6) : \(d=\sqrt{9+9}=3\sqrt{2}\)<br>
+    (c) (2,−1) et (2,−3) : \(d=\sqrt{0+4}=2\)<br>
+    (d) (0,6) et (3,2) : \(d=\sqrt{9+16}=5\)<br>
+    (e) \(d_1: y=2x-2\) et (4,1) → \(-2x+y+2=0\) : \(d=\dfrac{|-8+1+2|}{\sqrt{5}}=\dfrac{5}{\sqrt{5}}=\sqrt{5}\)<br>
+    (f) \(d_2: y=x\) et (3,3) → \(-x+y=0\) : \(d=\dfrac{|-3+3|}{\sqrt{2}}=0\) → le point est <strong>sur la droite</strong><br>
+    (g) \(d_3: y=2x\) et (1,−2) → \(-2x+y=0\) : \(d=\dfrac{|-2-2|}{\sqrt{5}}=\dfrac{4}{\sqrt{5}}=\dfrac{2}{5}\sqrt{20}\)
+  </div>
+</section>
+
+<!-- ══════ P3 INTERSECTION ══════ -->
+<section id="p3">
+  <div class="stitle"><span class="stag">P3</span><h2>Intersection de droites</h2></div>
+
+  <p>Pour trouver l'intersection de \(d_1\) et \(d_2\) : résoudre le système en égalisant les deux expressions de \(y\).</p>
+
+  <div class="steps">
+    <div class="step"><div class="sn">1</div><p>Écrire les deux équations sous la forme \(y = \ldots\)</p></div>
+    <div class="step"><div class="sn">2</div><p>Égaliser : \(a_1x+b_1 = a_2x+b_2\) → résoudre en \(x\)</p></div>
+    <div class="step"><div class="sn">3</div><p>Substituer \(x\) dans l'une des équations pour trouver \(y\)</p></div>
+    <div class="step"><div class="sn">4</div><p>Si les droites sont parallèles (même pente) → <strong>aucune intersection</strong>. Si confondues → <strong>infinité de solutions</strong>.</p></div>
+  </div>
+
+  
+    <strong>\(d_1: y=2x-2\) et \(d_2: 2y=x-6\) → \(y=\frac{x-6}{2}\)</strong><br>
+    \(2x-2 = \frac{x-6}{2}\) → \(4x-4=x-6\) → \(3x=-2\) → \(x=-\frac{2}{3}\)<br>
+    \(y=2\cdot(-\frac{2}{3})-2=-\frac{4}{3}-2=-\frac{10}{3}\) → intersection : \(\left(-\frac{2}{3},\ -\frac{10}{3}\right)\)<br><br>
+    <strong>\(d_1: y=2x-2\) et \(d_3: 3y=6x-6\) → \(y=2x-2\)</strong><br>
+    Les deux droites ont la même équation → elles sont <strong>confondues</strong> (toute la droite est solution).
+  </div>
+</section>
+
+<!-- ══════ P4 PROBLEMES 1ER DEGRE ══════ -->
+<section id="p4">
+  <div class="stitle"><span class="stag">P4</span><h2>Problèmes du 1er degré</h2></div>
+
+  <div class="tip"><span>💡</span><span>Méthode : nommer l'inconnue \(x\), traduire les conditions en équation, résoudre, vérifier.</span></div>
+
+  
+    Soit la benjamine = \(x\), cadette = \(x+10\), aînée = \(x+30\)<br>
+    \(x + (x+10) + (x+30) = 100\) → \(3x+40=100\) → \(x=20\)<br>
+    → Benjamine : <strong>20€</strong>, cadette : <strong>30€</strong>, aînée : <strong>50€</strong>
+  </div>
+
+  
+    Soit les trois entiers : \(n-1,\ n,\ n+1\)<br>
+    \((n-1)+n+(n+1)=2010\) → \(3n=2010\) → \(n=670\)<br>
+    → Les nombres sont <strong>669, 670, 671</strong>
+  </div>
+
+  
+    \(\dfrac{x+45}{x+59} = \dfrac{7}{9}\)<br>
+    \(9(x+45) = 7(x+59)\) → \(9x+405=7x+413\) → \(2x=8\) → \(x=4\)
+  </div>
+</section>
+
+<!-- ══════ P5 SECOND DEGRE ══════ -->
+<section id="p5">
+  <div class="stitle"><span class="stag b">P5</span><h2>Équations et fonctions du second degré</h2></div>
+
+  <div class="f r" style="text-align:center;font-size:1rem">\[f(x) = ax^2 + bx + c \qquad (a \neq 0)\]</div>
+
+  <div class="g3">
+    <div class="card">
+      <div class="clabel b">Discriminant</div>
+      <div class="f b">\[\Delta = b^2 - 4ac\]</div>
+      <p style="font-size:.82rem;margin-top:6px">
+        \(\Delta > 0\) : 2 racines réelles<br>
+        \(\Delta = 0\) : 1 racine double<br>
+        \(\Delta < 0\) : pas de racines réelles
+      </p>
+    </div>
+    <div class="card">
+      <div class="clabel b">Racines</div>
+      <div class="f b">\[x_{1,2} = \frac{-b \pm \sqrt{\Delta}}{2a}\]</div>
+    </div>
+    <div class="card">
+      <div class="clabel b">Sommet (vertex)</div>
+      <div class="f b">\[x_S = \frac{-b}{2a}\]</div>
+      <div class="f b">\[y_S = f(x_S)\]</div>
+    </div>
+  </div>
+
+  <div class="g2" style="margin-top:10px">
+    <div class="card">
+      <div class="clabel b">Concavité</div>
+      <p style="font-size:.88rem">• \(a > 0\) : parabole vers le <strong>haut</strong> ∪ (minimum au sommet)<br>
+      • \(a < 0\) : parabole vers le <strong>bas</strong> ∩ (maximum au sommet)</p>
+    </div>
+    <div class="card">
+      <div class="clabel b">Forme factorisée</div>
+      <div class="f b">\[f(x) = a(x - x_1)(x - x_2)\]</div>
+      <p style="font-size:.82rem;margin-top:4px">si \(x_1\) et \(x_2\) sont les racines connues.</p>
+    </div>
+  </div>
+
+  <div class="tip"><span>💡</span><span><strong>Lien somme/produit des racines :</strong><br>
+  \(x_1 + x_2 = -\dfrac{b}{a}\) &ensp;·&ensp; \(x_1 \cdot x_2 = \dfrac{c}{a}\)<br>
+  Utile pour retrouver une équation dont on connaît les racines.</span></div>
+</section>
+
+<!-- ══════ P6 METHODE PARABOLE ══════ -->
+<section id="p6">
+  <div class="stitle"><span class="stag b">P6</span><h2>Méthode — étudier et dessiner une parabole</h2></div>
+
+  <div class="steps">
+    <div class="step"><div class="sn b">1</div><p>Identifier \(a, b, c\) et déterminer la <strong>concavité</strong> (\(a>0\) : ∪ ; \(a<0\) : ∩)</p></div>
+    <div class="step"><div class="sn b">2</div><p>Calculer \(\Delta = b^2-4ac\) → déterminer le nombre de racines</p></div>
+    <div class="step"><div class="sn b">3</div><p>Calculer les <strong>racines</strong> \(x_{1,2} = \frac{-b\pm\sqrt{\Delta}}{2a}\)</p></div>
+    <div class="step"><div class="sn b">4</div><p>Calculer le <strong>sommet</strong> : \(x_S = \frac{-b}{2a}\), puis \(y_S = f(x_S)\)</p></div>
+    <div class="step"><div class="sn b">5</div><p>Calculer l'<strong>ordonnée à l'origine</strong> : \(f(0) = c\)</p></div>
+    <div class="step"><div class="sn b">6</div><p>Tracer : placer les racines, le sommet, l'ordonnée à l'origine</p></div>
+  </div>
+
+  
+    <strong>(a) \(f_1(x) = (2x+2)(2x-2) = 4x^2-4\)</strong><br>
+    \(a=4>0\) → ∪ &ensp;·&ensp; Racines : \(2x+2=0\Rightarrow x=-1\) et \(2x-2=0\Rightarrow x=1\)<br>
+    Sommet : \(x_S=0\), \(y_S=-4\) → Sommet \((0,-4)\)<br><br>
+
+    <strong>(b) \(f_2(x) = -x(x-1) = -x^2+x\)</strong><br>
+    \(a=-1<0\) → ∩ &ensp;·&ensp; Racines : \(x=0\) et \(x=1\)<br>
+    Sommet : \(x_S=\frac{1}{2}\), \(y_S=\frac{1}{4}\) → <strong>Maximum</strong> \(\left(\frac{1}{2},\frac{1}{4}\right)\) (car \(a&lt;0\))<br><br>
+
+    <strong>(c) \(f_3(x) = x^2-x-2\)</strong><br>
+    \(a=1>0\) → ∪ &ensp;·&ensp; \(\Delta=1+8=9\) → \(x_{1,2}=\frac{1\pm 3}{2}\) → \(x_1=-1,\ x_2=2\)<br>
+    Sommet : \(x_S=\frac{1}{2}\), \(y_S=\frac{1}{4}-\frac{1}{2}-2=-\frac{9}{4}\) → Sommet \(\left(\frac{1}{2},-\frac{9}{4}\right)\)<br><br>
+
+    <strong>(d) \(f_4(x) = x^2-x-12\)</strong><br>
+    \(a=1>0\) → ∪ &ensp;·&ensp; \(\Delta=1+48=49\) → \(x_{1,2}=\frac{1\pm 7}{2}\) → \(x_1=-3,\ x_2=4\)<br>
+    Sommet : \(x_S=\frac{1}{2}\), \(y_S=-\frac{49}{4}\) → Sommet \(\left(\frac{1}{2},-\frac{49}{4}\right)\)
+  </div>
+
+  
+    <strong>(a) \(x + \frac{1}{x} = 2\)</strong> → multiplier par \(x\) : \(x^2+1=2x\) → \(x^2-2x+1=0\) → \((x-1)^2=0\) → \(x=1\)<br><br>
+    <strong>(b) \(\frac{2x-3}{x-1} = x-1\)</strong> → multiplier par \((x-1)\) : \(2x-3=(x-1)^2=x^2-2x+1\)<br>
+    → \(x^2-4x+4=0\) → \((x-2)^2=0\) → \(x=2\)
+  </div>
+
+  
+    Racines connues : \(x_1=3\) et \(x_2=-4\)<br>
+    \(f(x) = a(x-3)(x+4),\quad a\in\mathbb{R}\)
+  </div>
+
+  
+    Méthode : si somme = \(S\) et produit = \(P\), les deux nombres sont racines de \(x^2 - Sx + P = 0\).<br><br>
+    (a) \(S=4,\ P=3\) → \(x^2-4x+3=0\) → \(\{1,\ 3\}\)<br>
+    (b) \(S=7,\ P=10\) → \(x^2-7x+10=0\) → \(\{2,\ 5\}\)<br>
+    (c) \(S=1,\ P=-2\) → \(x^2-x-2=0\) → \(\{-1,\ 2\}\)<br>
+    (d) \(S=-5,\ P=6\) → \(x^2+5x+6=0\) → \(\{-2,\ -3\}\)<br>
+    (e) \(S=\frac{3}{2},\ P=\frac{1}{2}\) → \(x^2-\frac{3}{2}x+\frac{1}{2}=0\) → \(\left\{\frac{1}{2},\ 1\right\}\)
+  </div>
+
+  
+    Soit \(n-1,\ n,\ n+1\) : \((n-1)^2+n^2+(n+1)^2=50\)<br>
+    \(n^2-2n+1+n^2+n^2+2n+1=50\) → \(3n^2+2=50\) → \(n^2=16\) → \(n=\pm 4\)<br>
+    → Solutions : \(\{3,4,5\}\) ou \(\{-5,-4,-3\}\)
+  </div>
+</section>
+
+<!-- ══════ P7 INTERSECTION ══════ -->
+<section id="p7">
+  <div class="stitle"><span class="stag b">P7</span><h2>Intersection droite / parabole</h2></div>
+
+  <div class="steps">
+    <div class="step"><div class="sn b">1</div><p>Égaliser : \(f(x) = d(x)\) → ramener à \(ax^2+bx+c=0\)</p></div>
+    <div class="step"><div class="sn b">2</div><p>Calculer \(\Delta\) → \(\Delta>0\) : 2 intersections ; \(\Delta=0\) : tangente ; \(\Delta<0\) : aucune</p></div>
+    <div class="step"><div class="sn b">3</div><p>Calculer les \(x\) d'intersection, puis les \(y\) correspondants</p></div>
+  </div>
+
+  
+    \(x^2-x-2 = x+1\) → \(x^2-2x-3=0\)<br>
+    \(\Delta=4+12=16\) → \(x_{1,2}=\frac{2\pm 4}{2}\) → \(x_1=3\) et \(x_2=-1\)<br>
+    \(y_1=3+1=4\) et \(y_2=-1+1=0\)<br>
+    → Intersections : \(\mathbf{(3,4)}\) et \(\mathbf{(-1,0)}\)
+  </div>
+</section>
+
+<!-- ══════ P8 EXEMPLES INTERRO ══════ -->
+<section id="p8">
+  <div class="stitle"><span class="stag">P8</span><h2>Exemples d'interrogation — exercices types</h2></div>
+  <p>Ces exercices sont extraits du syllabus (exemples d'interros) — à bien maîtriser !</p>
+
+  
+    Réécrire : \(2y=4x-2\) → \(y=2x-1\) (pente = 2)<br><br>
+    <strong>a) Droite parallèle passant par (−1, 0) :</strong><br>
+    Même pente \(a=2\) : \(0=2\cdot(-1)+b\) → \(b=2\) → \(y=2x+2\)<br><br>
+    <strong>b) Le point (2,3) appartient-il à cette droite ?</strong><br>
+    \(y=2(2)-1=3\) → \(3=3\) ✓ → <strong>Oui</strong><br><br>
+    <strong>c) Distance entre la droite \(y=2x-1\) et le point (2,−2) :</strong><br>
+    Forme \(-2x+y+1=0\) → \(d=\dfrac{|-4+(-2)+1|}{\sqrt{4+1}}=\dfrac{5}{\sqrt{5}}=\sqrt{5}\)
+  </div>
+
+  
+    \(a=-1<0\) → ∩ (concave vers le bas)<br>
+    \(\Delta=4+12=16\) → \(x_{1,2}=\frac{-2\pm 4}{-2}\) → \(x_1=-1,\ x_2=3\)<br>
+    Sommet : \(x_S=\frac{-2}{-2}=1\), \(y_S=-1+2+3=4\) → Sommet \((1,4)\)<br>
+    Ordonnée à l'origine : \(f(0)=3\)
+  </div>
+
+  
+    \(3x-1=x^2-2\) → \(x^2-3x-1=0\)<br>
+    \(\Delta=9+4=13\) → \(x_{1,2}=\frac{3\pm\sqrt{13}}{2}\)<br>
+    \(x_1=\frac{3+\sqrt{13}}{2}\approx 3{,}30\) → \(y_1\approx 8{,}90\)<br>
+    \(x_2=\frac{3-\sqrt{13}}{2}\approx -0{,}30\) → \(y_2\approx -1{,}90\)
+  </div>
+
+  
+    Soit \(p\) = prix d'une balle. Raquette = \(p+16\)<br>
+    \(15p + (p+16) = 24{,}32\) → \(16p=8{,}32\) → \(p=0{,}52\)€ et raquette = \(16{,}52\)€
+  </div>
+
+  
+    \(7(2n-5)=91\) → \(2n-5=13\) → \(2n=18\) → \(n=9\)
+  </div>
+
+  
+    \(y-2m=x+mx-m\) → \(y=(m+1)x+m\)<br>
+    Substituer \((m,-1)\) : \(-1=(m+1)\cdot m+m=(m+1)m+m\)<br>
+    \(-1=m^2+m+m=m^2+2m\) → \(m^2+2m+1=0\) → \((m+1)^2=0\) → \(\mathbf{m=-1}\)
+  </div>
+</section>
+
+</main>
+</body>
+</html>
