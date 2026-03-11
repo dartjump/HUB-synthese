@@ -203,8 +203,7 @@ code{font-family:'JetBrains Mono',monospace;background:#e8eef5;padding:2px 6px;b
     <div class="card">
       <div class="clabel">Simplification avec XOR</div>
       <p style="font-size:.88rem;margin-bottom:8px">Pour simplifier \(A \oplus f(A,B,...)\), développer le XOR puis utiliser les lois de Boole.</p>
-      <div class="sol" style="margin:0">
-        <div class="sol-lbl">Exercice 5 — Solutions</div>
+      
         (a) \(A\oplus(A+B) = A\overline{(A+B)}+\bar{A}(A+B) = A\bar{A}\bar{B}+\bar{A}B = \bar{A}B = \overline{A}B\)<br>
         (b) \(AB\oplus A = A\overline{B}+\bar{A}\cdot AB... = \bar{B}A = B\bar{A}\)<br>
         (c) \(A\oplus BA = A\bar{B}+\bar{A}B = \overline{A}B\) (attention: \(BA = \bar{A}B\) non, \(BA=AB\)) : \(= A\bar{B}\)<br>
@@ -236,22 +235,19 @@ code{font-family:'JetBrains Mono',monospace;background:#e8eef5;padding:2px 6px;b
 <section id="l7">
   <div class="stitle"><span class="stag">L7</span><h2>Solutions des exercices — Logique</h2></div>
 
-  <div class="sol b">
-    <div class="sol-lbl b">Solution Exercice 1</div>
+  
     <strong>F = A(B+C) + B̄C̄</strong> → Table (A B C → F) : 0,0,0→1 ; 0,0,1→1 ; 0,1,0→1 ; 0,1,1→1 ; 1,0,0→1 ; 1,0,1→0 ; 1,1,0→0 ; 1,1,1→0<br>
     Représentation PDS la plus pertinente : \(F = (A+B+C)(A+B+\bar{C})(A+\bar{B}+C)\)<br><br>
     <strong>G = AC̄ + B + BC̄</strong> → Table (A B C → G) : 0,0,0→0 ; 0,0,1→0 ; 0,1,0→1 ; 0,1,1→1 ; 1,0,0→0 ; 1,0,1→0 ; 1,1,0→1 ; 1,1,1→0<br>
     Représentation SDP la plus pertinente : \(G = \bar{A}B\bar{C} + \bar{A}BC + AB\bar{C}\)
   </div>
 
-  <div class="sol b" style="margin-top:10px">
-    <div class="sol-lbl b">Solutions Exercice 2 (simplifications)</div>
+  
     (a) \(A(A+B) = A\) &ensp;·&ensp; (b) \(AB(A+C) = AB\) &ensp;·&ensp; (c) \((A+B)(A+\bar{B}) = A\)<br>
     (d) \(A + B(A+B) = A+B\) &ensp;·&ensp; (e) \((A+B)(A+AB) = A+B\)
   </div>
 
-  <div class="sol b" style="margin-top:10px">
-    <div class="sol-lbl b">Solutions Exercice 3 (simplifications)</div>
+  
     (a) \((A+\bar{C}B)(A+B+\bar{C}B) = AB + A\bar{C} + A\bar{B}\bar{C}\)<br>
     (b) \(ABC+\bar{A}BC+AB\bar{C}+A(B+A\bar{C}+B\bar{C}) = AB + AB\bar{C}+A\bar{C}\)<br>
     (c) \(ABC+\bar{A}BC+AB\bar{C}+A\bar{B}\bar{C} = A\)<br>
@@ -259,16 +255,14 @@ code{font-family:'JetBrains Mono',monospace;background:#e8eef5;padding:2px 6px;b
     (e) \((X+YZ)Y+X+\bar{Y}Z+Y\bar{Z} = 1\) (toujours vrai)
   </div>
 
-  <div class="sol b" style="margin-top:10px">
-    <div class="sol-lbl b">Solutions Exercice 7 (De Morgan)</div>
+  
     (a) \(X(\bar{Z}+\bar{Y}) = X+YZ\) via De Morgan &ensp;·&ensp; (b) \((A+B)(A+C) = A(B+C)\)<br>
     (c) \((X+Z)(Z+XY) = Z\) &ensp;·&ensp; (d) \((X+YZ)(Y+XZ) = Z(X+Y)+X\bar{Y}\)<br>
     (e) \(\overline{X+YZ}+\overline{X+YZ} = Z(XY+\bar{X}\bar{Y}) = Z\cdot\overline{X\oplus Y}\)<br>
     (f) \(A+BC+A\bar{C}+B(A+C)+A\bar{B}C = 1\) &ensp;·&ensp; (g) \(X(Y\oplus Z)+X(Z\oplus X)+Z(X\oplus Y) = X+Y+Z\)
   </div>
 
-  <div class="sol b" style="margin-top:10px">
-    <div class="sol-lbl b">Solutions Exercice 8 (circuits)</div>
+  
     (a) Circuit : \(F = A\oplus B\) — déjà simplifié<br>
     (b) Circuit : \(G = A+(A+B)(B+C)\) → simplifié : \(G = A+B\)
   </div>
@@ -336,8 +330,7 @@ code{font-family:'JetBrains Mono',monospace;background:#e8eef5;padding:2px 6px;b
   <div class="f g" style="font-size:.85rem">(AF)₁₆ = 10×16¹ + 15×16⁰ = 160 + 15 = <strong>175</strong></div>
   <div class="f g" style="font-size:.85rem">(110111)₂ = 1×32 + 1×16 + 0×8 + 1×4 + 1×2 + 1×1 = <strong>55</strong></div>
 
-  <div class="sol b">
-    <div class="sol-lbl b">Solutions Exercice 1</div>
+  
     (a) (57)₁₀ = (111001)₂ · (71)₈ · (39)₁₆<br>
     (b) (845)₁₀ = (1101001101)₂ · (1515)₈ · (34D)₁₆<br>
     (c) (110111)₂ = (55)₁₀ · (67)₈ · (37)₁₆<br>
@@ -364,8 +357,7 @@ code{font-family:'JetBrains Mono',monospace;background:#e8eef5;padding:2px 6px;b
     </div>
   </div>
   <div class="f g" style="font-size:.85rem">0.125 × 2 = 0.<strong>2</strong>5 → chiffre : <strong>0</strong><br>0.25 × 2 = 0.<strong>5</strong> → chiffre : <strong>0</strong><br>0.5 × 2 = 1.<strong>0</strong> → chiffre : <strong>1</strong><br>→ 0.125₁₀ = 0.<strong>001</strong>₂</div>
-  <div class="sol b">
-    <div class="sol-lbl b">Solutions Exercice 3</div>
+  
     (a) (55.125)₁₀ = (110111.001)₂ · (67.1)₈ · (37.2)₁₆<br>
     (b) (17.5625)₁₀ = (10001.1001)₂ · (21.44)₈ · (11.9)₁₆<br>
     (c) (11011.011)₂ = (27.375)₁₀ · (33.3)₈ · (1B.6)₁₆<br>
@@ -380,8 +372,7 @@ code{font-family:'JetBrains Mono',monospace;background:#e8eef5;padding:2px 6px;b
     <div class="f g" style="font-size:.85rem">Base 2 : 1+1 = 10₂ (on écrit 0 et retient 1)<br>1+1+1 = 11₂ (on écrit 1 et retient 1)</div>
     <div class="f g" style="font-size:.85rem">Base 16 : A+7 = 11 → 1 et retenue 1<br>F+F = 1E → E et retenue 1</div>
   </div>
-  <div class="sol b">
-    <div class="sol-lbl b">Solutions Exercice 4</div>
+  
     (a) (38489)₁₀ + (99587)₁₀ = <strong>(138076)₁₀</strong><br>
     (b) (1110101101)₂ + (1011101010)₂ = <strong>(11010010111)₂</strong><br>
     (c) (CF8792)₁₆ + (934CE54)₁₆ = <strong>(A0455E6)₁₆</strong><br>
@@ -409,8 +400,7 @@ code{font-family:'JetBrains Mono',monospace;background:#e8eef5;padding:2px 6px;b
   </div>
   <div class="f g" style="font-size:.85rem">Complément de (9CED0)₁₆ :<br>(F-9)(F-C)(F-E)(F-E)(F-D) = 63120, +1 = <strong>63121</strong>... (méthode standard: 10⁵ - 9CED0 = 63130)</div>
 
-  <div class="sol b">
-    <div class="sol-lbl b">Solutions Exercice 5</div>
+  
     (a) (6712)₁₀ − (4572)₁₀ = <strong>(2140)₁₀</strong><br>
     (b) (4572)₁₀ − (6712)₁₀ = <strong>(−2140)₁₀</strong><br>
     (c) (4572)₁₀ − (712)₁₀ = <strong>(3860)₁₀</strong><br>
