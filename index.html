@@ -53,7 +53,6 @@
     @keyframes drift1 { from { transform: translate(0,0); } to { transform: translate(50px, 40px); } }
     @keyframes drift2 { from { transform: translate(0,0); } to { transform: translate(-40px, -50px); } }
 
-    /* ── VIEWS ── */
     .view {
       display: none;
       position: relative; z-index: 1;
@@ -71,7 +70,6 @@
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* ── HOME HEADER ── */
     .home-header {
       padding: 64px 0 52px;
       text-align: center;
@@ -109,7 +107,6 @@
       line-height: 1.65;
     }
 
-    /* ── CATEGORY GRID ── */
     .cat-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -214,7 +211,6 @@
     }
     .cat-card:hover .cat-arrow { background: white; border-color: white; color: var(--bg); transform: translateX(4px); }
 
-    /* ── HOME FOOTER ── */
     .home-footer {
       margin-top: 60px;
       padding-top: 28px;
@@ -231,7 +227,6 @@
       color: var(--muted);
     }
 
-    /* ── INNER VIEW ── */
     .inner-header {
       padding: 52px 0 40px;
     }
@@ -270,7 +265,6 @@
     .grad-sys  { background: linear-gradient(100deg, #10b981, #14b8a6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     .grad-hw   { background: linear-gradient(100deg, #f59e0b, #ef4444); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-    /* ── FILES GRID ── */
     .files-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
@@ -340,7 +334,6 @@
     }
     .file-card:hover .file-arrow { background: white; border-color: white; color: var(--bg); transform: translateX(3px); }
 
-    /* ── RESPONSIVE ── */
     @media (max-width: 640px) {
       .view { padding: 0 16px 60px; }
       .cat-grid { grid-template-columns: 1fr; }
@@ -351,11 +344,7 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style id="theme-system">
-/* ════════════════════════════════════════════
-   SHARED DESIGN SYSTEM — light & dark
-   ════════════════════════════════════════════ */
 :root {
-  /* ── Light (default) ── */
   --bg:          #f5f6fa;
   --surface:     #ffffff;
   --surface2:    #f0f1f7;
@@ -365,8 +354,6 @@
   --text2:       #374151;
   --muted:       #6b7280;
   --dim:         #9ca3af;
-
-  /* ── Accents ── */
   --blue:        #2563eb;
   --blue-bg:     #eff6ff;
   --blue-bd:     #bfdbfe;
@@ -386,58 +373,46 @@
   --red-bd:      #fecaca;
   --yellow:      #ca8a04;
   --yellow-bg:   #fefce8;
-
-  /* ── Shadows ── */
   --shadow-sm:   0 1px 3px rgba(0,0,0,.08);
   --shadow:      0 4px 16px rgba(0,0,0,.08);
   --shadow-lg:   0 8px 32px rgba(0,0,0,.1);
-
-  /* ── Radius ── */
-  --r-sm: 8px;
-  --r:    12px;
-  --r-lg: 18px;
-  --r-xl: 24px;
+  --r-sm: 8px; --r: 12px; --r-lg: 18px; --r-xl: 24px;
 }
 
 [data-theme="dark"] {
-  /* ── Navy/slate blue-night palette ── */
-  --bg:          #0d1117;   /* deep navy-black, like GitHub dark */
-  --surface:     #161b22;   /* card surface — slate navy */
-  --surface2:    #1c2333;   /* elevated elements */
-  --border:      #2d3748;   /* slate border, visible but subtle */
-  --border2:     #4a5568;   /* stronger border for hover/focus */
-  --text:        #e2e8f0;   /* soft white, easy on eyes */
-  --text2:       #a0aec0;   /* secondary text — slate-400 */
-  --muted:       #718096;   /* muted — slate-500 */
-  --dim:         #2d3748;   /* very dim — slate-700 */
-
-  /* ── Accents tuned for navy backgrounds ── */
-  --blue:        #63b3ed;   /* sky blue — readable on navy */
-  --blue-bg:     #1a2744;   /* navy-tinted blue bg */
-  --blue-bd:     #2c4a7c;   /* blue border */
-  --purple:      #b794f4;   /* soft purple */
+  --bg:          #0d1117;
+  --surface:     #161b22;
+  --surface2:    #1c2333;
+  --border:      #2d3748;
+  --border2:     #4a5568;
+  --text:        #e2e8f0;
+  --text2:       #a0aec0;
+  --muted:       #718096;
+  --dim:         #2d3748;
+  --blue:        #63b3ed;
+  --blue-bg:     #1a2744;
+  --blue-bd:     #2c4a7c;
+  --purple:      #b794f4;
   --purple-bg:   #1e1a3a;
-  --teal:        #4fd1c5;   /* teal — pops on navy */
+  --teal:        #4fd1c5;
   --teal-bg:     #0e2a2e;
   --teal-bd:     #1a4a50;
-  --green:       #68d391;   /* mint green */
+  --green:       #68d391;
   --green-bg:    #0e2a1a;
   --green-bd:    #1a4a2e;
-  --orange:      #f6ad55;   /* warm amber */
+  --orange:      #f6ad55;
   --orange-bg:   #2a1e0e;
   --orange-bd:   #4a3418;
-  --red:         #fc8181;   /* soft red */
+  --red:         #fc8181;
   --red-bg:      #2a1414;
   --red-bd:      #4a2020;
   --yellow:      #f6e05e;
   --yellow-bg:   #2a2400;
-
   --shadow-sm:   0 1px 4px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.03);
   --shadow:      0 4px 20px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.04);
   --shadow-lg:   0 12px 48px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.05);
 }
 
-/* ── Base reset ── */
 *, *::before, *::after { box-sizing: border-box; }
 
 body {
@@ -449,33 +424,24 @@ body {
   transition: background 0.25s ease, color 0.25s ease;
 }
 
-/* ── Toggle button ── */
 #theme-toggle {
   position: fixed;
-  top: 16px;
-  right: 20px;
+  top: 16px; right: 20px;
   z-index: 9999;
-  display: flex;
-  align-items: center;
-  gap: 7px;
+  display: flex; align-items: center; gap: 7px;
   background: var(--surface);
   border: 1px solid var(--border2);
   border-radius: 100px;
   padding: 7px 14px 7px 10px;
   cursor: pointer;
   font-family: 'DM Mono', monospace;
-  font-size: 12px;
-  font-weight: 500;
+  font-size: 12px; font-weight: 500;
   color: var(--muted);
   box-shadow: var(--shadow-sm);
   transition: all 0.2s;
   user-select: none;
 }
-#theme-toggle:hover {
-  color: var(--text);
-  border-color: var(--border2);
-  box-shadow: var(--shadow);
-}
+#theme-toggle:hover { color: var(--text); border-color: var(--border2); box-shadow: var(--shadow); }
 #theme-toggle .t-icon { font-size: 15px; transition: transform 0.3s; }
 [data-theme="dark"] #theme-toggle .t-icon { transform: rotate(180deg); }
 </style>
@@ -534,9 +500,9 @@ function toggleTheme(){
       <div class="cat-card math" onclick="openCat('math')">
         <span class="cat-emoji">∑</span>
         <div class="cat-title">Mathématiques</div>
-        <div class="cat-desc">Complexes, dérivées, trigonométrie et logique — fiches de révision complètes.</div>
+        <div class="cat-desc">Complexes, dérivées, trigonométrie, logique et polynômes — fiches de révision complètes.</div>
         <div class="cat-footer">
-          <span class="cat-count-badge">4 fiches</span>
+          <span class="cat-count-badge">5 fiches</span>
           <div class="cat-arrow">→</div>
         </div>
       </div>
@@ -564,7 +530,7 @@ function toggleTheme(){
 
     <div class="home-footer">
       <span>Hub — T1131 & BTS</span>
-      <span>18 fichiers · 4 matières</span>
+      <span>19 fichiers · 4 matières</span>
     </div>
   </div>
 
@@ -583,7 +549,7 @@ function toggleTheme(){
     <div class="inner-header">
       <button class="back-btn" onclick="goHome()">← Retour</button>
       <h2>Mathé<span class="grad-math">matiques</span></h2>
-      <p>Synthèses complètes pour réviser les complexes, dérivées, trigonométrie et logique booléenne.</p>
+      <p>Synthèses complètes pour réviser les complexes, dérivées, trigonométrie, logique et polynômes.</p>
     </div>
     <div class="files-grid" id="files-math"></div>
   </div>
@@ -617,9 +583,10 @@ function toggleTheme(){
       ],
       math: [
         { icon: '🔢', title: 'Nombres Complexes',    sub: 'Synthèse', file: 'Synthese_Complexes.html' },
-        { icon: '📈', title: 'Dérivées',             sub: 'Synthèse', file: 'Synthese_Derivees.html' },
+        { icon: '📈', title: 'Dérivées & Exp/Log',   sub: 'Synthèse', file: 'Synthese_Derivees_ExpLog.html' },
         { icon: '📐', title: 'Trigonométrie',        sub: 'Synthèse', file: 'Synthese_Trigonometrie.html' },
         { icon: '🧮', title: 'Logique & Numération', sub: 'Synthèse', file: 'Synthese_Logique_Numeration.html' },
+        { icon: '📊', title: 'Polynômes',            sub: 'Synthèse', file: 'Synthese_Polynomes.html' },
       ],
       sys: [
         { icon: '🐧', title: 'Linux / OS', sub: 'QCM interactif', file: 'interro_os_linux.html' },
