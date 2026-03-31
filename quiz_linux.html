@@ -38,7 +38,12 @@ nav{position:sticky;top:0;z-index:100;background:rgba(15,17,23,.9);backdrop-filt
 .q-tag{background:rgba(79,142,247,.1);border:1px solid rgba(79,142,247,.2);color:var(--accent);font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:3px 10px;border-radius:20px;}
 .q-num{font-size:11px;color:var(--text3);font-family:var(--mono);margin-left:auto;}
 .q-text{font-size:16px;line-height:1.6;color:var(--text);margin-bottom:1.1rem;font-weight:500;}
-.q-hint{font-size:13px;color:var(--text2);background:rgba(251,191,36,.06);border-left:3px solid rgba(251,191,36,.4);padding:8px 12px;border-radius:0 8px 8px 0;margin-bottom:1.1rem;font-style:italic;}
+.q-hint-toggle{display:inline-flex;align-items:center;gap:6px;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.25);color:#fbbf24;font-size:12px;font-weight:600;padding:4px 12px;border-radius:20px;cursor:pointer;margin-bottom:1rem;user-select:none;transition:background .15s;}
+.q-hint-toggle:hover{background:rgba(251,191,36,.16);}
+.q-hint-toggle .arrow{transition:transform .25s;display:inline-block;font-style:normal;}
+.q-hint-toggle.open .arrow{transform:rotate(90deg);}
+.q-hint-body{font-size:13px;color:var(--text2);background:rgba(251,191,36,.06);border-left:3px solid rgba(251,191,36,.4);padding:8px 12px;border-radius:0 8px 8px 0;margin-bottom:1.1rem;font-style:italic;display:none;animation:fadeIn .2s ease;}
+.q-hint-body.open{display:block;}
 .terminal{background:#0d1117;border:1px solid #2d3748;border-radius:10px;overflow:hidden;margin-bottom:1rem;font-family:var(--mono);}
 .term-tb{background:#161b22;border-bottom:1px solid #2d3748;padding:7px 12px;display:flex;align-items:center;gap:6px;}
 .dr{width:10px;height:10px;border-radius:50%;background:#ff5f56;}
@@ -119,12 +124,12 @@ footer{position:relative;z-index:1;text-align:center;padding:1.25rem;color:var(-
   <div class="hero">
     <div class="hero-tag">Prépa examen · 1ère BAC · OS</div>
     <h1>Quiz <span class="hl">Linux &amp; Bash</span><br>comme à l'exam</h1>
-    <p>116 questions tirées de tes TPs — commandes Linux, scripting bash, droits, arborescence, redirections, processus, cron...</p>
+    <p>60 questions tirées de tes TPs — commandes Linux, scripting bash, droits, arborescence, redirections, processus, cron...</p>
     <button class="btn-start" onclick="startQuiz()">Commencer le quiz →</button>
     <div class="stats">
-      <div class="stat-card"><div class="val">116</div><div class="lbl">questions</div></div>
-      <div class="stat-card"><div class="val">~45</div><div class="lbl">minutes</div></div>
-      <div class="stat-card"><div class="val">12</div><div class="lbl">thèmes</div></div>
+      <div class="stat-card"><div class="val">60</div><div class="lbl">questions</div></div>
+      <div class="stat-card"><div class="val">~25</div><div class="lbl">minutes</div></div>
+      <div class="stat-card"><div class="val">8</div><div class="lbl">thèmes</div></div>
       <div class="stat-card"><div class="val">&#8734;</div><div class="lbl">tentatives</div></div>
     </div>
   </div>
@@ -157,9 +162,6 @@ footer{position:relative;z-index:1;text-align:center;padding:1.25rem;color:var(-
 <footer>LinuxQuiz &middot; basé sur tes cours OS 1ère BAC</footer>
 <script>
 var ALL_Q=[
-  /* ══════════════════════════════════════════════
-     COMMANDES DE BASE
-  ══════════════════════════════════════════════ */
   {type:"terminal",tag:"Commandes de base",text:"Affiche le répertoire courant (le chemin complet).",hint:"💡 pwd = print working directory",answers:["pwd"],expl:"pwd (Print Working Directory) affiche le chemin absolu. Ex: /home/etudiant"},
   {type:"terminal",tag:"Commandes de base",text:"Affiche le contenu du répertoire courant.",hint:"💡 ls = list",answers:["ls","ls -l","ls -a","ls -la","ls -al"],expl:"ls liste le contenu. -l = détails, -a = fichiers cachés (commençant par .), -la = tout."},
   {type:"terminal",tag:"Commandes de base",text:"Affiche le nom de l'utilisateur connecté.",hint:"💡 En anglais 'who am I' en un seul mot",answers:["whoami","logname"],expl:"whoami affiche le nom de l'utilisateur courant. id donne uid, gid et groupes."},
@@ -170,20 +172,12 @@ var ALL_Q=[
   {type:"terminal",tag:"Commandes de base",text:"Affiche tous les utilisateurs connectés au système.",hint:"💡 who (commande courte)",answers:["who","w"],expl:"who liste les utilisateurs connectés. w donne encore plus de détails."},
   {type:"terminal",tag:"Commandes de base",text:"Affiche le contenu du fichier notes.txt.",hint:"💡 cat = concatenate",answers:["cat notes.txt"],expl:"cat affiche le contenu. Pour les gros fichiers : less (q pour quitter)."},
   {type:"terminal",tag:"Commandes de base",text:"Affiche les 10 premières lignes de /etc/passwd.",hint:"💡 head = tête = premières lignes",answers:["head /etc/passwd","head -10 /etc/passwd","head -n 10 /etc/passwd"],expl:"head affiche les premières lignes (10 par défaut). tail affiche les dernières."},
-
-  /* ══════════════════════════════════════════════
-     NAVIGATION
-  ══════════════════════════════════════════════ */
   {type:"terminal",tag:"Navigation",text:"Déplace-toi dans le dossier /home/etudiant/tp",hint:"💡 cd = change directory",answers:["cd /home/etudiant/tp"],expl:"cd chemin absolu (commence par /). cd chemin_relatif pour un chemin depuis le répertoire courant."},
   {type:"terminal",tag:"Navigation",text:"Remonte d'un niveau dans l'arborescence.",hint:"💡 .. = dossier parent",answers:["cd .."],expl:"cd .. remonte d'un niveau. cd ../.. remonte de deux. cd - revient au répertoire précédent."},
   {type:"terminal",tag:"Navigation",text:"Reviens dans ton répertoire personnel (home).",hint:"💡 Il existe un raccourci avec cd",answers:["cd ~","cd","cd $HOME"],expl:"cd ~ ou juste cd revient dans /home/ton_nom. ~ est un alias pour $HOME."},
   {type:"terminal",tag:"Navigation",text:"Va à la racine du système.",hint:"💡 La racine en Linux c'est le /",answers:["cd /"],expl:"cd / va à la racine. Toute l'arborescence Linux part de /."},
   {type:"mcq",tag:"Navigation",text:"Quelle commande affiche le contenu détaillé (permissions, taille...) ?",options:["ls -l","ls -a","ls -d","ls -r"],correct:0,expl:"ls -l (long format) affiche permissions, propriétaire, groupe, taille, date."},
   {type:"mcq",tag:"Navigation",text:"Dans un chemin Linux, que représente ~ (tilde) ?",options:["Le répertoire personnel de l'utilisateur","La racine du système","Le répertoire courant","Le répertoire parent"],correct:0,expl:"~ est un raccourci pour /home/nom_utilisateur."},
-
-  /* ══════════════════════════════════════════════
-     GESTION DES FICHIERS
-  ══════════════════════════════════════════════ */
   {type:"terminal",tag:"Gestion des fichiers",text:"Crée un fichier vide nommé test.txt.",hint:"💡 touch crée un fichier vide",answers:["touch test.txt"],expl:"touch test.txt crée un fichier vide. S'il existe, met à jour sa date de modification."},
   {type:"terminal",tag:"Gestion des fichiers",text:"Crée un dossier nommé projets.",hint:"💡 mk... dir...",answers:["mkdir projets"],expl:"mkdir projets crée le dossier. mkdir -p a/b/c crée toute la hiérarchie."},
   {type:"terminal",tag:"Gestion des fichiers",text:"Renomme le fichier ancien.txt en nouveau.txt.",hint:"💡 mv sert à déplacer ET renommer",answers:["mv ancien.txt nouveau.txt"],expl:"mv (move) déplace ou renomme. mv ancien.txt nouveau.txt = renommer dans le même dossier."},
@@ -192,20 +186,12 @@ var ALL_Q=[
   {type:"terminal",tag:"Gestion des fichiers",text:"Crée trois fichiers en une commande : a.txt, b.txt et c.txt.",hint:"💡 touch accepte plusieurs arguments",answers:["touch a.txt b.txt c.txt"],expl:"touch accepte plusieurs noms. Aussi possible : touch {a,b,c}.txt"},
   {type:"mcq",tag:"Gestion des fichiers",text:"Quelle commande copie un dossier entier avec tout son contenu ?",options:["cp -r dossier/ destination/","cp dossier/ destination/","copy -r dossier/ destination/","mv -r dossier/ destination/"],correct:0,expl:"cp -r (récursif) copie un dossier et tout son contenu. Sans -r, cp refuse de copier un dossier."},
   {type:"terminal",tag:"Gestion des fichiers",text:"Déplace le dossier archives/ vers /tmp/",hint:"💡 mv fonctionne aussi pour les dossiers",answers:["mv archives/ /tmp/","mv archives /tmp/","mv archives /tmp"],expl:"mv fonctionne pour fichiers et dossiers. Pas besoin de -r contrairement à cp."},
-
-  /* ══════════════════════════════════════════════
-     ARBORESCENCE LINUX
-  ══════════════════════════════════════════════ */
   {type:"mcq",tag:"Arborescence Linux",text:"Quel dossier contient les fichiers de configuration du système ?",options:["/etc","/bin","/home","/var"],correct:0,expl:"/etc = configuration. /bin = commandes essentielles. /home = répertoires utilisateurs."},
   {type:"mcq",tag:"Arborescence Linux",text:"Où se trouvent les répertoires personnels des utilisateurs ?",options:["/home","/usr","/etc","/root"],correct:0,expl:"/home contient /home/alice, /home/bob... L'admin root a son home dans /root."},
   {type:"mcq",tag:"Arborescence Linux",text:"Quel dossier contient les commandes essentielles (ls, cp, mv...) ?",options:["/bin","/etc","/lib","/usr"],correct:0,expl:"/bin = commandes essentielles. /usr/bin = commandes supplémentaires. /sbin = commandes admin."},
   {type:"mcq",tag:"Arborescence Linux",text:"Quel dossier est utilisé pour les fichiers temporaires ?",options:["/tmp","/var","/cache","/temp"],correct:0,expl:"/tmp = fichiers temporaires. Souvent vidé au redémarrage. Tout le monde peut y écrire."},
   {type:"mcq",tag:"Arborescence Linux",text:"Que contient le fichier /etc/passwd ?",options:["La liste des utilisateurs","Les mots de passe chiffrés","La configuration réseau","Les variables d'environnement"],correct:0,expl:"/etc/passwd liste tous les utilisateurs. Format : nom:x:uid:gid:info:home:shell."},
   {type:"terminal",tag:"Arborescence Linux",text:"Affiche le contenu du fichier /etc/passwd.",hint:"💡 cat affiche le contenu d'un fichier",answers:["cat /etc/passwd"],expl:"cat /etc/passwd affiche tous les utilisateurs. Chaque ligne : nom:x:uid:gid:commentaire:home:shell"},
-
-  /* ══════════════════════════════════════════════
-     DROITS LINUX
-  ══════════════════════════════════════════════ */
   {type:"mcq",tag:"Droits Linux",text:"Que signifie rwxr-xr-- ?",options:["Proprio: tout | Groupe: lire+exec | Autres: lire","Proprio: lire | Groupe: tout | Autres: rien","Proprio: tout | Groupe: tout | Autres: tout","Proprio: lire+écrire | Groupe: rien | Autres: exec"],correct:0,expl:"rwx=7 (proprio tout), r-x=5 (groupe: lire+exec), r--=4 (autres: lire). r=4, w=2, x=1."},
   {type:"terminal",tag:"Droits Linux",text:"Rends exécutable le fichier monscript.sh.",hint:"💡 chmod +x ...",answers:["chmod +x monscript.sh","chmod a+x monscript.sh","chmod 755 monscript.sh"],expl:"chmod +x ajoute l'exécution pour tous. 755 = rwxr-xr-x."},
   {type:"mcq",tag:"Droits Linux",text:"Que donne chmod 755 ?",options:["rwxr-xr-x","rwxrwxrwx","rw-r--r--","r-xr-xr-x"],correct:0,expl:"7=rwx, 5=r-x, 5=r-x. Typique pour un script ou exécutable."},
@@ -214,20 +200,12 @@ var ALL_Q=[
   {type:"terminal",tag:"Droits Linux",text:"Donne les droits 600 au fichier secret.txt.",hint:"💡 chmod valeur fichier",answers:["chmod 600 secret.txt"],expl:"600 = rw------- : seul le propriétaire peut lire et écrire. Idéal pour fichiers sensibles."},
   {type:"mcq",tag:"Droits Linux",text:"Quelle commande change le propriétaire d'un fichier ?",options:["chown","chmod","chgrp","chuser"],correct:0,expl:"chown change le propriétaire. chown alice fichier.txt. Nécessite sudo."},
   {type:"terminal",tag:"Droits Linux",text:"Affiche les permissions détaillées du fichier script.sh.",hint:"💡 ls avec l'option détails",answers:["ls -l script.sh","ls -la script.sh"],expl:"ls -l affiche permissions, propriétaire, groupe, taille, date."},
-
-  /* ══════════════════════════════════════════════
-     REDIRECTIONS
-  ══════════════════════════════════════════════ */
   {type:"mcq",tag:"Redirections",text:"Que fait : ls > liste.txt ?",options:["Redirige la sortie dans liste.txt (écrase)","Ajoute à la fin de liste.txt","Lit liste.txt et le donne à ls","Affiche liste.txt à l'écran"],correct:0,expl:"> redirige stdout vers un fichier en l'ÉCRASANT. >> ajoute sans écraser."},
   {type:"mcq",tag:"Redirections",text:"Comment ajouter la sortie à la FIN d'un fichier sans écraser ?",options:["commande >> fichier","commande > fichier","commande < fichier","commande | fichier"],correct:0,expl:">> ajoute en fin de fichier. > écrase. Exemple : echo 'log' >> journal.txt"},
   {type:"mcq",tag:"Redirections",text:"Que fait le pipe | dans : ls | grep txt ?",options:["Envoie la sortie de ls à grep","Écrit la sortie dans grep","Exécute en parallèle","Redirige les erreurs"],correct:0,expl:"| connecte stdout d'une commande à stdin de la suivante. ls | grep txt filtre les résultats."},
   {type:"terminal",tag:"Redirections",text:"Redirige les erreurs de ls /inexistant vers erreurs.txt.",hint:"💡 2> redirige le flux d'erreur",answers:["ls /inexistant 2> erreurs.txt"],expl:"2> redirige stderr. > redirige stdout. 2>&1 redirige stderr vers stdout."},
   {type:"mcq",tag:"Redirections",text:"Que fait : cat fichier.txt | wc -l ?",options:["Compte le nombre de lignes","Compte les mots","Affiche les 10 premières lignes","Trie le fichier"],correct:0,expl:"wc -l compte les lignes. wc -w compte les mots. wc -c compte les caractères."},
   {type:"terminal",tag:"Redirections",text:"Cherche le mot 'erreur' dans le fichier log.txt.",hint:"💡 grep cherche un motif dans un fichier",answers:["grep erreur log.txt","grep 'erreur' log.txt"],expl:"grep motif fichier affiche les lignes contenant le motif. -i = insensible casse. -r = récursif."},
-
-  /* ══════════════════════════════════════════════
-     SCRIPTING BASH — BASES
-  ══════════════════════════════════════════════ */
   {type:"mcq",tag:"Scripting bash",text:"Quelle est la première ligne obligatoire d'un script bash ?",options:["#!/bin/bash","# bash script","bash start","@bash"],correct:0,expl:"Le shebang #!/bin/bash indique l'interpréteur. Sans lui, le script peut ne pas s'exécuter."},
   {type:"terminal",tag:"Scripting bash",text:"Affiche la valeur de la variable nom.",hint:"💡 En bash, $ devant le nom de variable",answers:["echo $nom","echo ${nom}"],expl:"echo $nom ou echo ${nom} affiche la valeur. Les accolades sont utiles pour concaténer."},
   {type:"mcq",tag:"Scripting bash",text:"Comment déclarer une variable age avec la valeur 20 ?",options:["age=20","age = 20","var age=20","set age=20"],correct:0,expl:"age=20 (sans espaces autour du =). Les espaces sont INTERDITS autour du = en bash."},
@@ -236,131 +214,42 @@ var ALL_Q=[
   {type:"mcq",tag:"Scripting bash",text:"En bash, quel opérateur compare deux entiers (égalité) dans [ ] ?",options:["-eq","==","=","eq"],correct:0,expl:"-eq = égal, -ne = pas égal, -lt = inférieur, -gt = supérieur. Pour chaînes : = et !="},
   {type:"mcq",tag:"Scripting bash",text:"Comment tester si un fichier existe en bash ?",options:["if [ -f fichier.txt ]","if [ -e fichier.txt ]","if exists fichier.txt","if file fichier.txt"],correct:0,expl:"-f = fichier régulier. -e = existe (fichier ou dossier). -d = dossier. -r = lisible. -x = exécutable."},
   {type:"mcq",tag:"Scripting bash",text:"Que contient $# dans un script bash ?",options:["Le nombre d'arguments","Le premier argument","Tous les arguments","Le nom du script"],correct:0,expl:"$# = nombre d'arguments. $0 = nom du script. $1 = 1er arg. $@ = tous les args."},
-
-  /* ══════════════════════════════════════════════
-     BOUCLES & CONDITIONS
-  ══════════════════════════════════════════════ */
   {type:"mcq",tag:"Boucles & conditions",text:"Quelle boucle parcourt une liste de fichiers en bash ?",options:["for fichier in *.txt; do ... done","while fichier in *.txt","loop fichier in *.txt","foreach fichier in *.txt"],correct:0,expl:"for est idéal pour parcourir une liste. for fichier in *.txt; do echo $fichier; done"},
   {type:"mcq",tag:"Boucles & conditions",text:"Quel mot-clé termine un bloc if en bash ?",options:["fi","end","endif","done"],correct:0,expl:"fi termine le if (if à l'envers !). done termine while et for. esac termine case."},
   {type:"terminal",tag:"Boucles & conditions",text:"Génère la séquence de nombres de 1 à 10.",hint:"💡 seq génère une séquence",answers:["seq 1 10","seq 1 1 10"],expl:"seq 1 10 génère 1 2 ... 10. seq 1 2 10 = 1 3 5 7 9. Utilisé dans for : for i in $(seq 1 10)"},
   {type:"mcq",tag:"Boucles & conditions",text:"Quel mot-clé sort immédiatement d'une boucle ?",options:["break","exit","quit","continue"],correct:0,expl:"break sort de la boucle. continue passe à l'itération suivante. exit quitte tout le script."},
-  {type:"mcq",tag:"Boucles & conditions",text:"Quelle boucle répète TANT QUE la condition est FAUSSE ?",options:["until","while","for","repeat"],correct:0,expl:"until [ condition ]; do ... done répète tant que la condition est fausse (inverse de while)."},
-  {type:"mcq",tag:"Boucles & conditions",text:"Comment tester si une variable est un dossier en bash ?",options:["[ -d $var ]","[ -f $var ]","[ -r $var ]","[ -x $var ]"],correct:0,expl:"-d teste si c'est un répertoire. -f = fichier régulier, -r = lisible, -w = accessible en écriture, -x = exécutable."},
-
-  /* ══════════════════════════════════════════════
-     FONCTIONS BASH
-  ══════════════════════════════════════════════ */
   {type:"mcq",tag:"Fonctions bash",text:"Quelle syntaxe déclare une fonction en bash ?",options:["maFonction() { ... }","def maFonction() { ... }","function: maFonction { ... }","maFonction: { ... }"],correct:0,expl:"maFonction() { } est la syntaxe courante. function maFonction { } est aussi valide."},
   {type:"terminal",tag:"Fonctions bash",text:"Appelle une fonction nommée dire_bonjour.",hint:"💡 En bash, appeler = juste écrire le nom",answers:["dire_bonjour"],expl:"En bash, on appelle une fonction en écrivant simplement son nom, sans parenthèses."},
   {type:"mcq",tag:"Fonctions bash",text:"Dans une fonction bash, que désigne $1 ?",options:["Le 1er paramètre de la fonction","Le 1er paramètre du script global","Le nom de la fonction","Le nom du script"],correct:0,expl:"Dans une fonction, $1, $2... = paramètres de LA FONCTION, pas du script."},
-  {type:"mcq",tag:"Fonctions bash",text:"Que fait return 2 dans une fonction bash ?",options:["Quitte la fonction avec le code de retour 2","Affiche le chiffre 2","Relance la fonction 2 fois","Arrête tout le script avec code 2"],correct:0,expl:"return N quitte la FONCTION et renvoie le code N. $? permet de récupérer ce code après l'appel. exit arrêterait tout le script."},
-
-  /* ══════════════════════════════════════════════
-     UTILISATEURS & PROCESSUS
-  ══════════════════════════════════════════════ */
   {type:"terminal",tag:"Utilisateurs",text:"Affiche les infos de l'utilisateur courant (uid, gid, groupes).",hint:"💡 Commande de 2 lettres",answers:["id"],expl:"id affiche uid (user id), gid (group id) et tous les groupes de l'utilisateur."},
   {type:"mcq",tag:"Utilisateurs",text:"Quelle commande crée un nouvel utilisateur ?",options:["useradd alice","adduser alice","newuser alice","createuser alice"],correct:0,expl:"useradd alice crée l'utilisateur. adduser est plus interactif sur Debian/Ubuntu. Les deux nécessitent sudo."},
   {type:"terminal",tag:"Processus",text:"Affiche les processus en cours d'exécution.",hint:"💡 ps ou top",answers:["ps","ps aux","ps -ef","top","htop"],expl:"ps liste les processus. ps aux = tous avec détails. top = vue dynamique temps réel."},
   {type:"mcq",tag:"Processus",text:"Que fait & à la fin d'une commande comme : ./script.sh & ?",options:["Lance en arrière-plan","Lance en superutilisateur","Lance en boucle","Lance en mode silencieux"],correct:0,expl:"& exécute en background, libérant le terminal. jobs liste les jobs. fg ramène au premier plan."},
-
-  /* ══════════════════════════════════════════════
-     CRON
-  ══════════════════════════════════════════════ */
   {type:"mcq",tag:"Cron",text:"Quelle commande édite la crontab de l'utilisateur courant ?",options:["crontab -e","cron -e","crontab edit","vi /etc/crontab"],correct:0,expl:"crontab -e ouvre l'éditeur. crontab -l liste les tâches. crontab -r supprime tout."},
   {type:"mcq",tag:"Cron",text:"Que signifie * dans un champ cron ?",options:["N'importe quelle valeur","Jamais","Une seule fois","Toutes les 2 unités"],correct:0,expl:"* = toutes les valeurs. * * * * * commande = exécute la commande chaque minute."},
-  {type:"mcq",tag:"Cron",text:"Quelle ligne cron exécute un script tous les jours à 3h00 ?",options:["0 3 * * * /chemin/script.sh","3 0 * * * /chemin/script.sh","* 3 * * * /chemin/script.sh","0 3 0 * * /chemin/script.sh"],correct:0,expl:"0 3 * * * = minute:0, heure:3, tous les jours → 03:00 chaque jour."},
-
-  /* ══════════════════════════════════════════════
-     SCRIPTING AVANCÉ — niveau examen
-  ══════════════════════════════════════════════ */
-
-  /* -- codes de retour et $? -- */
-  {type:"mcq",tag:"Scripting avancé",text:"Que vaut $? après une commande qui s'est bien exécutée ?",options:["0","1","-1","true"],correct:0,expl:"$? = code de retour de la dernière commande. 0 = succès. Toute autre valeur = erreur. Essentiel pour les conditions après appel de fonction."},
-  {type:"mcq",tag:"Scripting avancé",text:"Que fait exit 1 dans un script bash ?",options:["Quitte le script avec le code d'erreur 1","Affiche le chiffre 1","Passe à la ligne 1","Relance le script"],correct:0,expl:"exit N quitte le script avec le code N. Par convention : 0=succès, 1=erreur générale, 2=mauvais usage..."},
-  {type:"mcq",tag:"Scripting avancé",text:"Dans un script, comment vérifier qu'il reçoit exactement 3 paramètres ?",options:["if [ $# -ne 3 ]","if [ $1 -ne 3 ]","if [ $@ -eq 3 ]","if [ argc -ne 3 ]"],correct:0,expl:"$# contient le nombre d'arguments. -ne = not equal. Donc [ $# -ne 3 ] est vrai si ce n'est PAS 3 arguments."},
-
-  /* -- arithmétique -- */
-  {type:"mcq",tag:"Scripting avancé",text:"Comment calculer 5 * 3 et stocker le résultat dans une variable res ?",options:["res=$((5 * 3))","res=5 * 3","res=$(5 * 3)","let res = 5 * 3"],correct:0,expl:"$(( )) évalue une expression arithmétique. res=$((5 * 3)) → res=15. On peut aussi : let res=5*3"},
-  {type:"mcq",tag:"Scripting avancé",text:"Que vaut ce code : n=7 ; echo $((n * n * n)) ?",options:["343","21","777","Erreur"],correct:0,expl:"$((n * n * n)) = 7³ = 343. C'est la façon standard de faire de l'arithmétique en bash."},
-
-  /* -- capture de sortie -- */
-  {type:"mcq",tag:"Scripting avancé",text:"Comment capturer la sortie de la commande date dans une variable ?",options:["d=$(date)","d=date","d=`(date)`","d=$[date]"],correct:0,expl:"d=$(date) ou d=`date` capture la sortie. La syntaxe $() est préférable car elle se combine mieux."},
-
-  /* -- tableaux bash -- */
-  {type:"mcq",tag:"Scripting avancé",text:"Comment déclarer un tableau bash avec les valeurs 'a' 'b' 'c' ?",options:["tab=(\"a\" \"b\" \"c\")","tab=[\"a\",\"b\",\"c\"]","array tab = a b c","declare tab a b c"],correct:0,expl:"En bash : tab=(val1 val2 val3). Accès : ${tab[0]} = premier élément. ${#tab[@]} = taille du tableau."},
-  {type:"mcq",tag:"Scripting avancé",text:"Comment accéder au 2ème élément d'un tableau tab ?",options:["${tab[1]}","$tab[1]","${tab[2]}","tab.get(1)"],correct:0,expl:"Les tableaux bash commencent à l'index 0. Donc le 2ème élément est ${tab[1]}. ${tab[0]} = premier."},
-  {type:"mcq",tag:"Scripting avancé",text:"Comment obtenir le nombre d'éléments du tableau tab ?",options:["${#tab[@]}","${tab.length}","count(tab)","${#tab}"],correct:0,expl:"${#tab[@]} donne le nombre d'éléments. ${tab[@]} donne tous les éléments. ${!tab[@]} donne les index."},
-  {type:"mcq",tag:"Scripting avancé",text:"Comment ajouter tous les éléments d'un tableau dans une boucle ?",options:["for i in \"${tab[@]}\"; do","for i in $tab; do","foreach i in tab; do","for i in ${tab}; do"],correct:0,expl:"for i in \"${tab[@]}\"; do ... done parcourt chaque élément. Les guillemets protègent les espaces éventuels."},
-
-  /* -- regex -- */
-  {type:"mcq",tag:"Scripting avancé",text:"Que teste cette condition bash : [[ \"$1\" =~ ^[0-9]+$ ]] ?",options:["Si $1 est un entier positif (seulement des chiffres)","Si $1 est un nombre décimal","Si $1 commence par un chiffre","Si $1 est vide"],correct:0,expl:"^ = début, [0-9]+ = un ou plusieurs chiffres, $ = fin. Donc toute la chaîne = chiffres → entier positif."},
-  {type:"mcq",tag:"Scripting avancé",text:"Que signifie -? dans l'expression régulière ^-?[0-9]+$ ?",options:["Le signe - est optionnel (0 ou 1 fois)","Exactement un signe -","N'importe quel caractère","Pas de signe -"],correct:0,expl:"-? = le caractère - apparaît 0 ou 1 fois. Cela permet de matcher des entiers négatifs comme -5 et positifs comme 5."},
-  {type:"mcq",tag:"Scripting avancé",text:"Quelle syntaxe bash permet d'utiliser des expressions régulières ?",options:["[[ \"$var\" =~ regex ]]","[ \"$var\" =~ regex ]","$var =~ regex","grep regex $var"],correct:0,expl:"[[ ]] (double crochets) avec =~ permet les regex. [ ] (simple) ne supporte pas =~. C'est une feature bash, pas POSIX."},
-
-  /* -- vérification paramètres/fichiers -- */
-  {type:"mcq",tag:"Scripting avancé",text:"Dans un script, comment vérifier qu'un fichier est LISIBLE ?",options:["[ -r \"$fichier\" ]","[ -f \"$fichier\" ]","[ -l \"$fichier\" ]","[ -read \"$fichier\" ]"],correct:0,expl:"-r teste la lisibilité (readable). -f = fichier régulier, -w = accessible en écriture, -x = exécutable, -s = non vide."},
-  {type:"mcq",tag:"Scripting avancé",text:"Quelle structure vérifie si $1 est vide (non fourni) ?",options:["[ -z \"$1\" ]","[ $1 -eq 0 ]","[ -e $1 ]","[ $1 = 0 ]"],correct:0,expl:"-z teste si la chaîne est vide (zero length). -n teste si elle est non vide. Utile pour vérifier si un paramètre a été passé."},
-
-  /* -- tri -- */
-  {type:"mcq",tag:"Scripting avancé",text:"Quelle commande bash trie les lignes d'un fichier ?",options:["sort fichier.txt","order fichier.txt","trie fichier.txt","sort -r fichier.txt"],correct:0,expl:"sort trie alphabétiquement. sort -r = inverse, sort -n = numérique, sort -u = sans doublons."},
-  {type:"mcq",tag:"Scripting avancé",text:"Comment trier des nombres du plus grand au plus petit ?",options:["sort -rn","sort -n","sort -r","sort -d"],correct:0,expl:"sort -n = tri numérique, -r = inverse (décroissant). Combinés : sort -rn trie numériquement du plus grand au plus petit."},
-
-  /* -- tar -- */
-  {type:"mcq",tag:"Archivage & compression",text:"Que fait : tar -czf archive.tar.gz dossier/ ?",options:["Crée une archive gzip du dossier","Extrait une archive gzip","Liste une archive","Compresse sans archiver"],correct:0,expl:"-c=créer, -z=gzip, -f=nom du fichier. Résultat : archive.tar.gz contenant tout le dossier."},
-  {type:"mcq",tag:"Archivage & compression",text:"Quelle option tar extrait le contenu d'une archive ?",options:["-x","-c","-t","-z"],correct:0,expl:"-x = extract (extraire). -c = create. -t = table (lister). -z = gzip. Exemple : tar -xzf archive.tar.gz"},
-  {type:"terminal",tag:"Archivage & compression",text:"Liste le contenu de l'archive backup.tar.gz sans l'extraire.",hint:"💡 tar -tzf ...",answers:["tar -tzf backup.tar.gz","tar -tf backup.tar.gz"],expl:"tar -tzf liste le contenu d'une archive gzip. -t = table of contents. Utile pour vérifier avant d'extraire."},
-
-  /* ══════════════════════════════════════════════
-     QUESTIONS TYPE EXAMEN — SCRIPTS COMPLETS
-  ══════════════════════════════════════════════ */
-
-  /* -- somme_3_meilleurs -- */
-  {type:"mcq",tag:"Exam — Scripts complets",text:"Dans somme_3_meilleurs.sh, comment vérifier qu'il y a exactement 5 paramètres et quitter avec code 1 si non ?",options:["if [ $# -ne 5 ]; then echo 'pb param'; exit 1; fi","if [ $1 -ne 5 ]; then echo 'pb param'; exit 1; fi","if [ $# -lt 5 ]; then echo 'pb param'; exit 0; fi","if [ argc != 5 ]; then echo 'pb param'; exit 1; fi"],correct:0,expl:"$# = nombre d'arguments. -ne = 'not equal'. exit 1 = quitte avec code d'erreur 1. C'est la vérification d'arguments standard."},
-  {type:"mcq",tag:"Exam — Scripts complets",text:"Dans somme_3_meilleurs.sh, comment vérifier si au moins un des 5 arguments est négatif ?",options:["for n in $@; do\n  if [ $n -lt 0 ]; then echo 'pb negatif'; exit 2; fi\ndone","if [ $@ -lt 0 ]","if [ $1 -lt 0 ] || [ $2 -lt 0 ]","for n in $*; if n<0"],correct:0,expl:"On boucle sur $@ (tous les args) et on teste chacun avec -lt 0. À la première valeur négative, on affiche le message et on exit 2."},
-  {type:"mcq",tag:"Exam — Scripts complets",text:"Pour calculer la somme des 3 plus grands parmi 5 entiers en bash, quelle approche est la plus simple ?",options:["Trier les 5 valeurs avec sort -n, prendre les 3 dernières avec tail -3, puis sommer","Comparer toutes les paires manuellement","Utiliser un tableau et une boucle de tri à bulles","Appeler python pour le tri"],correct:0,expl:"echo '4 9 1 7 3' | tr ' ' '\\n' | sort -n | tail -3 | paste -sd+ | bc — on trie, prend les 3 plus grands, somme."},
-
-  /* -- good.sh tableau -- */
-  {type:"mcq",tag:"Exam — Scripts complets",text:"Dans good.sh, pourquoi stocker les lignes contenant 'good' dans un tableau ?",options:["Pour lire le fichier une seule fois et accéder à n'importe quelle ligne ensuite","Pour trier les lignes automatiquement","Parce que grep ne fonctionne pas avec les fichiers","Pour économiser de la mémoire"],correct:0,expl:"L'énoncé impose de lire le fichier UNE SEULE FOIS. Un tableau bash stocke toutes les lignes en mémoire, permettant d'accéder à n'importe laquelle (index 0 = 1ère, -1 = dernière)."},
-  {type:"mcq",tag:"Exam — Scripts complets",text:"En bash, comment remplir un tableau avec toutes les lignes contenant 'good' depuis fichier.txt (en une lecture) ?",options:["tab=($(grep 'good' fichier.txt))","tab=grep good fichier.txt","read -a tab < fichier.txt","tab=[$(grep good fichier.txt)]"],correct:0,expl:"tab=($(grep 'good' fichier.txt)) — $() capture la sortie de grep, les parenthèses créent le tableau. Fonctionne si les lignes n'ont pas d'espaces (comme l'indique l'énoncé)."},
-  {type:"mcq",tag:"Exam — Scripts complets",text:"Dans good.sh, comment afficher la 6ème ligne contenant 'good' depuis le tableau tab ?",options:["echo ${tab[5]}","echo ${tab[6]}","echo $tab[5]","echo ${tab.5}"],correct:0,expl:"Les tableaux bash commencent à l'index 0. La 6ème ligne = index 5 = ${tab[5]}."},
-  {type:"mcq",tag:"Exam — Scripts complets",text:"Dans good.sh, comment afficher la DERNIÈRE ligne du tableau tab ?",options:["echo ${tab[-1]}","echo ${tab[last]}","echo ${tab[${#tab[@]}-1]}","echo $tab[-1]"],correct:0,expl:"${tab[-1]} accède au dernier élément (bash 4+). Équivalent : ${tab[${#tab[@]}-1]} qui calcule l'index du dernier."},
-
-  /* -- sauvegarde.sh -- */
-  {type:"mcq",tag:"Exam — Scripts complets",text:"Dans sauvegarde.sh, comment créer ./sauvegardes seulement s'il n'existe pas encore ?",options:["if [ ! -d ./sauvegardes ]; then mkdir ./sauvegardes; fi","mkdir ./sauvegardes","mkdir -p ./sauvegardes","if [ -f ./sauvegardes ]; then mkdir ./sauvegardes; fi"],correct:0,expl:"[ ! -d ... ] teste l'absence du dossier. On pourrait aussi utiliser mkdir -p qui ne fait rien si le dossier existe déjà. Mais l'énoncé demande aussi de gérer le cas où ./sauvegardes est un fichier."},
-  {type:"mcq",tag:"Exam — Scripts complets",text:"Dans sauvegarde.sh, comment construire le nouveau nom de fichier avec nom d'utilisateur et date ?",options:["nouveau=\"${fichier}_${nom}_$(date +%F)\"","nouveau=$fichier_$nom_$date","nouveau=\"$fichier\" + \"$nom\" + date","nouveau=${fichier}.${nom}.${date +%F}"],correct:0,expl:"Les accolades ${} délimitent le nom de variable. $(date +%F) capture la date au format YYYY-MM-DD. Les guillemets protègent les espaces éventuels."},
-  {type:"mcq",tag:"Exam — Scripts complets",text:"Dans sauvegarde.sh, comment copier fichier vers ./sauvegardes/nouveau_nom et tester si ça a réussi ?",options:["if cp \"$fichier\" \"./sauvegardes/$nouveau\"; then echo \"ok ...\"; fi","cp $fichier $nouveau && echo ok","copy $fichier $nouveau; if ok","cp \"$fichier\" \"$nouveau\" || echo ok"],correct:0,expl:"if cp ... then ... fi teste le code de retour de cp. Si 0 (succès), on entre dans le then. C'est le pattern standard de vérification de commande en bash."},
-
-  /* -- archive.sh -- */
-  {type:"mcq",tag:"Exam — Scripts complets",text:"Dans archive.sh, comment créer l'archive nommée NOM_DOSSIER_DATE.tar.gz dans ./backups ?",options:["tar -czf \"./backups/${dossier}_$(date +%F).tar.gz\" \"$dossier\"","tar -czf $dossier_$date.tar.gz $dossier","tar -czf backups/$dossier.tar.gz $dossier","gzip $dossier > backups/$dossier.tar.gz"],correct:0,expl:"tar -czf NOM DOSSIER : -c=créer, -z=gzip, -f=nom. $(date +%F) = date YYYY-MM-DD. Les guillemets protègent les noms avec espaces."},
-  {type:"mcq",tag:"Exam — Scripts complets",text:"Quelle ligne cron exécute /home/etudiant1/bin/archive.sh avec le paramètre 'projet' toutes les 2 minutes ?",options:["*/2 * * * * /home/etudiant1/bin/archive.sh projet","2 * * * * /home/etudiant1/bin/archive.sh projet","0 */2 * * * /home/etudiant1/bin/archive.sh projet","* 2 * * * /home/etudiant1/bin/archive.sh projet"],correct:0,expl:"*/2 dans le champ 'minute' = toutes les 2 minutes. Les autres champs * = n'importe quelle valeur."},
-
-  /* -- verifierNombre + puissance3 -- */
-  {type:"mcq",tag:"Exam — Scripts complets",text:"Dans la fonction verifierNombre, comment tester si $1 est vide (non fourni) ?",options:["[ -z \"$1\" ]","[ $1 -eq 0 ]","[ $# -eq 0 ]","[ -e $1 ]"],correct:0,expl:"-z teste si la chaîne est vide. [ -z \"$1\" ] est vrai si $1 n'existe pas ou est vide. Dans une fonction, $# est le nb d'args de la FONCTION."},
-  {type:"mcq",tag:"Exam — Scripts complets",text:"Dans verifierNombre, quel test valide que $1 est un entier (positif ou négatif) ?",options:["[[ \"$1\" =~ ^-?[0-9]+$ ]]","[ $1 -is-int ]","[[ $1 == [0-9]* ]]","expr $1 + 0"],correct:0,expl:"[[ =~ ]] permet les regex. ^-?[0-9]+$ : début, signe optionnel, un ou plusieurs chiffres, fin. Matche -5, 0, 42 mais pas 'abc' ni '3.14'."},
-  {type:"mcq",tag:"Exam — Scripts complets",text:"Dans puissance3.sh, après avoir appelé verifierNombre, comment récupérer son code de retour ?",options:["verifierNombre\ncode=$?","code=$(verifierNombre)","verifierNombre; code=$1","return verifierNombre"],correct:0,expl:"$? contient le code de retour de la DERNIÈRE commande exécutée. Il faut le capturer immédiatement après l'appel avec code=$?"},
-  {type:"mcq",tag:"Exam — Scripts complets",text:"Dans puissance3.sh, comment calculer et afficher n³ (la puissance 3 de $1) ?",options:["echo $(($1 * $1 * $1))","echo $1^3","echo $(pow $1 3)","echo $1 ** 3"],correct:0,expl:"$(( )) évalue les expressions arithmétiques. $1 * $1 * $1 = cube. En bash il n'y a pas d'opérateur ** natif dans [ ] standard."},
-  {type:"mcq",tag:"Exam — Scripts complets",text:"Dans puissance3.sh, si verifierNombre retourne un code != 0, que doit faire le script ?",options:["Quitter avec ce même code : exit $code","Afficher une erreur et continuer","Relancer verifierNombre","Ignorer et calculer quand même"],correct:0,expl:"L'énoncé dit : 'si ce code n'est pas 0, le script se termine avec ce même code'. Donc : verifierNombre ; code=$? ; if [ $code -ne 0 ]; then exit $code; fi"},
-
-  /* ══════════════════════════════════════════════
-     QUESTIONS SUPPLÉMENTAIRES NIVEAU AVANCÉ
-  ══════════════════════════════════════════════ */
-  {type:"mcq",tag:"Scripting avancé",text:"Que fait 2>&1 dans une commande ?",options:["Redirige stderr vers stdout (les deux dans le même flux)","Redirige stdout vers stderr","Duplique la sortie dans deux fichiers","Redirige vers le fichier numéro 2"],correct:0,expl:"2>&1 = redirige le descripteur 2 (stderr) vers le descripteur 1 (stdout). Utile : commande > out.txt 2>&1 pour tout capturer."},
-  {type:"mcq",tag:"Scripting avancé",text:"Quelle commande affiche les 10 dernières lignes d'un fichier log en temps réel ?",options:["tail -f log.txt","head -f log.txt","tail -10 log.txt","watch cat log.txt"],correct:0,expl:"tail -f (follow) affiche les nouvelles lignes en temps réel au fur et à mesure qu'elles sont ajoutées. Parfait pour surveiller un log."},
-  {type:"mcq",tag:"Scripting avancé",text:"Comment chercher récursivement le mot 'TODO' dans tous les fichiers .sh du répertoire courant ?",options:["grep -r 'TODO' *.sh","grep -r 'TODO' .","grep 'TODO' **/*.sh","find . -name '*.sh' | grep 'TODO'"],correct:0,expl:"grep -r cherche récursivement. On peut combiner : grep -r 'TODO' --include='*.sh' . pour filtrer sur l'extension."},
-  {type:"mcq",tag:"Scripting avancé",text:"Quelle commande remplace 'chat' par 'chien' dans un fichier texte.txt (en place) ?",options:["sed -i 's/chat/chien/g' texte.txt","replace chat chien texte.txt","awk '/chat/{print \"chien\"}' texte.txt","grep -r chat chien texte.txt"],correct:0,expl:"sed -i 's/motif/remplacement/g' fichier modifie le fichier directement. s = substitution, g = global (toutes les occurrences)."},
-  {type:"mcq",tag:"Scripting avancé",text:"Comment afficher seulement la 3ème colonne d'un fichier CSV séparé par des virgules ?",options:["cut -d',' -f3 fichier.csv","awk '{print $3}' fichier.csv","grep -f3 fichier.csv","col 3 fichier.csv"],correct:0,expl:"cut -d',' -f3 : -d = délimiteur, -f = field (colonne). Pour espace : cut -d' ' -f3. awk '{print $3}' fonctionne pour les espaces."},
-  {type:"mcq",tag:"Scripting avancé",text:"Que fait la commande find . -name '*.sh' -type f ?",options:["Cherche tous les fichiers .sh dans le répertoire courant et ses sous-dossiers","Cherche les dossiers nommés *.sh","Cherche .sh dans /etc","Affiche le type des fichiers .sh"],correct:0,expl:"find chemin -name pattern -type f cherche récursivement les fichiers (f=file, d=directory) correspondant au pattern."},
-  {type:"mcq",tag:"Scripting avancé",text:"Dans un script bash, comment lire un fichier ligne par ligne ?",options:["while IFS= read -r ligne; do ... done < fichier.txt","for ligne in fichier.txt; do ... done","read ligne < fichier.txt","cat fichier.txt | for ligne"],correct:0,expl:"while IFS= read -r ligne; do ... done < fichier.txt est la méthode standard. IFS= préserve les espaces, -r protège les backslashes."},
-  {type:"mcq",tag:"Scripting avancé",text:"Que fait la commande : chmod u+x,g-w fichier.sh ?",options:["Ajoute exec au propriétaire ET retire write au groupe","Donne tous les droits au propriétaire","Retire tous les droits au groupe","Ajoute exec à tout le monde"],correct:0,expl:"u=user(proprio), g=group, o=others. + ajoute, - retire. On peut combiner : u+x,g-w = deux modifications en une commande."},
-  {type:"mcq",tag:"Scripting avancé",text:"Comment tester si deux chaînes sont ÉGALES en bash ?",options:['[ "$a" = "$b" ]','[ $a -eq $b ]','[ $a == $b ]','[ "$a" equals "$b" ]'],correct:0,expl:'Pour les chaînes on utilise = (ou ==). Pour les entiers : -eq. Les guillemets autour des variables évitent les erreurs si elles sont vides.'},
-  {type:"mcq",tag:"Scripting avancé",text:"Quelle commande permet de voir l'espace disque utilisé ?",options:["df -h","du -h","ls -lh","free -h"],correct:0,expl:"df -h (disk free) affiche l'espace disponible par partition. du -h (disk usage) affiche l'espace utilisé par dossier. -h = human readable."},
+  {type:"mcq",tag:"Cron",text:"Quelle ligne cron exécute un script tous les jours à 3h00 ?",options:["0 3 * * * /chemin/script.sh","3 0 * * * /chemin/script.sh","* 3 * * * /chemin/script.sh","0 3 0 * * /chemin/script.sh"],correct:0,expl:"0 3 * * * = minute:0, heure:3, tous les jours → 03:00 chaque jour."}
 ];
 
 var questions=[],current=0,score=0,wrong=0,answered=false;
 function shuffle(a){return[].concat(a).sort(function(){return Math.random()-.5;});}
 
+function shuffleOptions(q){
+  if(q.type!=="mcq")return q;
+  var idx=[];for(var i=0;i<q.options.length;i++)idx.push(i);
+  idx=shuffle(idx);
+  var correctVal=q.options[q.correct];
+  var newOpts=idx.map(function(i){return q.options[i];});
+  var newCorrect=newOpts.indexOf(correctVal);
+  return {type:q.type,tag:q.tag,text:q.text,options:newOpts,correct:newCorrect,expl:q.expl};
+}
+
+function toggleHint(el){
+  el.classList.toggle("open");
+  el.nextElementSibling.classList.toggle("open");
+}
+
 function startQuiz(){
-  questions=shuffle(ALL_Q);
+  questions=shuffle(ALL_Q).map(shuffleOptions);
   current=0;score=0;wrong=0;
   document.getElementById("nav-total").textContent=questions.length;
   document.getElementById("start-area").style.display="none";
