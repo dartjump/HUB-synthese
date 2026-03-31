@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Linux & Bash — Prépa Examen</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Sora:wght@400;500;600;700&display=swap');
+:root{--bg:#0f1117;--bg2:#161b27;--bg3:#1e2535;--border:#2a3147;--accent:#4f8ef7;--accent2:#6ee7b7;--danger:#f87171;--success:#34d399;--warning:#fbbf24;--text:#e2e8f0;--text2:#94a3b8;--text3:#4b5563;--mono:'JetBrains Mono',monospace;--sans:'Sora',sans-serif;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(79,142,247,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(79,142,247,.04) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
+nav{position:sticky;top:0;z-index:100;background:rgba(15,17,23,.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 1.5rem;height:52px;display:flex;align-items:center;justify-content:space-between;}
+.nav-logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px;}
+.dot-pulse{width:8px;height:8px;background:var(--accent);border-radius:50%;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.5;transform:scale(.8);}}
+.score-chip{background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:4px 14px;font-family:var(--mono);font-size:13px;}
+.score-chip span{color:var(--accent2);font-weight:500;}
+.hero{position:relative;z-index:1;text-align:center;padding:3.5rem 1rem 2.5rem;}
+.hero-tag{display:inline-block;background:rgba(79,142,247,.1);border:1px solid rgba(79,142,247,.25);color:var(--accent);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:4px 14px;border-radius:20px;margin-bottom:1.25rem;}
+.hero h1{font-size:clamp(1.8rem,5vw,3.2rem);font-weight:700;letter-spacing:-.03em;line-height:1.1;margin-bottom:1rem;}
+.hero h1 .hl{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero p{color:var(--text2);font-size:15px;line-height:1.6;max-width:520px;margin:0 auto 2rem;}
+.btn-start{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:13px 30px;font-size:15px;font-weight:600;font-family:var(--sans);cursor:pointer;transition:transform .15s,box-shadow .15s;box-shadow:0 0 30px rgba(79,142,247,.3);}
+.btn-start:hover{transform:translateY(-2px);box-shadow:0 0 40px rgba(79,142,247,.45);}
+.stats{display:flex;justify-content:center;gap:1rem;flex-wrap:wrap;margin-top:2.5rem;}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:.9rem 1.4rem;text-align:center;min-width:100px;}
+.stat-card .val{font-size:22px;font-weight:700;font-family:var(--mono);color:var(--accent);}
+.stat-card .lbl{font-size:11px;color:var(--text2);margin-top:2px;}
+#quiz-area{position:relative;z-index:1;display:none;max-width:760px;margin:0 auto;padding:0 1rem 4rem;}
+.progress-wrap{margin-bottom:1.75rem;}
+.progress-meta{display:flex;justify-content:space-between;font-size:12px;color:var(--text2);margin-bottom:7px;}
+.progress-track{height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px;transition:width .5s cubic-bezier(.4,0,.2,1);}
+.q-card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:1.6rem;margin-bottom:1rem;animation:slideUp .3s ease;}
+@keyframes slideUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+.q-header{display:flex;align-items:center;gap:10px;margin-bottom:.9rem;}
+.q-tag{background:rgba(79,142,247,.1);border:1px solid rgba(79,142,247,.2);color:var(--accent);font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:3px 10px;border-radius:20px;}
+.q-num{font-size:11px;color:var(--text3);font-family:var(--mono);margin-left:auto;}
+.q-text{font-size:16px;line-height:1.6;color:var(--text);margin-bottom:1.1rem;font-weight:500;}
+.q-hint{font-size:13px;color:var(--text2);background:rgba(251,191,36,.06);border-left:3px solid rgba(251,191,36,.4);padding:8px 12px;border-radius:0 8px 8px 0;margin-bottom:1.1rem;font-style:italic;}
+.terminal{background:#0d1117;border:1px solid #2d3748;border-radius:10px;overflow:hidden;margin-bottom:1rem;font-family:var(--mono);}
+.term-tb{background:#161b22;border-bottom:1px solid #2d3748;padding:7px 12px;display:flex;align-items:center;gap:6px;}
+.dr{width:10px;height:10px;border-radius:50%;background:#ff5f56;}
+.dy{width:10px;height:10px;border-radius:50%;background:#ffbd2e;}
+.dg{width:10px;height:10px;border-radius:50%;background:#27c93f;}
+.term-title{font-size:11px;color:#6b7280;margin-left:8px;}
+.term-body{padding:12px 14px;}
+.term-row{display:flex;align-items:center;gap:4px;}
+.prompt-g{color:#4ade80;font-size:13px;white-space:nowrap;}
+.cmd-input{background:none;border:none;outline:none;color:#e2e8f0;font-family:var(--mono);font-size:13px;flex:1;caret-color:#a78bfa;width:100%;}
+.term-out{margin-top:9px;font-size:12px;line-height:1.6;white-space:pre-wrap;}
+.term-ok{color:#34d399;}.term-err{color:#f87171;}
+.mcq-grid{display:flex;flex-direction:column;gap:7px;margin-bottom:1rem;}
+.mcq-btn{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:11px 15px;font-size:13px;color:var(--text);cursor:pointer;text-align:left;font-family:var(--sans);transition:border-color .15s,background .15s,transform .1s;line-height:1.5;}
+.mcq-btn:hover:not(:disabled){border-color:var(--accent);background:rgba(79,142,247,.05);transform:translateX(3px);}
+.mcq-btn.correct{background:rgba(52,211,153,.1);border-color:var(--success);color:var(--success);}
+.mcq-btn.wrong{background:rgba(248,113,113,.1);border-color:var(--danger);color:var(--danger);}
+.mcq-btn.reveal{background:rgba(52,211,153,.1);border-color:var(--success);color:var(--success);}
+.feedback{border-radius:10px;padding:11px 15px;font-size:13px;line-height:1.6;display:none;margin-bottom:1rem;}
+.feedback.show{display:block;animation:fadeIn .2s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+.feedback.ok{background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.25);color:var(--success);}
+.feedback.ko{background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.25);color:#fca5a5;}
+.feedback strong{display:block;margin-bottom:4px;font-size:14px;}
+code{font-family:var(--mono);background:rgba(255,255,255,.07);padding:2px 6px;border-radius:4px;font-size:12px;}
+.actions{display:flex;gap:8px;flex-wrap:wrap;}
+.btn-check{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:9px 20px;font-size:13px;font-weight:600;font-family:var(--sans);cursor:pointer;transition:transform .1s,opacity .1s;}
+.btn-check:hover{opacity:.9;transform:translateY(-1px);}
+.btn-next{background:var(--bg3);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:9px 20px;font-size:13px;font-weight:500;font-family:var(--sans);cursor:pointer;display:none;transition:border-color .15s,background .15s;}
+.btn-next.show{display:inline-block;animation:fadeIn .2s ease;}
+.btn-next:hover{border-color:var(--accent2);background:rgba(110,231,183,.05);}
+#result-area{position:relative;z-index:1;display:none;max-width:640px;margin:0 auto;padding:2rem 1rem 4rem;text-align:center;animation:slideUp .4s ease;}
+.result-card{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:2.5rem 2rem;}
+.result-emoji{font-size:60px;margin-bottom:1rem;}
+.result-title{font-size:26px;font-weight:700;letter-spacing:-.02em;margin-bottom:.4rem;}
+.result-sub{color:var(--text2);font-size:14px;margin-bottom:2rem;}
+.result-score-big{font-size:68px;font-weight:700;font-family:var(--mono);background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;margin-bottom:.2rem;}
+.result-score-lbl{font-size:13px;color:var(--text2);font-family:var(--mono);margin-bottom:2rem;}
+.result-stats{display:flex;justify-content:center;gap:2rem;flex-wrap:wrap;margin-bottom:2rem;}
+.rs .v{font-size:22px;font-weight:700;font-family:var(--mono);}
+.rs .v.g{color:var(--success);}.rs .v.r{color:var(--danger);}.rs .v.w{color:var(--warning);}
+.rs .l{font-size:11px;color:var(--text2);margin-top:2px;}
+.btn-restart{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:13px 30px;font-size:14px;font-weight:600;font-family:var(--sans);cursor:pointer;transition:transform .15s,box-shadow .15s;box-shadow:0 0 30px rgba(79,142,247,.3);}
+.btn-restart:hover{transform:translateY(-2px);box-shadow:0 0 40px rgba(79,142,247,.45);}
+footer{position:relative;z-index:1;text-align:center;padding:1.25rem;color:var(--text3);font-size:11px;border-top:1px solid var(--border);}
+@media(max-width:600px){.hero h1{font-size:1.7rem;}.q-card{padding:1.2rem;}.btn-start,.btn-restart{width:100%;}}
+
+/* ── Hub back button ── */
+.hub-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(79,142,247,.1);
+  border: 1px solid rgba(79,142,247,.25);
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .05em;
+  color: var(--accent);
+  text-decoration: none;
+  transition: background .2s;
+  font-family: var(--sans);
+}
+.hub-back:hover { background: rgba(79,142,247,.2); }
+
+</style>
+</head>
+<body>
+<nav>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <a href="index.html" class="hub-back">← Hub</a>
+    <div class="nav-logo"><span class="dot-pulse"></span>LinuxQuiz</div>
+  </div>
+  <div class="score-chip">Score : <span id="nav-score">0</span> / <span id="nav-total">0</span></div>
+</nav>
+<div id="start-area">
+  <div class="hero">
+    <div class="hero-tag">Prépa examen · 1ère BAC · OS</div>
+    <h1>Quiz <span class="hl">Linux &amp; Bash</span><br>comme à l'exam</h1>
+    <p>60 questions tirées de tes TPs — commandes Linux, scripting bash, droits, arborescence, redirections, processus, cron...</p>
+    <button class="btn-start" onclick="startQuiz()">Commencer le quiz →</button>
+    <div class="stats">
+      <div class="stat-card"><div class="val">60</div><div class="lbl">questions</div></div>
+      <div class="stat-card"><div class="val">~25</div><div class="lbl">minutes</div></div>
+      <div class="stat-card"><div class="val">8</div><div class="lbl">thèmes</div></div>
+      <div class="stat-card"><div class="val">&#8734;</div><div class="lbl">tentatives</div></div>
+    </div>
+  </div>
+</div>
+<div id="quiz-area">
+  <div class="progress-wrap">
+    <div class="progress-meta">
+      <span id="q-counter">Question 1 / 60</span>
+      <span id="q-cat-label">—</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+  </div>
+  <div id="question-slot"></div>
+</div>
+<div id="result-area">
+  <div class="result-card">
+    <div class="result-emoji" id="r-emoji">🎉</div>
+    <div class="result-title" id="r-title">Résultat</div>
+    <div class="result-sub" id="r-sub">Voici ton score :</div>
+    <div class="result-score-big" id="r-score">0</div>
+    <div class="result-score-lbl" id="r-lbl">/ 60 points</div>
+    <div class="result-stats">
+      <div class="rs"><div class="v g" id="r-ok">0</div><div class="l">Correctes</div></div>
+      <div class="rs"><div class="v r" id="r-ko">0</div><div class="l">Incorrectes</div></div>
+      <div class="rs"><div class="v w" id="r-pct">0%</div><div class="l">Réussite</div></div>
+    </div>
+    <button class="btn-restart" onclick="restartQuiz()">Recommencer &#8634;</button>
+  </div>
+</div>
+<footer>LinuxQuiz &middot; basé sur tes cours OS 1ère BAC</footer>
+<script>
+var ALL_Q=[
+  {type:"terminal",tag:"Commandes de base",text:"Affiche le répertoire courant (le chemin complet).",hint:"💡 pwd = print working directory",answers:["pwd"],expl:"pwd (Print Working Directory) affiche le chemin absolu. Ex: /home/etudiant"},
+  {type:"terminal",tag:"Commandes de base",text:"Affiche le contenu du répertoire courant.",hint:"💡 ls = list",answers:["ls","ls -l","ls -a","ls -la","ls -al"],expl:"ls liste le contenu. -l = détails, -a = fichiers cachés (commençant par .), -la = tout."},
+  {type:"terminal",tag:"Commandes de base",text:"Affiche le nom de l'utilisateur connecté.",hint:"💡 En anglais 'who am I' en un seul mot",answers:["whoami","logname"],expl:"whoami affiche le nom de l'utilisateur courant. id donne uid, gid et groupes."},
+  {type:"terminal",tag:"Commandes de base",text:"Affiche la date et l'heure actuelles.",hint:"💡 Commande de 4 lettres",answers:["date"],expl:"date affiche la date/heure système. date +%F donne 2025-04-06."},
+  {type:"terminal",tag:"Commandes de base",text:"Efface l'écran du terminal.",hint:"💡 cl...r",answers:["clear","reset"],expl:"clear efface l'écran. reset réinitialise le terminal. Raccourci : Ctrl+L."},
+  {type:"terminal",tag:"Commandes de base",text:"Affiche le manuel de la commande ls.",hint:"💡 man = manual",answers:["man ls"],expl:"man ls ouvre le manuel de ls. q pour quitter."},
+  {type:"mcq",tag:"Commandes de base",text:"Que signifie l'acronyme pwd ?",options:["Print Working Directory","Print Windows Directory","Path Working Directory","Personal Work Directory"],correct:0,expl:"pwd = Print Working Directory. Affiche le chemin absolu du répertoire courant."},
+  {type:"terminal",tag:"Commandes de base",text:"Affiche tous les utilisateurs connectés au système.",hint:"💡 who (commande courte)",answers:["who","w"],expl:"who liste les utilisateurs connectés. w donne encore plus de détails."},
+  {type:"terminal",tag:"Commandes de base",text:"Affiche le contenu du fichier notes.txt.",hint:"💡 cat = concatenate",answers:["cat notes.txt"],expl:"cat affiche le contenu. Pour les gros fichiers : less (q pour quitter)."},
+  {type:"terminal",tag:"Commandes de base",text:"Affiche les 10 premières lignes de /etc/passwd.",hint:"💡 head = tête = premières lignes",answers:["head /etc/passwd","head -10 /etc/passwd","head -n 10 /etc/passwd"],expl:"head affiche les premières lignes (10 par défaut). tail affiche les dernières."},
+  {type:"terminal",tag:"Navigation",text:"Déplace-toi dans le dossier /home/etudiant/tp",hint:"💡 cd = change directory",answers:["cd /home/etudiant/tp"],expl:"cd chemin absolu (commence par /). cd chemin_relatif pour un chemin depuis le répertoire courant."},
+  {type:"terminal",tag:"Navigation",text:"Remonte d'un niveau dans l'arborescence.",hint:"💡 .. = dossier parent",answers:["cd .."],expl:"cd .. remonte d'un niveau. cd ../.. remonte de deux. cd - revient au répertoire précédent."},
+  {type:"terminal",tag:"Navigation",text:"Reviens dans ton répertoire personnel (home).",hint:"💡 Il existe un raccourci avec cd",answers:["cd ~","cd","cd $HOME"],expl:"cd ~ ou juste cd revient dans /home/ton_nom. ~ est un alias pour $HOME."},
+  {type:"terminal",tag:"Navigation",text:"Va à la racine du système.",hint:"💡 La racine en Linux c'est le /",answers:["cd /"],expl:"cd / va à la racine. Toute l'arborescence Linux part de /."},
+  {type:"mcq",tag:"Navigation",text:"Quelle commande affiche le contenu détaillé (permissions, taille...) ?",options:["ls -l","ls -a","ls -d","ls -r"],correct:0,expl:"ls -l (long format) affiche permissions, propriétaire, groupe, taille, date."},
+  {type:"mcq",tag:"Navigation",text:"Dans un chemin Linux, que représente ~ (tilde) ?",options:["Le répertoire personnel de l'utilisateur","La racine du système","Le répertoire courant","Le répertoire parent"],correct:0,expl:"~ est un raccourci pour /home/nom_utilisateur."},
+  {type:"terminal",tag:"Gestion des fichiers",text:"Crée un fichier vide nommé test.txt.",hint:"💡 touch crée un fichier vide",answers:["touch test.txt"],expl:"touch test.txt crée un fichier vide. S'il existe, met à jour sa date de modification."},
+  {type:"terminal",tag:"Gestion des fichiers",text:"Crée un dossier nommé projets.",hint:"💡 mk... dir...",answers:["mkdir projets"],expl:"mkdir projets crée le dossier. mkdir -p a/b/c crée toute la hiérarchie."},
+  {type:"terminal",tag:"Gestion des fichiers",text:"Renomme le fichier ancien.txt en nouveau.txt.",hint:"💡 mv sert à déplacer ET renommer",answers:["mv ancien.txt nouveau.txt"],expl:"mv (move) déplace ou renomme. mv ancien.txt nouveau.txt = renommer dans le même dossier."},
+  {type:"terminal",tag:"Gestion des fichiers",text:"Copie le fichier notes.txt vers /tmp/",hint:"💡 cp = copy",answers:["cp notes.txt /tmp/","cp notes.txt /tmp"],expl:"cp source destination. Pour copier un dossier entier : cp -r dossier/ destination/"},
+  {type:"terminal",tag:"Gestion des fichiers",text:"Supprime le fichier inutile.txt.",hint:"💡 rm = remove. Pas de corbeille !",answers:["rm inutile.txt"],expl:"rm supprime définitivement. rm -r pour un dossier. rm -rf force sans confirmation."},
+  {type:"terminal",tag:"Gestion des fichiers",text:"Crée trois fichiers en une commande : a.txt, b.txt et c.txt.",hint:"💡 touch accepte plusieurs arguments",answers:["touch a.txt b.txt c.txt"],expl:"touch accepte plusieurs noms. Aussi possible : touch {a,b,c}.txt"},
+  {type:"mcq",tag:"Gestion des fichiers",text:"Quelle commande copie un dossier entier avec tout son contenu ?",options:["cp -r dossier/ destination/","cp dossier/ destination/","copy -r dossier/ destination/","mv -r dossier/ destination/"],correct:0,expl:"cp -r (récursif) copie un dossier et tout son contenu. Sans -r, cp refuse de copier un dossier."},
+  {type:"terminal",tag:"Gestion des fichiers",text:"Déplace le dossier archives/ vers /tmp/",hint:"💡 mv fonctionne aussi pour les dossiers",answers:["mv archives/ /tmp/","mv archives /tmp/","mv archives /tmp"],expl:"mv fonctionne pour fichiers et dossiers. Pas besoin de -r contrairement à cp."},
+  {type:"mcq",tag:"Arborescence Linux",text:"Quel dossier contient les fichiers de configuration du système ?",options:["/etc","/bin","/home","/var"],correct:0,expl:"/etc = configuration. /bin = commandes essentielles. /home = répertoires utilisateurs."},
+  {type:"mcq",tag:"Arborescence Linux",text:"Où se trouvent les répertoires personnels des utilisateurs ?",options:["/home","/usr","/etc","/root"],correct:0,expl:"/home contient /home/alice, /home/bob... L'admin root a son home dans /root."},
+  {type:"mcq",tag:"Arborescence Linux",text:"Quel dossier contient les commandes essentielles (ls, cp, mv...) ?",options:["/bin","/etc","/lib","/usr"],correct:0,expl:"/bin = commandes essentielles. /usr/bin = commandes supplémentaires. /sbin = commandes admin."},
+  {type:"mcq",tag:"Arborescence Linux",text:"Quel dossier est utilisé pour les fichiers temporaires ?",options:["/tmp","/var","/cache","/temp"],correct:0,expl:"/tmp = fichiers temporaires. Souvent vidé au redémarrage. Tout le monde peut y écrire."},
+  {type:"mcq",tag:"Arborescence Linux",text:"Que contient le fichier /etc/passwd ?",options:["La liste des utilisateurs","Les mots de passe chiffrés","La configuration réseau","Les variables d'environnement"],correct:0,expl:"/etc/passwd liste tous les utilisateurs. Format : nom:x:uid:gid:info:home:shell."},
+  {type:"terminal",tag:"Arborescence Linux",text:"Affiche le contenu du fichier /etc/passwd.",hint:"💡 cat affiche le contenu d'un fichier",answers:["cat /etc/passwd"],expl:"cat /etc/passwd affiche tous les utilisateurs. Chaque ligne : nom:x:uid:gid:commentaire:home:shell"},
+  {type:"mcq",tag:"Droits Linux",text:"Que signifie rwxr-xr-- ?",options:["Proprio: tout | Groupe: lire+exec | Autres: lire","Proprio: lire | Groupe: tout | Autres: rien","Proprio: tout | Groupe: tout | Autres: tout","Proprio: lire+écrire | Groupe: rien | Autres: exec"],correct:0,expl:"rwx=7 (proprio tout), r-x=5 (groupe: lire+exec), r--=4 (autres: lire). r=4, w=2, x=1."},
+  {type:"terminal",tag:"Droits Linux",text:"Rends exécutable le fichier monscript.sh.",hint:"💡 chmod +x ...",answers:["chmod +x monscript.sh","chmod a+x monscript.sh","chmod 755 monscript.sh"],expl:"chmod +x ajoute l'exécution pour tous. 755 = rwxr-xr-x."},
+  {type:"mcq",tag:"Droits Linux",text:"Que donne chmod 755 ?",options:["rwxr-xr-x","rwxrwxrwx","rw-r--r--","r-xr-xr-x"],correct:0,expl:"7=rwx, 5=r-x, 5=r-x. Typique pour un script ou exécutable."},
+  {type:"mcq",tag:"Droits Linux",text:"Que donne chmod 644 ?",options:["rw-r--r--","rwxr-xr-x","rw-rw-rw-","r--r--r--"],correct:0,expl:"6=rw-, 4=r--, 4=r-- → rw-r--r--. Typique pour un fichier texte."},
+  {type:"mcq",tag:"Droits Linux",text:"Quelle valeur octale donne rwxrwxrwx ?",options:["777","755","644","666"],correct:0,expl:"777 = rwxrwxrwx. 7 = r(4)+w(2)+x(1). Très permissif, à éviter !"},
+  {type:"terminal",tag:"Droits Linux",text:"Donne les droits 600 au fichier secret.txt.",hint:"💡 chmod valeur fichier",answers:["chmod 600 secret.txt"],expl:"600 = rw------- : seul le propriétaire peut lire et écrire. Idéal pour fichiers sensibles."},
+  {type:"mcq",tag:"Droits Linux",text:"Quelle commande change le propriétaire d'un fichier ?",options:["chown","chmod","chgrp","chuser"],correct:0,expl:"chown change le propriétaire. chown alice fichier.txt. Nécessite sudo."},
+  {type:"terminal",tag:"Droits Linux",text:"Affiche les permissions détaillées du fichier script.sh.",hint:"💡 ls avec l'option détails",answers:["ls -l script.sh","ls -la script.sh"],expl:"ls -l affiche permissions, propriétaire, groupe, taille, date."},
+  {type:"mcq",tag:"Redirections",text:"Que fait : ls > liste.txt ?",options:["Redirige la sortie dans liste.txt (écrase)","Ajoute à la fin de liste.txt","Lit liste.txt et le donne à ls","Affiche liste.txt à l'écran"],correct:0,expl:"> redirige stdout vers un fichier en l'ÉCRASANT. >> ajoute sans écraser."},
+  {type:"mcq",tag:"Redirections",text:"Comment ajouter la sortie à la FIN d'un fichier sans écraser ?",options:["commande >> fichier","commande > fichier","commande < fichier","commande | fichier"],correct:0,expl:">> ajoute en fin de fichier. > écrase. Exemple : echo 'log' >> journal.txt"},
+  {type:"mcq",tag:"Redirections",text:"Que fait le pipe | dans : ls | grep txt ?",options:["Envoie la sortie de ls à grep","Écrit la sortie dans grep","Exécute en parallèle","Redirige les erreurs"],correct:0,expl:"| connecte stdout d'une commande à stdin de la suivante. ls | grep txt filtre les résultats."},
+  {type:"terminal",tag:"Redirections",text:"Redirige les erreurs de ls /inexistant vers erreurs.txt.",hint:"💡 2> redirige le flux d'erreur",answers:["ls /inexistant 2> erreurs.txt"],expl:"2> redirige stderr. > redirige stdout. 2>&1 redirige stderr vers stdout."},
+  {type:"mcq",tag:"Redirections",text:"Que fait : cat fichier.txt | wc -l ?",options:["Compte le nombre de lignes","Compte les mots","Affiche les 10 premières lignes","Trie le fichier"],correct:0,expl:"wc -l compte les lignes. wc -w compte les mots. wc -c compte les caractères."},
+  {type:"terminal",tag:"Redirections",text:"Cherche le mot 'erreur' dans le fichier log.txt.",hint:"💡 grep cherche un motif dans un fichier",answers:["grep erreur log.txt","grep 'erreur' log.txt"],expl:"grep motif fichier affiche les lignes contenant le motif. -i = insensible casse. -r = récursif."},
+  {type:"mcq",tag:"Scripting bash",text:"Quelle est la première ligne obligatoire d'un script bash ?",options:["#!/bin/bash","# bash script","bash start","@bash"],correct:0,expl:"Le shebang #!/bin/bash indique l'interpréteur. Sans lui, le script peut ne pas s'exécuter."},
+  {type:"terminal",tag:"Scripting bash",text:"Affiche la valeur de la variable nom.",hint:"💡 En bash, $ devant le nom de variable",answers:["echo $nom","echo ${nom}"],expl:"echo $nom ou echo ${nom} affiche la valeur. Les accolades sont utiles pour concaténer."},
+  {type:"mcq",tag:"Scripting bash",text:"Comment déclarer une variable age avec la valeur 20 ?",options:["age=20","age = 20","var age=20","set age=20"],correct:0,expl:"age=20 (sans espaces autour du =). Les espaces sont INTERDITS autour du = en bash."},
+  {type:"terminal",tag:"Scripting bash",text:"Lis une entrée utilisateur dans la variable prenom.",hint:"💡 La commande pour lire une entrée...",answers:["read prenom","read -p '' prenom"],expl:"read prenom attend la saisie. read -p 'Prénom : ' prenom affiche un message avant."},
+  {type:"mcq",tag:"Scripting bash",text:"Quelle syntaxe est correcte pour un if en bash ?",options:["if [ $a -eq $b ]; then\necho ok\nfi","if ($a == $b) { echo ok }","if $a = $b then echo ok end","if [ $a=$b ] { echo ok }"],correct:0,expl:"if [ condition ]; then ... fi. Les espaces autour de [ ] sont OBLIGATOIRES."},
+  {type:"mcq",tag:"Scripting bash",text:"En bash, quel opérateur compare deux entiers (égalité) dans [ ] ?",options:["-eq","==","=","eq"],correct:0,expl:"-eq = égal, -ne = pas égal, -lt = inférieur, -gt = supérieur. Pour chaînes : = et !="},
+  {type:"mcq",tag:"Scripting bash",text:"Comment tester si un fichier existe en bash ?",options:["if [ -f fichier.txt ]","if [ -e fichier.txt ]","if exists fichier.txt","if file fichier.txt"],correct:0,expl:"-f = fichier régulier. -e = existe (fichier ou dossier). -d = dossier. -r = lisible. -x = exécutable."},
+  {type:"mcq",tag:"Scripting bash",text:"Que contient $# dans un script bash ?",options:["Le nombre d'arguments","Le premier argument","Tous les arguments","Le nom du script"],correct:0,expl:"$# = nombre d'arguments. $0 = nom du script. $1 = 1er arg. $@ = tous les args."},
+  {type:"mcq",tag:"Boucles & conditions",text:"Quelle boucle parcourt une liste de fichiers en bash ?",options:["for fichier in *.txt; do ... done","while fichier in *.txt","loop fichier in *.txt","foreach fichier in *.txt"],correct:0,expl:"for est idéal pour parcourir une liste. for fichier in *.txt; do echo $fichier; done"},
+  {type:"mcq",tag:"Boucles & conditions",text:"Quel mot-clé termine un bloc if en bash ?",options:["fi","end","endif","done"],correct:0,expl:"fi termine le if (if à l'envers !). done termine while et for. esac termine case."},
+  {type:"terminal",tag:"Boucles & conditions",text:"Génère la séquence de nombres de 1 à 10.",hint:"💡 seq génère une séquence",answers:["seq 1 10","seq 1 1 10"],expl:"seq 1 10 génère 1 2 ... 10. seq 1 2 10 = 1 3 5 7 9. Utilisé dans for : for i in $(seq 1 10)"},
+  {type:"mcq",tag:"Boucles & conditions",text:"Quel mot-clé sort immédiatement d'une boucle ?",options:["break","exit","quit","continue"],correct:0,expl:"break sort de la boucle. continue passe à l'itération suivante. exit quitte tout le script."},
+  {type:"mcq",tag:"Fonctions bash",text:"Quelle syntaxe déclare une fonction en bash ?",options:["maFonction() { ... }","def maFonction() { ... }","function: maFonction { ... }","maFonction: { ... }"],correct:0,expl:"maFonction() { } est la syntaxe courante. function maFonction { } est aussi valide."},
+  {type:"terminal",tag:"Fonctions bash",text:"Appelle une fonction nommée dire_bonjour.",hint:"💡 En bash, appeler = juste écrire le nom",answers:["dire_bonjour"],expl:"En bash, on appelle une fonction en écrivant simplement son nom, sans parenthèses."},
+  {type:"mcq",tag:"Fonctions bash",text:"Dans une fonction bash, que désigne $1 ?",options:["Le 1er paramètre de la fonction","Le 1er paramètre du script global","Le nom de la fonction","Le nom du script"],correct:0,expl:"Dans une fonction, $1, $2... = paramètres de LA FONCTION, pas du script."},
+  {type:"terminal",tag:"Utilisateurs",text:"Affiche les infos de l'utilisateur courant (uid, gid, groupes).",hint:"💡 Commande de 2 lettres",answers:["id"],expl:"id affiche uid (user id), gid (group id) et tous les groupes de l'utilisateur."},
+  {type:"mcq",tag:"Utilisateurs",text:"Quelle commande crée un nouvel utilisateur ?",options:["useradd alice","adduser alice","newuser alice","createuser alice"],correct:0,expl:"useradd alice crée l'utilisateur. adduser est plus interactif sur Debian/Ubuntu. Les deux nécessitent sudo."},
+  {type:"terminal",tag:"Processus",text:"Affiche les processus en cours d'exécution.",hint:"💡 ps ou top",answers:["ps","ps aux","ps -ef","top","htop"],expl:"ps liste les processus. ps aux = tous avec détails. top = vue dynamique temps réel."},
+  {type:"mcq",tag:"Processus",text:"Que fait & à la fin d'une commande comme : ./script.sh & ?",options:["Lance en arrière-plan","Lance en superutilisateur","Lance en boucle","Lance en mode silencieux"],correct:0,expl:"& exécute en background, libérant le terminal. jobs liste les jobs. fg ramène au premier plan."},
+  {type:"mcq",tag:"Cron",text:"Quelle commande édite la crontab de l'utilisateur courant ?",options:["crontab -e","cron -e","crontab edit","vi /etc/crontab"],correct:0,expl:"crontab -e ouvre l'éditeur. crontab -l liste les tâches. crontab -r supprime tout."},
+  {type:"mcq",tag:"Cron",text:"Que signifie * dans un champ cron ?",options:["N'importe quelle valeur","Jamais","Une seule fois","Toutes les 2 unités"],correct:0,expl:"* = toutes les valeurs. * * * * * commande = exécute la commande chaque minute."},
+  {type:"mcq",tag:"Cron",text:"Quelle ligne cron exécute un script tous les jours à 3h00 ?",options:["0 3 * * * /chemin/script.sh","3 0 * * * /chemin/script.sh","* 3 * * * /chemin/script.sh","0 3 0 * * /chemin/script.sh"],correct:0,expl:"0 3 * * * = minute:0, heure:3, tous les jours → 03:00 chaque jour."}
+];
+
+var questions=[],current=0,score=0,wrong=0,answered=false;
+function shuffle(a){return[].concat(a).sort(function(){return Math.random()-.5;});}
+
+function startQuiz(){
+  questions=shuffle(ALL_Q);
+  current=0;score=0;wrong=0;
+  document.getElementById("nav-total").textContent=questions.length;
+  document.getElementById("start-area").style.display="none";
+  document.getElementById("quiz-area").style.display="block";
+  renderQuestion();
+}
+
+function updateNav(){document.getElementById("nav-score").textContent=score;}
+
+function renderQuestion(){
+  if(current>=questions.length){showResult();return;}
+  answered=false;
+  var q=questions[current];
+  var pct=(current/questions.length)*100;
+  document.getElementById("progress-fill").style.width=pct+"%";
+  document.getElementById("q-counter").textContent="Question "+(current+1)+" / "+questions.length;
+  document.getElementById("q-cat-label").textContent=q.tag;
+  var slot=document.getElementById("question-slot");
+  var num=String(current+1);while(num.length<2)num="0"+num;
+
+  if(q.type==="terminal"){
+    slot.innerHTML='<div class="q-card"><div class="q-header"><span class="q-tag">'+q.tag+'</span><span class="q-num">#'+num+'</span></div><div class="q-text">'+q.text+'</div><div class="q-hint">'+q.hint+'</div><div class="terminal"><div class="term-tb"><span class="dr"></span><span class="dy"></span><span class="dg"></span><span class="term-title">etudiant@ubuntu:~</span></div><div class="term-body"><div class="term-row"><span class="prompt-g">etudiant@ubuntu:~$&nbsp;</span><input class="cmd-input" id="cmd-input" type="text" placeholder="tape ta commande..." autocomplete="off" spellcheck="false"/></div><div class="term-out" id="term-out"></div></div></div><div class="feedback" id="feedback"></div><div class="actions"><button class="btn-check" onclick="checkTerminal()">Vérifier ↵</button><button class="btn-next" id="btn-next" onclick="nextQ()">Suivant →</button></div></div>';
+    var inp=document.getElementById("cmd-input");
+    inp.addEventListener("keydown",function(e){if(e.key==="Enter")checkTerminal();});
+    setTimeout(function(){inp.focus();},50);
+  } else {
+    var opts=q.options.map(function(o,i){return'<button class="mcq-btn" id="opt-'+i+'" onclick="checkMCQ('+i+')">'+o.replace(/\n/g,'<br>')+'</button>';}).join('');
+    slot.innerHTML='<div class="q-card"><div class="q-header"><span class="q-tag">'+q.tag+'</span><span class="q-num">#'+num+'</span></div><div class="q-text">'+q.text+'</div><div class="mcq-grid">'+opts+'</div><div class="feedback" id="feedback"></div><div class="actions"><button class="btn-next" id="btn-next" onclick="nextQ()">Suivant →</button></div></div>';
+  }
+}
+
+function checkTerminal(){
+  if(answered)return;
+  var q=questions[current];
+  var inp=document.getElementById("cmd-input");
+  var val=inp.value.trim();
+  var out=document.getElementById("term-out");
+  var fb=document.getElementById("feedback");
+  var btn=document.getElementById("btn-next");
+  var ok=q.answers.some(function(a){return val.toLowerCase()===a.toLowerCase();});
+  inp.disabled=true;answered=true;
+  if(ok){
+    out.className="term-out term-ok";out.textContent="✓  Commande acceptée.";
+    fb.className="feedback ok show";fb.innerHTML='<strong>✓ Correct !</strong>'+q.expl;score++;
+  } else {
+    out.className="term-out term-err";out.textContent=val?"bash: "+val.split(' ')[0]+": commande introuvable":"(aucune commande)";
+    fb.className="feedback ko show";fb.innerHTML='<strong>✗ Pas tout à fait.</strong>Bonne réponse : <code>'+q.answers[0]+'</code><br><br>'+q.expl;wrong++;
+  }
+  btn.className="btn-next show";updateNav();
+}
+
+function checkMCQ(idx){
+  if(answered)return;
+  var q=questions[current];
+  var fb=document.getElementById("feedback");
+  var btn=document.getElementById("btn-next");
+  answered=true;
+  q.options.forEach(function(_,i){
+    var el=document.getElementById("opt-"+i);el.disabled=true;
+    if(i===q.correct)el.className="mcq-btn reveal";
+    if(i===idx&&idx!==q.correct)el.className="mcq-btn wrong";
+  });
+  if(idx===q.correct){
+    fb.className="feedback ok show";fb.innerHTML='<strong>✓ Correct !</strong>'+q.expl;score++;
+  } else {
+    fb.className="feedback ko show";fb.innerHTML='<strong>✗ Pas tout à fait.</strong>'+q.expl;wrong++;
+  }
+  btn.className="btn-next show";updateNav();
+}
+
+function nextQ(){current++;renderQuestion();window.scrollTo({top:0,behavior:'smooth'});}
+
+function showResult(){
+  document.getElementById("quiz-area").style.display="none";
+  document.getElementById("result-area").style.display="block";
+  document.getElementById("progress-fill").style.width="100%";
+  var total=questions.length;
+  var pct=Math.round((score/total)*100);
+  document.getElementById("r-score").textContent=score;
+  document.getElementById("r-lbl").textContent="/ "+total+" points";
+  document.getElementById("r-ok").textContent=score;
+  document.getElementById("r-ko").textContent=wrong;
+  document.getElementById("r-pct").textContent=pct+"%";
+  var emoji,title,sub;
+  if(pct>=90){emoji="🏆";title="Excellent !";sub="Tu maîtrises très bien le sujet, bravo !";}
+  else if(pct>=75){emoji="🎯";title="Très bien !";sub="Bon niveau, encore un peu de révision et c'est parfait.";}
+  else if(pct>=60){emoji="📚";title="Bien joué !";sub="Continue à réviser, tu es sur la bonne voie.";}
+  else if(pct>=45){emoji="💪";title="Pas mal !";sub="Relis tes TPs sur les points faibles.";}
+  else{emoji="🔄";title="Continue !";sub="Relis bien tes TPs et recommence, tu vas progresser !";}
+  document.getElementById("r-emoji").textContent=emoji;
+  document.getElementById("r-title").textContent=title;
+  document.getElementById("r-sub").textContent=sub;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function restartQuiz(){
+  document.getElementById("result-area").style.display="none";
+  startQuiz();
+}
+</script>
+</body>
+</html>
