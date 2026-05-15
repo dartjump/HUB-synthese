@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Synthèse Terminal Linux — T1012 TechOrdi</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c10;
+    --surface: #111520;
+    --surface2: #161b28;
+    --border: #1e2a3a;
+    --accent: #22c55e;
+    --accent2: #7c3aed;
+    --accent3: #f59e0b;
+    --green: #22c55e;
+    --red: #ef4444;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --prompt: #22c55e;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Scanline effect */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(34,197,94,0.012) 2px,
+      rgba(34,197,94,0.012) 4px
+    );
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  header {
+    padding: 3rem 2rem 2rem;
+    text-align: center;
+    position: relative;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, rgba(34,197,94,0.05) 0%, transparent 100%);
+  }
+
+  .badge {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 0.25rem 0.75rem;
+    border-radius: 2px;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    animation: pulse 3s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+
+  h1 {
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+  }
+
+  h1 span.lnx { color: var(--accent); }
+  h1 span.line { display: block; color: var(--muted); font-size: 0.45em; font-weight: 400; letter-spacing: 0.05em; margin-top: 0.3em; }
+
+  .header-meta {
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  .header-meta span { color: var(--accent3); }
+
+  nav {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1.5rem 2rem;
+    flex-wrap: wrap;
+    position: sticky;
+    top: 0;
+    background: rgba(10,12,16,0.95);
+    backdrop-filter: blur(10px);
+    z-index: 100;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .tab {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    padding: 0.4rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: transparent;
+    color: var(--muted);
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  .tab:hover, .tab.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(34,197,94,0.08);
+  }
+
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  .section {
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .section.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-title {
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .section-title .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 0.1rem 0.5rem;
+    border-radius: 2px;
+  }
+
+  .section-desc {
+    color: var(--muted);
+    margin-bottom: 2.5rem;
+    font-size: 0.9rem;
+    border-left: 3px solid var(--accent2);
+    padding-left: 1rem;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .grid-2 {
+    grid-template-columns: repeat(auto-fill, minmax(480px, 1fr));
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1.25rem;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .card:hover {
+    border-color: var(--accent2);
+    transform: translateY(-2px);
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .cmd-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--bg);
+    background: var(--accent);
+    padding: 0.2rem 0.6rem;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+
+  .cmd-badge.purple { background: var(--accent2); color: white; }
+  .cmd-badge.yellow { background: var(--accent3); color: var(--bg); }
+  .cmd-badge.green { background: var(--green); color: var(--bg); }
+  .cmd-badge.red { background: var(--red); color: white; }
+  .cmd-badge.blue { background: #3b82f6; color: white; }
+
+  .card-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .card-desc {
+    font-size: 0.8rem;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 0.75rem;
+  }
+
+  .code-block {
+    background: #0d1117;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.6rem 0.8rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--accent);
+    overflow-x: auto;
+    white-space: pre;
+    margin-top: 0.5rem;
+  }
+
+  .code-block .comment { color: var(--muted); }
+  .code-block .kw { color: var(--accent3); }
+  .code-block .var { color: #a78bfa; }
+  .code-block .str { color: #22c55e; }
+  .code-block .op { color: var(--red); }
+  .code-block .flag { color: #38bdf8; }
+
+  .terminal {
+    background: #0d1117;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+  }
+
+  .terminal-bar {
+    background: var(--surface2);
+    padding: 0.5rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .terminal-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-red { background: #ff5f57; }
+  .dot-yellow { background: #febc2e; }
+  .dot-green { background: #28c840; }
+
+  .terminal-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-left: 0.5rem;
+  }
+
+  .terminal-body {
+    padding: 1rem 1.25rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    line-height: 1.8;
+  }
+
+  .t-prompt { color: var(--accent); }
+  .t-user { color: #38bdf8; }
+  .t-at { color: var(--muted); }
+  .t-cmd { color: white; }
+  .t-output { color: #94a3b8; }
+  .t-ok { color: var(--green); }
+  .t-err { color: var(--red); }
+  .t-hl { color: var(--accent); }
+
+  .cmd-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 2rem;
+    font-size: 0.82rem;
+  }
+
+  .cmd-table th {
+    background: var(--surface2);
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.6rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .cmd-table td {
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid rgba(30,42,58,0.5);
+    vertical-align: top;
+  }
+
+  .cmd-table tr:hover td { background: rgba(34,197,94,0.03); }
+
+  .cmd-table td:first-child {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--accent);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .cmd-table td:nth-child(2) { color: var(--muted); }
+
+  .tip {
+    background: rgba(124,58,237,0.1);
+    border: 1px solid rgba(124,58,237,0.3);
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.83rem;
+    line-height: 1.7;
+  }
+
+  .tip strong { color: var(--accent2); display: block; margin-bottom: 0.3rem; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; }
+
+  .warn {
+    background: rgba(245,158,11,0.1);
+    border: 1px solid rgba(245,158,11,0.3);
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.83rem;
+    line-height: 1.7;
+  }
+
+  .warn strong { color: var(--accent3); display: block; margin-bottom: 0.3rem; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; }
+
+  .info {
+    background: rgba(34,197,94,0.08);
+    border: 1px solid rgba(34,197,94,0.25);
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.83rem;
+    line-height: 1.7;
+  }
+
+  .info strong { color: var(--accent); display: block; margin-bottom: 0.3rem; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; }
+
+  .subsection {
+    margin-bottom: 2.5rem;
+  }
+
+  .subsection h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--accent3);
+    margin-bottom: 1rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid var(--border);
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.05em;
+  }
+
+  .steps {
+    counter-reset: step;
+    list-style: none;
+  }
+
+  .steps li {
+    counter-increment: step;
+    display: flex;
+    gap: 1rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(30,42,58,0.5);
+    font-size: 0.83rem;
+    align-items: flex-start;
+  }
+
+  .steps li::before {
+    content: counter(step, decimal-leading-zero);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent);
+    background: rgba(34,197,94,0.1);
+    border: 1px solid rgba(34,197,94,0.2);
+    border-radius: 3px;
+    padding: 0.1rem 0.4rem;
+    min-width: 2rem;
+    text-align: center;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+  }
+
+  .steps li .step-cmd {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--accent);
+    font-size: 0.78rem;
+    display: block;
+    margin-top: 0.25rem;
+  }
+
+  .kbd {
+    display: inline-block;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 0.1rem 0.4rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--accent3);
+  }
+
+  .op-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .op-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 0.85rem 1rem;
+  }
+
+  .op-sym {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.1rem;
+    color: var(--accent3);
+    font-weight: 700;
+  }
+
+  .op-desc {
+    font-size: 0.77rem;
+    color: var(--muted);
+    margin-top: 0.25rem;
+  }
+
+  .op-ex {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--accent);
+    margin-top: 0.4rem;
+    background: #0d1117;
+    padding: 0.25rem 0.5rem;
+    border-radius: 3px;
+  }
+
+  footer {
+    text-align: center;
+    padding: 2rem;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    border-top: 1px solid var(--border);
+    margin-top: 3rem;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="badge">T1012 TechOrdi · Synthèse Linux</div>
+  <h1>
+    <span class="lnx">Linux</span> Terminal Bash
+    <span class="line">Référence complète — Navigation · Fichiers · Réseau · Scripts</span>
+  </h1>
+  <div class="header-meta">
+    <div>Shell — <span>Bash / sh</span></div>
+    <div>Prompt — <span>utilisateur@machine:~$</span></div>
+    <div>Distros — <span>Ubuntu · Debian · Mint</span></div>
+  </div>
+</header>
+
+<nav>
+  <a class="tab active" onclick="show('terminal')" href="#">🖥 Terminal</a>
+  <a class="tab" onclick="show('commandes')" href="#">⌨ Commandes</a>
+  <a class="tab" onclick="show('fichiers')" href="#">📁 Fichiers & Dirs</a>
+  <a class="tab" onclick="show('droits')" href="#">🔒 Droits & Users</a>
+  <a class="tab" onclick="show('reseau')" href="#">🌐 Réseau</a>
+  <a class="tab" onclick="show('scripts')" href="#">⚙ Scripts Bash</a>
+</nav>
+
+<main>
+
+<!-- ===================== TERMINAL ===================== -->
+<div class="section active" id="terminal">
+  <div class="section-title"><span class="num">01</span> Le Terminal Linux</div>
+  <div class="section-desc">Démarrage, structure du prompt et raccourcis essentiels</div>
+
+  <div class="subsection">
+    <h3>// Ouvrir un terminal</h3>
+    <div class="grid">
+      <div class="card">
+        <div class="card-header"><span class="cmd-badge">Méthode 1</span><span class="card-title">Raccourci clavier</span></div>
+        <div class="card-desc">Sur la plupart des distributions Ubuntu/Debian</div>
+        <div class="code-block">Ctrl + Alt + T</div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="cmd-badge">Méthode 2</span><span class="card-title">Menu Applications</span></div>
+        <div class="card-desc">Chercher "Terminal", "Konsole", "xterm" ou "GNOME Terminal" dans le menu</div>
+        <div class="code-block">Applications → Outils système → Terminal</div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="cmd-badge yellow">Root</span><span class="card-title">Mode Super-utilisateur</span></div>
+        <div class="card-desc">Passer en root pour les commandes d'administration (avec précaution !)</div>
+        <div class="code-block">sudo -i          <span class="comment">← shell root interactif</span>
+sudo commande    <span class="comment">← exécuter en root</span>
+su -             <span class="comment">← changer d'utilisateur root</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3>// Structure du prompt</h3>
+    <div class="info">
+      <strong>📍 Lire le prompt</strong>
+      Le prompt Linux contient des informations essentielles. Par exemple :
+      <code style="display:block;margin-top:0.5rem;background:#0d1117;padding:0.5rem;border-radius:4px;font-size:0.85rem;">liam@ubuntu:~/Documents$</code>
+      <ul style="margin-top:0.5rem;padding-left:1.2rem;color:var(--text)">
+        <li><strong style="color:#38bdf8">liam</strong> — nom de l'utilisateur connecté</li>
+        <li><strong style="color:var(--muted)">@ubuntu</strong> — nom de la machine (hostname)</li>
+        <li><strong style="color:var(--accent3)">:~/Documents</strong> — répertoire courant (<code>~</code> = home)</li>
+        <li><strong style="color:var(--accent)">$</strong> — utilisateur normal (<code>#</code> = root)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3>// Raccourcis essentiels du terminal</h3>
+    <div class="op-grid">
+      <div class="op-card">
+        <div class="op-sym"><kbd class="kbd">TAB</kbd></div>
+        <div class="op-desc">Autocomplétion des commandes et fichiers</div>
+      </div>
+      <div class="op-card">
+        <div class="op-sym"><kbd class="kbd">↑</kbd> / <kbd class="kbd">↓</kbd></div>
+        <div class="op-desc">Naviguer dans l'historique des commandes</div>
+      </div>
+      <div class="op-card">
+        <div class="op-sym"><kbd class="kbd">Ctrl+C</kbd></div>
+        <div class="op-desc">Interrompre une commande en cours</div>
+      </div>
+      <div class="op-card">
+        <div class="op-sym"><kbd class="kbd">Ctrl+D</kbd></div>
+        <div class="op-desc">Fermer le terminal / envoyer EOF</div>
+      </div>
+      <div class="op-card">
+        <div class="op-sym"><kbd class="kbd">Ctrl+Z</kbd></div>
+        <div class="op-desc">Suspendre un processus (mettre en arrière-plan)</div>
+      </div>
+      <div class="op-card">
+        <div class="op-sym"><kbd class="kbd">Ctrl+L</kbd></div>
+        <div class="op-desc">Effacer l'écran (équivalent de <code>clear</code>)</div>
+      </div>
+      <div class="op-card">
+        <div class="op-sym"><kbd class="kbd">Ctrl+A</kbd></div>
+        <div class="op-desc">Aller au début de la ligne</div>
+      </div>
+      <div class="op-card">
+        <div class="op-sym"><kbd class="kbd">Ctrl+E</kbd></div>
+        <div class="op-desc">Aller à la fin de la ligne</div>
+      </div>
+      <div class="op-card">
+        <div class="op-sym"><kbd class="kbd">Ctrl+R</kbd></div>
+        <div class="op-desc">Recherche dans l'historique des commandes</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <strong>💡 Bash vs sh</strong>
+    <strong>Bash</strong> (Bourne Again SHell) est le shell par défaut sur la plupart des distributions Linux. Il est plus puissant que <code>sh</code> (Bourne Shell) et supporte les tableaux, l'historique interactif, et l'autocomplétion. La commande <code>echo $SHELL</code> affiche le shell actuel.
+  </div>
+</div>
+
+<!-- ===================== COMMANDES ===================== -->
+<div class="section" id="commandes">
+  <div class="section-title"><span class="num">02</span> Commandes essentielles</div>
+  <div class="section-desc">Navigation, affichage, informations système — les fondamentaux Linux</div>
+
+  <div class="subsection">
+    <h3>// Aide & Informations système</h3>
+    <table class="cmd-table">
+      <tr><th>Commande</th><th>Description</th><th>Exemple</th></tr>
+      <tr><td>man</td><td>Afficher le manuel d'une commande</td><td><code>man ls</code></td></tr>
+      <tr><td>--help</td><td>Aide rapide sur une commande</td><td><code>ls --help</code></td></tr>
+      <tr><td>date</td><td>Afficher la date et l'heure</td><td><code>date</code></td></tr>
+      <tr><td>cal</td><td>Afficher le calendrier</td><td><code>cal</code></td></tr>
+      <tr><td>clear</td><td>Effacer l'écran du terminal</td><td><code>clear</code></td></tr>
+      <tr><td>uname</td><td>Afficher des infos sur le système</td><td><code>uname -a</code></td></tr>
+      <tr><td>hostname</td><td>Afficher le nom de la machine</td><td><code>hostname</code></td></tr>
+      <tr><td>whoami</td><td>Afficher l'utilisateur courant</td><td><code>whoami</code></td></tr>
+      <tr><td>history</td><td>Afficher l'historique des commandes</td><td><code>history</code></td></tr>
+      <tr><td>exit</td><td>Fermer le terminal / quitter le shell</td><td><code>exit</code></td></tr>
+    </table>
+  </div>
+
+  <div class="subsection">
+    <h3>// Navigation & Affichage</h3>
+    <table class="cmd-table">
+      <tr><th>Commande</th><th>Description</th><th>Exemple</th></tr>
+      <tr><td>ls</td><td>Lister le contenu d'un répertoire</td><td><code>ls</code> / <code>ls -la</code></td></tr>
+      <tr><td>cd</td><td>Changer de répertoire</td><td><code>cd dossier</code> / <code>cd ..</code></td></tr>
+      <tr><td>cd ~</td><td>Retourner au répertoire home</td><td><code>cd ~</code> ou simplement <code>cd</code></td></tr>
+      <tr><td>pwd</td><td>Afficher le chemin du répertoire courant</td><td><code>pwd</code></td></tr>
+      <tr><td>tree</td><td>Afficher l'arborescence d'un répertoire</td><td><code>tree</code> / <code>tree -L 2</code></td></tr>
+      <tr><td>cat</td><td>Afficher le contenu d'un fichier</td><td><code>cat fichier.txt</code></td></tr>
+      <tr><td>less</td><td>Afficher page par page (navigation avec flèches, q pour quitter)</td><td><code>less fichier.txt</code></td></tr>
+      <tr><td>more</td><td>Afficher page par page (barre espace)</td><td><code>more fichier.txt</code></td></tr>
+      <tr><td>head</td><td>Afficher les premières lignes d'un fichier</td><td><code>head -10 fichier.txt</code></td></tr>
+      <tr><td>tail</td><td>Afficher les dernières lignes d'un fichier</td><td><code>tail -10 fichier.txt</code></td></tr>
+    </table>
+  </div>
+
+  <div class="subsection">
+    <h3>// Options importantes de ls</h3>
+    <div class="grid">
+      <div class="card">
+        <div class="card-header"><span class="cmd-badge flag">ls -l</span><span class="card-title">Format long détaillé</span></div>
+        <div class="card-desc">Affiche permissions, propriétaire, taille, date</div>
+        <div class="code-block">ls -l
+<span class="comment">-rw-r--r-- 1 liam liam 1234 mai 10 rapport.txt</span></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="cmd-badge flag">ls -a</span><span class="card-title">Fichiers cachés</span></div>
+        <div class="card-desc">Affiche les fichiers commençant par <code>.</code> (cachés)</div>
+        <div class="code-block">ls -a
+<span class="comment">.  ..  .bashrc  .profile  Documents</span></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="cmd-badge flag">ls -la</span><span class="card-title">Long + cachés (combiné)</span></div>
+        <div class="card-desc">Combine <code>-l</code> et <code>-a</code> — le plus complet</div>
+        <div class="code-block">ls -la ~</div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="cmd-badge flag">ls -lh</span><span class="card-title">Taille lisible</span></div>
+        <div class="card-desc">Affiche les tailles en Ko, Mo, Go</div>
+        <div class="code-block">ls -lh
+<span class="comment">-rw-r--r-- 1 liam liam 1.2K mai 10 rapport.txt</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3>// Recherche de fichiers</h3>
+    <table class="cmd-table">
+      <tr><th>Commande</th><th>Description</th><th>Exemple</th></tr>
+      <tr><td>find</td><td>Chercher des fichiers selon des critères</td><td><code>find / -name "*.txt"</code></td></tr>
+      <tr><td>grep</td><td>Chercher du texte dans des fichiers</td><td><code>grep "mot" fichier.txt</code></td></tr>
+      <tr><td>grep -r</td><td>Chercher récursivement dans les sous-dossiers</td><td><code>grep -r "mot" /home</code></td></tr>
+      <tr><td>locate</td><td>Trouver rapidement un fichier (base de données)</td><td><code>locate rapport.txt</code></td></tr>
+      <tr><td>which</td><td>Trouver l'emplacement d'un exécutable</td><td><code>which python3</code></td></tr>
+    </table>
+  </div>
+
+  <div class="subsection">
+    <h3>// Wildcards (jokers)</h3>
+    <div class="grid">
+      <div class="card">
+        <div class="card-header"><span class="cmd-badge yellow">*</span><span class="card-title">Astérisque — plusieurs caractères</span></div>
+        <div class="card-desc">Remplace zéro, un ou plusieurs caractères</div>
+        <div class="code-block">ls *.txt        <span class="comment">→ tous les .txt</span>
+ls rapport*     <span class="comment">→ commence par rapport</span>
+rm *.tmp        <span class="comment">→ supprimer tous les .tmp</span></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="cmd-badge yellow">?</span><span class="card-title">Point d'interrogation — un seul caractère</span></div>
+        <div class="card-desc">Remplace exactement un seul caractère</div>
+        <div class="code-block">ls fichier?.txt  <span class="comment">→ fichier1.txt, fichierA.txt</span>
+ls ???.sh        <span class="comment">→ noms de 3 caractères</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== FICHIERS & DIRS ===================== -->
+<div class="section" id="fichiers">
+  <div class="section-title"><span class="num">03</span> Fichiers & Répertoires</div>
+  <div class="section-desc">Créer, copier, déplacer, supprimer fichiers et dossiers sous Linux</div>
+
+  <div class="subsection">
+    <h3>// Répertoires</h3>
+    <div class="grid">
+      <div class="card">
+        <div class="card-header"><span class="cmd-badge green">mkdir</span><span class="card-title">Make Directory — Créer un dossier</span></div>
+        <div class="card-desc">Crée un ou plusieurs répertoires. <code>-p</code> crée les parents si besoin.</div>
+        <div class="code-block">mkdir MonDossier
+mkdir -p /home/liam/T1012/Labo2
+<span class="comment">Créer plusieurs d'un coup :</span>
+mkdir -p projet/{src,docs,tests}</div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="cmd-badge red">rmdir</span><span class="card-title">Remove Directory — Supprimer un dossier vide</span></div>
+        <div class="card-desc">Supprime uniquement un répertoire vide</div>
+        <div class="code-block">rmdir MonDossier   <span class="comment">← vide seulement</span></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="cmd-badge red">rm -r</span><span class="card-title">Supprimer un dossier et son contenu</span></div>
+        <div class="card-desc">Supprime récursivement. <code>-f</code> sans confirmation. ⚠ Irréversible !</div>
+        <div class="code-block">rm -r MonDossier        <span class="comment">← avec confirmation</span>
+rm -rf MonDossier       <span class="comment">← sans confirmation ⚠</span></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="cmd-badge">cd</span><span class="card-title">Naviguer dans l'arborescence</span></div>
+        <div class="card-desc">Chemins absolus (depuis /) ou relatifs (depuis ici)</div>
+        <div class="code-block">cd NomDossier    <span class="comment">← descendre</span>
+cd ..            <span class="comment">← remonter d'un niveau</span>
+cd /             <span class="comment">← racine du système</span>
+cd ~             <span class="comment">← home de l'utilisateur</span>
+cd -             <span class="comment">← répertoire précédent</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3>// Fichiers</h3>
+    <div class="grid">
+      <div class="card">
+        <div class="card-header"><span class="cmd-badge green">touch</span><span class="card-title">Créer un fichier vide</span></div>
+        <div class="card-desc">Crée un fichier vide ou met à jour la date d'accès</div>
+        <div class="code-block">touch fichier.txt
+touch a.txt b.txt c.txt   <span class="comment">← plusieurs</span></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="cmd-badge green">cp</span><span class="card-title">Copier des fichiers</span></div>
+        <div class="card-desc">Copie un ou plusieurs fichiers. <code>-r</code> pour les dossiers.</div>
+        <div class="code-block">cp source.txt dest.txt
+cp *.txt /home/liam/backup/
+cp -r dossier/ /backup/    <span class="comment">← copier un dossier</span></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="cmd-badge yellow">mv</span><span class="card-title">Déplacer / Renommer</span></div>
+        <div class="card-desc">Déplace ou renomme un fichier ou dossier</div>
+        <div class="code-block">mv fichier.txt /tmp/
+mv vieux.txt nouveau.txt   <span class="comment">← renommer</span>
+mv *.txt ~/Documents/</div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="cmd-badge red">rm</span><span class="card-title">Supprimer des fichiers</span></div>
+        <div class="card-desc">Supprime définitivement (pas de corbeille !). ⚠ Irréversible.</div>
+        <div class="code-block">rm fichier.txt
+rm *.tmp             <span class="comment">← tous les .tmp</span>
+rm -f fichier.txt    <span class="comment">← sans confirmation</span></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="cmd-badge purple">nano</span><span class="card-title">Éditeur de texte nano</span></div>
+        <div class="card-desc">Éditeur simple dans le terminal. <kbd class="kbd">Ctrl+O</kbd> sauvegarder, <kbd class="kbd">Ctrl+X</kbd> quitter.</div>
+        <div class="code-block">nano fichier.txt</div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="cmd-badge">ln</span><span class="card-title">Lien symbolique</span></div>
+        <div class="card-desc">Crée un raccourci (lien) vers un fichier</div>
+        <div class="code-block">ln -s /chemin/original /chemin/lien</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3>// Redirection & Opérateurs</h3>
+    <div class="op-grid">
+      <div class="op-card">
+        <div class="op-sym">&gt;</div>
+        <div class="op-desc">Rediriger la sortie vers un fichier (écrase)</div>
+        <div class="op-ex">ls > liste.txt</div>
+      </div>
+      <div class="op-card">
+        <div class="op-sym">&gt;&gt;</div>
+        <div class="op-desc">Ajouter à la fin du fichier (append)</div>
+        <div class="op-ex">date >> journal.txt</div>
+      </div>
+      <div class="op-card">
+        <div class="op-sym">&lt;</div>
+        <div class="op-desc">Lire l'entrée depuis un fichier</div>
+        <div class="op-ex">sort &lt; liste.txt</div>
+      </div>
+      <div class="op-card">
+        <div class="op-sym">|</div>
+        <div class="op-desc">Pipe — envoyer la sortie vers une autre commande</div>
+        <div class="op-ex">ls -l | less</div>
+      </div>
+      <div class="op-card">
+        <div class="op-sym">;</div>
+        <div class="op-desc">Exécuter deux commandes l'une après l'autre</div>
+        <div class="op-ex">clear; ls</div>
+      </div>
+      <div class="op-card">
+        <div class="op-sym">&amp;&amp;</div>
+        <div class="op-desc">Exécuter la 2e commande seulement si la 1re réussit</div>
+        <div class="op-ex">mkdir test && cd test</div>
+      </div>
+      <div class="op-card">
+        <div class="op-sym">2&gt;</div>
+        <div class="op-desc">Rediriger les erreurs vers un fichier</div>
+        <div class="op-ex">cmd 2> erreurs.txt</div>
+      </div>
+      <div class="op-card">
+        <div class="op-sym">&amp;</div>
+        <div class="op-desc">Lancer une commande en arrière-plan</div>
+        <div class="op-ex">firefox &</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="terminal-dot dot-red"></div>
+      <div class="terminal-dot dot-yellow"></div>
+      <div class="terminal-dot dot-green"></div>
+      <div class="terminal-title">Exemple — créer une arborescence et sauver</div>
+    </div>
+    <div class="terminal-body">
+<span class="t-prompt">liam@ubuntu:~$</span> <span class="t-cmd">mkdir -p T1012/Labo2/exercices</span>
+<span class="t-prompt">liam@ubuntu:~$</span> <span class="t-cmd">cd T1012/Labo2</span>
+<span class="t-prompt">liam@ubuntu:~/T1012/Labo2$</span> <span class="t-cmd">tree > arborescence.txt</span>
+<span class="t-prompt">liam@ubuntu:~/T1012/Labo2$</span> <span class="t-cmd">cat arborescence.txt</span>
+<span class="t-output">.
+└── exercices
+
+1 directory, 0 files</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== DROITS & USERS ===================== -->
+<div class="section" id="droits">
+  <div class="section-title"><span class="num">04</span> Droits & Utilisateurs</div>
+  <div class="section-desc">Permissions Linux, propriétaires, groupes et gestion des utilisateurs</div>
+
+  <div class="subsection">
+    <h3>// Lire les permissions</h3>
+    <div class="info">
+      <strong>🔒 Structure des permissions</strong>
+      <code style="display:block;margin-top:0.5rem;background:#0d1117;padding:0.5rem;border-radius:4px;font-size:0.85rem;">-rwxr-xr--  1  liam  groupe  1234  mai 10  script.sh</code>
+      <ul style="margin-top:0.5rem;padding-left:1.2rem;color:var(--text);font-size:0.82rem">
+        <li><strong style="color:var(--accent3)">-</strong> → type : <code>-</code>=fichier, <code>d</code>=dossier, <code>l</code>=lien</li>
+        <li><strong style="color:var(--accent)">rwx</strong> → propriétaire : lecture (r), écriture (w), exécution (x)</li>
+        <li><strong style="color:#38bdf8">r-x</strong> → groupe : lecture + exécution, pas d'écriture</li>
+        <li><strong style="color:var(--muted)">r--</strong> → autres : lecture seulement</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3>// chmod — Modifier les permissions</h3>
+    <div class="grid">
+      <div class="card">
+        <div class="card-header"><span class="cmd-badge purple">Notation octal</span><span class="card-title">Mode numérique</span></div>
+        <div class="card-desc">r=4, w=2, x=1. On additionne par groupe (proprio / groupe / autres)</div>
+        <div class="code-block">chmod 755 script.sh  <span class="comment">← rwxr-xr-x</span>
+chmod 644 rapport.txt  <span class="comment">← rw-r--r--</span>
+chmod 777 public/      <span class="comment">← tout le monde tout</span>
+chmod 600 secret.txt   <span class="comment">← proprio seul rw</span></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="cmd-badge purple">Notation symbolique</span><span class="card-title">Mode lettres</span></div>
+        <div class="card-desc"><code>u</code>=user, <code>g</code>=group, <code>o</code>=other, <code>a</code>=all</div>
+        <div class="code-block">chmod +x script.sh     <span class="comment">← ajouter exécution</span>
+chmod u+w fichier.txt  <span class="comment">← proprio peut écrire</span>
+chmod o-r secret.txt   <span class="comment">← autres ne lisent pas</span>
+chmod a+r public.txt   <span class="comment">← tout le monde lit</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3>// chown — Changer le propriétaire</h3>
+    <table class="cmd-table">
+      <tr><th>Commande</th><th>Description</th><th>Exemple</th></tr>
+      <tr><td>chown user fichier</td><td>Changer le propriétaire d'un fichier</td><td><code>chown liam rapport.txt</code></td></tr>
+      <tr><td>chown user:groupe fichier</td><td>Changer propriétaire et groupe</td><td><code>chown liam:staff fichier</code></td></tr>
+      <tr><td>chown -R user dossier</td><td>Changer récursivement (tout le dossier)</td><td><code>chown -R liam ~/projet</code></td></tr>
+    </table>
+  </div>
+
+  <div class="subsection">
+    <h3>// Gestion des utilisateurs</h3>
+    <table class="cmd-table">
+      <tr><th>Commande</th><th>Description</th><th>Exemple</th></tr>
+      <tr><td>whoami</td><td>Afficher l'utilisateur courant</td><td><code>whoami</code></td></tr>
+      <tr><td>id</td><td>Afficher UID, GID et groupes</td><td><code>id</code> / <code>id liam</code></td></tr>
+      <tr><td>who</td><td>Voir qui est connecté</td><td><code>who</code></td></tr>
+      <tr><td>su</td><td>Changer d'utilisateur</td><td><code>su liam</code></td></tr>
+      <tr><td>sudo</td><td>Exécuter en super-utilisateur</td><td><code>sudo apt update</code></td></tr>
+      <tr><td>passwd</td><td>Changer son mot de passe</td><td><code>passwd</code></td></tr>
+      <tr><td>useradd</td><td>Créer un utilisateur (admin)</td><td><code>sudo useradd liam</code></td></tr>
+      <tr><td>usermod</td><td>Modifier un utilisateur</td><td><code>sudo usermod -aG sudo liam</code></td></tr>
+    </table>
+  </div>
+
+  <div class="subsection">
+    <h3>// sudo — Super-utilisateur</h3>
+    <div class="warn">
+      <strong>⚠ Attention avec sudo</strong>
+      <code>sudo</code> exécute une commande avec les droits root. Une mauvaise commande en sudo peut endommager le système. Toujours vérifier avant d'exécuter !
+    </div>
+    <div class="terminal">
+      <div class="terminal-bar">
+        <div class="terminal-dot dot-red"></div>
+        <div class="terminal-dot dot-yellow"></div>
+        <div class="terminal-dot dot-green"></div>
+        <div class="terminal-title">Exemple — permissions</div>
+      </div>
+      <div class="terminal-body">
+<span class="t-prompt">liam@ubuntu:~$</span> <span class="t-cmd">ls -l script.sh</span>
+<span class="t-output">-rw-r--r-- 1 liam liam 45 mai 10 script.sh</span>
+
+<span class="t-prompt">liam@ubuntu:~$</span> <span class="t-cmd">chmod +x script.sh</span>
+<span class="t-prompt">liam@ubuntu:~$</span> <span class="t-cmd">ls -l script.sh</span>
+<span class="t-output">-rwxr-xr-x 1 liam liam 45 mai 10 script.sh</span>
+
+<span class="t-prompt">liam@ubuntu:~$</span> <span class="t-cmd">./script.sh</span>
+<span class="t-ok">Script exécuté avec succès !</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== RÉSEAU ===================== -->
+<div class="section" id="reseau">
+  <div class="section-title"><span class="num">05</span> Commandes Réseau</div>
+  <div class="section-desc">ping, ifconfig, ip, ssh, wget — diagnostic et connexion réseau sous Linux</div>
+
+  <div class="subsection">
+    <h3>// PING</h3>
+    <div class="card" style="margin-bottom:1rem">
+      <div class="card-desc">Teste la connectivité réseau. Sous Linux, ping tourne en continu par défaut. Utiliser <kbd class="kbd">Ctrl+C</kbd> pour arrêter.</div>
+      <div class="code-block">ping 192.168.1.1          <span class="comment">← par adresse IP (continu)</span>
+ping google.com           <span class="comment">← par nom de domaine</span>
+ping -c 4 192.168.1.1    <span class="comment">← envoyer 4 paquets seulement</span>
+ping -i 2 google.com     <span class="comment">← intervalle 2 secondes</span></div>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3>// Voir la configuration réseau</h3>
+    <table class="cmd-table">
+      <tr><th>Commande</th><th>Description</th><th>Exemple</th></tr>
+      <tr><td>ip a</td><td>Afficher toutes les interfaces réseau et leurs IP</td><td><code>ip a</code></td></tr>
+      <tr><td>ip addr show</td><td>Alias de ip a, plus verbeux</td><td><code>ip addr show eth0</code></td></tr>
+      <tr><td>ifconfig</td><td>Ancienne commande (peut nécessiter net-tools)</td><td><code>ifconfig</code></td></tr>
+      <tr><td>ip route</td><td>Afficher la table de routage</td><td><code>ip route</code></td></tr>
+      <tr><td>nmcli</td><td>Gérer les connexions réseau (NetworkManager)</td><td><code>nmcli device status</code></td></tr>
+      <tr><td>ss</td><td>Afficher les sockets / ports ouverts</td><td><code>ss -tuln</code></td></tr>
+      <tr><td>netstat</td><td>Statistiques réseau (ancien, remplacé par ss)</td><td><code>netstat -tuln</code></td></tr>
+    </table>
+  </div>
+
+  <div class="subsection">
+    <h3>// Diagnostic réseau</h3>
+    <table class="cmd-table">
+      <tr><th>Commande</th><th>Description</th><th>Exemple</th></tr>
+      <tr><td>traceroute</td><td>Afficher la route des paquets (équiv. tracert Windows)</td><td><code>traceroute google.com</code></td></tr>
+      <tr><td>nslookup</td><td>Résoudre un nom DNS</td><td><code>nslookup google.com</code></td></tr>
+      <tr><td>dig</td><td>Interrogation DNS avancée</td><td><code>dig google.com</code></td></tr>
+      <tr><td>host</td><td>Résolution DNS simple</td><td><code>host google.com</code></td></tr>
+      <tr><td>curl</td><td>Tester une URL / télécharger du contenu</td><td><code>curl https://example.com</code></td></tr>
+      <tr><td>wget</td><td>Télécharger un fichier depuis une URL</td><td><code>wget https://example.com/fichier</code></td></tr>
+    </table>
+  </div>
+
+  <div class="subsection">
+    <h3>// SSH — Connexion à distance</h3>
+    <div class="card" style="margin-bottom:1rem">
+      <div class="card-desc">SSH (Secure Shell) permet de se connecter à une machine distante de façon sécurisée.</div>
+      <div class="code-block">ssh utilisateur@192.168.1.10        <span class="comment">← connexion standard</span>
+ssh -p 2222 utilisateur@serveur    <span class="comment">← port personnalisé</span>
+ssh -i cle.pem utilisateur@serveur <span class="comment">← avec clé privée</span>
+scp fichier.txt user@ip:/dest/     <span class="comment">← copier un fichier via SSH</span></div>
+    </div>
+  </div>
+
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="terminal-dot dot-red"></div>
+      <div class="terminal-dot dot-yellow"></div>
+      <div class="terminal-dot dot-green"></div>
+      <div class="terminal-title">Exemple — diagnostic réseau</div>
+    </div>
+    <div class="terminal-body">
+<span class="t-prompt">liam@ubuntu:~$</span> <span class="t-cmd">ip a</span>
+<span class="t-output">2: eth0: &lt;BROADCAST,MULTICAST,UP&gt; mtu 1500
+    inet 192.168.1.42/24 brd 192.168.1.255 scope global eth0</span>
+
+<span class="t-prompt">liam@ubuntu:~$</span> <span class="t-cmd">ping -c 3 8.8.8.8</span>
+<span class="t-output">PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
+64 bytes from 8.8.8.8: icmp_seq=1 ttl=118 time=12.4 ms
+64 bytes from 8.8.8.8: icmp_seq=2 ttl=118 time=11.9 ms
+64 bytes from 8.8.8.8: icmp_seq=3 ttl=118 time=12.1 ms</span>
+<span class="t-ok">--- 8.8.8.8 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SCRIPTS BASH ===================== -->
+<div class="section" id="scripts">
+  <div class="section-title"><span class="num">06</span> Scripts Bash</div>
+  <div class="section-desc">Fichiers .sh — automatiser des séquences de commandes Linux</div>
+
+  <div class="subsection">
+    <h3>// Qu'est-ce qu'un script bash ?</h3>
+    <div class="tip">
+      <strong>📄 Définition</strong>
+      Un script <strong>.sh</strong> est un fichier texte contenant une suite de commandes Bash qui s'exécutent automatiquement dans l'ordre. La première ligne (<strong>shebang</strong>) indique quel interpréteur utiliser.
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3>// Instructions de base</h3>
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="card-header"><span class="cmd-badge purple">#!/bin/bash</span><span class="card-title">Shebang — première ligne obligatoire</span></div>
+        <div class="card-desc">Indique que le script doit être exécuté par bash</div>
+        <div class="code-block"><span class="comment">#!/bin/bash</span>
+<span class="comment"># Les commandes suivent ensuite</span></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="cmd-badge purple">#</span><span class="card-title">Commentaires</span></div>
+        <div class="card-desc">Les lignes commençant par <code>#</code> sont des commentaires</div>
+        <div class="code-block"><span class="comment"># Ceci est un commentaire
+# Auteur : Liam
+# Date : 2025</span></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="cmd-badge purple">echo</span><span class="card-title">Afficher un message</span></div>
+        <div class="card-desc">Afficher du texte dans le terminal</div>
+        <div class="code-block"><span class="kw">echo</span> <span class="str">"Bonjour !"</span>
+<span class="kw">echo</span> <span class="str">""</span>           <span class="comment">← ligne vide</span>
+<span class="kw">echo</span> <span class="str">"Fin du script"</span></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="cmd-badge purple">read</span><span class="card-title">Lire une entrée utilisateur</span></div>
+        <div class="card-desc">Demander une valeur à l'utilisateur</div>
+        <div class="code-block"><span class="kw">read</span> <span class="var">-p</span> <span class="str">"Ton prénom : "</span> <span class="var">prenom</span>
+<span class="kw">echo</span> <span class="str">"Bonjour, $prenom !"</span></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="cmd-badge purple">Variables</span><span class="card-title">Déclarer et utiliser</span></div>
+        <div class="card-desc">Pas d'espaces autour du <code>=</code>. Utiliser <code>$</code> pour accéder.</div>
+        <div class="code-block"><span class="var">nom</span>=<span class="str">"Liam"</span>
+<span class="var">age</span>=<span class="str">20</span>
+<span class="kw">echo</span> <span class="str">"Je m'appelle $nom, j'ai $age ans"</span></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="cmd-badge purple">if / else</span><span class="card-title">Conditions</span></div>
+        <div class="card-desc">Structure conditionnelle en bash</div>
+        <div class="code-block"><span class="kw">if</span> [ <span class="str">"$nom"</span> == <span class="str">"Liam"</span> ]; <span class="kw">then</span>
+  <span class="kw">echo</span> <span class="str">"Bonjour Liam !"</span>
+<span class="kw">else</span>
+  <span class="kw">echo</span> <span class="str">"Qui es-tu ?"</span>
+<span class="kw">fi</span></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="cmd-badge purple">for</span><span class="card-title">Boucle for</span></div>
+        <div class="card-desc">Itérer sur une liste de valeurs</div>
+        <div class="code-block"><span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> 1 2 3 4 5; <span class="kw">do</span>
+  <span class="kw">echo</span> <span class="str">"Ligne $i"</span>
+<span class="kw">done</span>
+
+<span class="kw">for</span> <span class="var">f</span> <span class="kw">in</span> *.txt; <span class="kw">do</span>
+  <span class="kw">echo</span> <span class="str">"Fichier : $f"</span>
+<span class="kw">done</span></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="cmd-badge purple">while</span><span class="card-title">Boucle while</span></div>
+        <div class="card-desc">Répéter tant qu'une condition est vraie</div>
+        <div class="code-block"><span class="var">compteur</span>=1
+<span class="kw">while</span> [ <span class="var">$compteur</span> -le 5 ]; <span class="kw">do</span>
+  <span class="kw">echo</span> <span class="str">"Tour $compteur"</span>
+  <span class="var">compteur</span>=$(( <span class="var">$compteur</span> + 1 ))
+<span class="kw">done</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3>// Variables d'environnement</h3>
+    <div class="card" style="margin-bottom:1rem">
+      <div class="card-desc">Les variables d'environnement sont des variables prédéfinies par le système. On y accède avec <code>$</code>.</div>
+      <div class="code-block"><span class="comment"># Afficher toutes les variables :</span>
+<span class="kw">env</span>
+<span class="kw">printenv</span>
+
+<span class="comment"># Variables prédéfinies importantes :</span>
+<span class="kw">echo</span> <span class="var">$HOME</span>        <span class="comment">← /home/liam</span>
+<span class="kw">echo</span> <span class="var">$USER</span>        <span class="comment">← liam</span>
+<span class="kw">echo</span> <span class="var">$SHELL</span>       <span class="comment">← /bin/bash</span>
+<span class="kw">echo</span> <span class="var">$PATH</span>        <span class="comment">← chemins des exécutables</span>
+<span class="kw">echo</span> <span class="var">$HOSTNAME</span>    <span class="comment">← nom de la machine</span>
+<span class="kw">echo</span> <span class="var">$PWD</span>         <span class="comment">← répertoire courant</span>
+<span class="kw">echo</span> <span class="var">$?</span>           <span class="comment">← code retour de la dernière commande</span></div>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3>// Exécuter un script</h3>
+    <div class="tip">
+      <strong>🚀 Méthode</strong>
+      Un script doit avoir la permission d'exécution pour pouvoir être lancé directement.
+    </div>
+    <div class="code-block"><span class="comment"># 1. Créer le script</span>
+nano monscript.sh
+
+<span class="comment"># 2. Lui donner la permission d'exécution</span>
+chmod +x monscript.sh
+
+<span class="comment"># 3. L'exécuter</span>
+./monscript.sh
+
+<span class="comment"># Ou sans permission :</span>
+bash monscript.sh</div>
+  </div>
+
+  <div class="subsection">
+    <h3>// Exemple de script complet</h3>
+    <div class="terminal">
+      <div class="terminal-bar">
+        <div class="terminal-dot dot-red"></div>
+        <div class="terminal-dot dot-yellow"></div>
+        <div class="terminal-dot dot-green"></div>
+        <div class="terminal-title">monscript.sh</div>
+      </div>
+      <div class="terminal-body">
+<span class="comment">#!/bin/bash</span>
+<span class="comment"># MonScript.sh — Script de démonstration</span>
+
+<span class="kw">clear</span>
+<span class="kw">echo</span> <span class="str">"========================================"</span>
+<span class="kw">echo</span> <span class="str">"   Informations réseau de la machine"</span>
+<span class="kw">echo</span> <span class="str">"========================================"</span>
+<span class="kw">echo</span> <span class="str">""</span>
+
+<span class="comment"># Afficher l'utilisateur et la machine</span>
+<span class="kw">echo</span> <span class="str">"Utilisateur : $USER"</span>
+<span class="kw">echo</span> <span class="str">"Machine     : $HOSTNAME"</span>
+<span class="kw">echo</span> <span class="str">"Répertoire  : $PWD"</span>
+<span class="kw">echo</span> <span class="str">""</span>
+
+<span class="comment"># Infos réseau</span>
+<span class="kw">ip</span> a | <span class="kw">grep</span> <span class="str">"inet "</span>
+<span class="kw">echo</span> <span class="str">""</span>
+
+<span class="kw">read</span> -p <span class="str">"Appuyez sur Entrée pour continuer..."</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3>// Démarrage automatique</h3>
+    <div class="tip">
+      <strong>🚀 Méthode</strong>
+      Pour exécuter un script automatiquement à chaque ouverture de terminal, ajouter la commande dans <code>~/.bashrc</code> (ou <code>~/.bash_profile</code> pour les connexions). Pour un démarrage système, utiliser <code>cron</code> ou <code>systemd</code>.
+    </div>
+    <div class="code-block"><span class="comment"># Ajouter à la fin de ~/.bashrc :</span>
+<span class="kw">nano</span> ~/.bashrc
+
+<span class="comment"># Puis ajouter la ligne :</span>
+<span class="var">bash</span> ~/monscript.sh
+
+<span class="comment"># Recharger sans fermer le terminal :</span>
+<span class="kw">source</span> ~/.bashrc</div>
+  </div>
+</div>
+
+</main>
+
+<footer>
+  T1012 TechOrdi · Synthèse Terminal Linux · 2025-2026
+</footer>
+
+<script>
+  function show(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    event.target.classList.add('active');
+    window.scrollTo({top: 0, behavior: 'smooth'});
+    return false;
+  }
+</script>
+
+</body>
+</html>
