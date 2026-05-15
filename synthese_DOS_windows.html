@@ -1,177 +1,571 @@
 <!doctype html>
 <html lang="fr" data-theme="light">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Quiz DOS Windows — cmd.exe</title>
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <style>
-    :root {
-      --bg:#f5f6fa;--surface:#ffffff;--surface2:#f0f1f7;
-      --border:#e2e4ef;--border2:#c8cbdc;
-      --text:#111827;--text2:#374151;--muted:#6b7280;--dim:#9ca3af;
-      --blue:#2563eb;--blue-bg:#eff6ff;--blue-bd:#bfdbfe;
-      --green:#16a34a;--green-bg:#f0fdf4;--green-bd:#bbf7d0;
-      --red:#dc2626;--red-bg:#fef2f2;--red-bd:#fecaca;
-      --orange:#d97706;--orange-bg:#fffbeb;--orange-bd:#fde68a;
-      --shadow-sm:0 1px 3px rgba(0,0,0,.08);
-      --shadow:0 4px 16px rgba(0,0,0,.08);
-    }
-    [data-theme="dark"] {
-      --bg:#0d1117;--surface:#161b22;--surface2:#1c2333;
-      --border:#2d3748;--border2:#4a5568;
-      --text:#e2e8f0;--text2:#a0aec0;--muted:#718096;--dim:#4a5568;
-      --blue:#63b3ed;--blue-bg:#1a2744;--blue-bd:#2c4a7c;
-      --green:#68d391;--green-bg:#0e2a1a;--green-bd:#1a4a2e;
-      --red:#fc8181;--red-bg:#2a1414;--red-bd:#4a2020;
-      --orange:#f6ad55;--orange-bg:#2a1e0e;--orange-bd:#4a3418;
-      --shadow-sm:0 1px 4px rgba(0,0,0,.5);
-      --shadow:0 4px 20px rgba(0,0,0,.6);
-    }
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:"Bricolage Grotesque",sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6;-webkit-font-smoothing:antialiased;transition:background .25s,color .25s}
-    #theme-toggle{position:fixed;top:16px;right:20px;z-index:9999;display:flex;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--border2);border-radius:100px;padding:7px 14px 7px 10px;cursor:pointer;font-family:"DM Mono",monospace;font-size:12px;font-weight:500;color:var(--muted);box-shadow:var(--shadow-sm);transition:all .2s;user-select:none}
-    #theme-toggle:hover{color:var(--text);box-shadow:var(--shadow)}
-    .back-btn{position:fixed;top:16px;left:20px;z-index:9999;display:inline-flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border2);border-radius:100px;padding:7px 14px;font-family:"DM Mono",monospace;font-size:12px;color:var(--muted);cursor:pointer;text-decoration:none;box-shadow:var(--shadow-sm);transition:all .2s}
-    .back-btn:hover{color:var(--text);box-shadow:var(--shadow)}
-    .wrap{max-width:640px;margin:0 auto;padding:80px 16px 60px}
-    .quiz-header{text-align:center;margin-bottom:32px}
-    .eyebrow{font-family:"DM Mono",monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:10px}
-    .quiz-header h1{font-size:clamp(1.8rem,6vw,2.4rem);font-weight:800;letter-spacing:-.5px;margin-bottom:8px}
-    .grad-dos{background:linear-gradient(135deg,#2563eb,#0891b2);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-    .quiz-header p{font-size:.88rem;color:var(--muted)}
-    .progress-wrap{margin-bottom:28px}
-    .progress-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-    .progress-label{font-family:"DM Mono",monospace;font-size:11px;color:var(--muted)}
-    .progress-score{font-family:"DM Mono",monospace;font-size:11px;color:var(--blue);font-weight:500}
-    .progress-bg{height:6px;background:var(--surface2);border-radius:100px;overflow:hidden}
-    .progress-bar{height:100%;background:linear-gradient(90deg,#2563eb,#0891b2);border-radius:100px;transition:width .4s cubic-bezier(.4,0,.2,1)}
-    .diff-badge{display:inline-flex;align-items:center;gap:6px;font-family:"DM Mono",monospace;font-size:10px;font-weight:500;padding:4px 10px;border-radius:20px;margin-bottom:16px;border:1px solid;text-transform:uppercase;letter-spacing:.5px}
-    .diff-1{color:var(--green);background:var(--green-bg);border-color:var(--green-bd)}
-    .diff-2{color:var(--blue);background:var(--blue-bg);border-color:var(--blue-bd)}
-    .diff-3{color:var(--orange);background:var(--orange-bg);border-color:var(--orange-bd)}
-    .diff-4{color:var(--red);background:var(--red-bg);border-color:var(--red-bd)}
-    .q-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:16px;box-shadow:var(--shadow-sm)}
-    .q-num{font-family:"DM Mono",monospace;font-size:11px;color:var(--dim);margin-bottom:10px}
-    .q-text{font-size:1rem;font-weight:600;color:var(--text);margin-bottom:12px;line-height:1.5}
-    .q-hint{font-size:.78rem;color:var(--muted);margin-bottom:14px;font-style:italic}
-    .terminal-box{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:10px;font-family:"DM Mono",monospace;transition:border-color .2s}
-    .terminal-box:focus-within{border-color:var(--blue)}
-    .terminal-prompt{color:var(--blue);font-size:.85rem;white-space:nowrap;font-weight:500}
-    .terminal-input{flex:1;background:none;border:none;outline:none;font-family:"DM Mono",monospace;font-size:.85rem;color:var(--text);caret-color:var(--blue)}
-    .terminal-input::placeholder{color:var(--dim)}
-    .feedback{display:none;border-radius:10px;padding:12px 16px;font-size:.83rem;margin-top:12px;line-height:1.5;border:1px solid}
-    .feedback.correct{background:var(--green-bg);border-color:var(--green-bd);color:var(--green)}
-    .feedback.wrong{background:var(--red-bg);border-color:var(--red-bd);color:var(--red)}
-    .feedback.show{display:block}
-    .feedback strong{display:block;margin-bottom:4px}
-    .feedback code{font-family:"DM Mono",monospace;font-size:.8rem;background:rgba(0,0,0,.06);padding:1px 5px;border-radius:4px}
-    .btn-row{display:flex;gap:10px;margin-top:16px}
-    .btn{flex:1;padding:12px;border-radius:10px;font-family:"Bricolage Grotesque",sans-serif;font-size:.88rem;font-weight:600;cursor:pointer;border:1px solid;transition:all .2s;text-align:center}
-    .btn-primary{background:var(--blue);border-color:var(--blue);color:white}
-    .btn-primary:hover{opacity:.9;transform:translateY(-1px);box-shadow:var(--shadow)}
-    .btn-secondary{background:var(--surface);border-color:var(--border2);color:var(--muted)}
-    .btn-secondary:hover{color:var(--text);box-shadow:var(--shadow-sm)}
-    #screen-result{display:none;text-align:center}
-    .result-emoji{font-size:4rem;margin-bottom:16px;display:block}
-    .result-score{font-size:3rem;font-weight:800;letter-spacing:-1px;margin-bottom:8px}
-    .result-label{font-size:.9rem;color:var(--muted);margin-bottom:32px}
-    .result-cards{display:flex;gap:12px;justify-content:center;margin-bottom:32px;flex-wrap:wrap}
-    .result-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 20px;min-width:100px}
-    .result-card-val{font-size:1.6rem;font-weight:700}
-    .result-card-lbl{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-family:"DM Mono",monospace}
-    .rc-green .result-card-val{color:var(--green)}
-    .rc-red .result-card-val{color:var(--red)}
-    .rc-blue .result-card-val{color:var(--blue)}
-    .btn-restart{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;background:var(--blue);color:white;border:none;border-radius:12px;font-family:"Bricolage Grotesque",sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s}
-    .btn-restart:hover{opacity:.9;transform:translateY(-2px);box-shadow:var(--shadow)}
-    #screen-start{text-align:center}
-    .start-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:40px 32px;margin:32px 0;box-shadow:var(--shadow-sm)}
-    .start-icon{font-size:3rem;display:block;margin-bottom:16px}
-    .start-title{font-size:1.3rem;font-weight:700;margin-bottom:8px}
-    .start-desc{font-size:.88rem;color:var(--muted);line-height:1.6;margin-bottom:24px}
-    .start-stats{display:flex;gap:20px;justify-content:center;margin-bottom:24px;flex-wrap:wrap}
-    .start-stat{text-align:center}
-    .start-stat-val{font-size:1.4rem;font-weight:700;color:var(--blue)}
-    .start-stat-lbl{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-family:"DM Mono",monospace}
-    .diff-legend{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:28px}
-    .btn-start{width:100%;padding:14px;background:linear-gradient(135deg,#2563eb,#0891b2);color:white;border:none;border-radius:12px;font-family:"Bricolage Grotesque",sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s}
-    .btn-start:hover{opacity:.9;transform:translateY(-2px);box-shadow:var(--shadow)}
-  </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>DOS Windows — Synthèse & Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#f5f6fa;--surface:#fff;--surface2:#f0f1f7;
+  --border:#e2e4ef;--border2:#c8cbdc;
+  --text:#111827;--text2:#374151;--muted:#6b7280;--dim:#9ca3af;
+  --blue:#2563eb;--blue-bg:#eff6ff;--blue-bd:#bfdbfe;
+  --green:#16a34a;--green-bg:#f0fdf4;--green-bd:#bbf7d0;
+  --red:#dc2626;--red-bg:#fef2f2;--red-bd:#fecaca;
+  --orange:#d97706;--orange-bg:#fffbeb;--orange-bd:#fde68a;
+  --purple:#7c3aed;--purple-bg:#f5f3ff;--purple-bd:#ddd6fe;
+  --teal:#0891b2;--teal-bg:#ecfeff;--teal-bd:#a5f3fc;
+  --shadow-sm:0 1px 3px rgba(0,0,0,.08);
+  --shadow:0 4px 16px rgba(0,0,0,.08);
+  --shadow-lg:0 8px 32px rgba(0,0,0,.1);
+}
+[data-theme="dark"]{
+  --bg:#0d1117;--surface:#161b22;--surface2:#1c2333;
+  --border:#2d3748;--border2:#4a5568;
+  --text:#e2e8f0;--text2:#a0aec0;--muted:#718096;--dim:#4a5568;
+  --blue:#63b3ed;--blue-bg:#1a2744;--blue-bd:#2c4a7c;
+  --green:#68d391;--green-bg:#0e2a1a;--green-bd:#1a4a2e;
+  --red:#fc8181;--red-bg:#2a1414;--red-bd:#4a2020;
+  --orange:#f6ad55;--orange-bg:#2a1e0e;--orange-bd:#4a3418;
+  --purple:#b794f4;--purple-bg:#1e1a3a;--purple-bd:#553c9a;
+  --teal:#4fd1c5;--teal-bg:#0e2a2e;--teal-bd:#1a4a50;
+  --shadow-sm:0 1px 4px rgba(0,0,0,.5);
+  --shadow:0 4px 20px rgba(0,0,0,.6);
+  --shadow-lg:0 8px 32px rgba(0,0,0,.7);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Bricolage Grotesque",sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6;-webkit-font-smoothing:antialiased;transition:background .25s,color .25s}
+
+/* ── Fixed controls ── */
+#theme-toggle{position:fixed;top:16px;right:20px;z-index:9999;display:flex;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--border2);border-radius:100px;padding:7px 14px 7px 10px;cursor:pointer;font-family:"DM Mono",monospace;font-size:12px;font-weight:500;color:var(--muted);box-shadow:var(--shadow-sm);transition:all .2s;user-select:none}
+#theme-toggle:hover{color:var(--text);box-shadow:var(--shadow)}
+.back-btn{position:fixed;top:16px;left:20px;z-index:9999;display:inline-flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border2);border-radius:100px;padding:7px 14px;font-family:"DM Mono",monospace;font-size:12px;color:var(--muted);cursor:pointer;text-decoration:none;box-shadow:var(--shadow-sm);transition:all .2s}
+.back-btn:hover{color:var(--text);box-shadow:var(--shadow)}
+
+/* ── Layout ── */
+.wrap{max-width:860px;margin:0 auto;padding:80px 20px 60px}
+
+/* ── Page header ── */
+.page-header{text-align:center;margin-bottom:32px}
+.eyebrow{font-family:"DM Mono",monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:10px}
+.page-header h1{font-size:clamp(2rem,6vw,2.8rem);font-weight:800;letter-spacing:-.5px;margin-bottom:8px}
+.grad-dos{background:linear-gradient(135deg,#2563eb,#0891b2);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.page-header p{font-size:.9rem;color:var(--muted)}
+
+/* ── Mode switcher ── */
+.mode-bar{display:flex;gap:8px;justify-content:center;margin-bottom:36px}
+.mode-btn{display:flex;align-items:center;gap:8px;padding:10px 22px;border-radius:100px;font-family:"Bricolage Grotesque",sans-serif;font-size:.88rem;font-weight:600;cursor:pointer;border:1px solid var(--border2);background:var(--surface);color:var(--muted);transition:all .2s}
+.mode-btn.active{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:var(--shadow-sm)}
+.mode-btn:hover:not(.active){color:var(--text);border-color:var(--border2);box-shadow:var(--shadow-sm)}
+
+/* ══════════════════════════════
+   SYNTHÈSE
+══════════════════════════════ */
+/* Sub-tabs */
+.sub-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:28px}
+.sub-tab{font-family:"DM Mono",monospace;font-size:.72rem;font-weight:500;letter-spacing:.04em;padding:6px 14px;border:1px solid var(--border);border-radius:8px;cursor:pointer;color:var(--muted);background:var(--surface);text-decoration:none;transition:all .2s;text-transform:uppercase}
+.sub-tab:hover,.sub-tab.active{border-color:var(--blue);color:var(--blue);background:var(--blue-bg)}
+
+.s-section{display:none}.s-section.active{display:block;animation:fadeIn .25s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+.s-title{font-size:1.5rem;font-weight:800;margin-bottom:6px;letter-spacing:-.3px}
+.s-desc{font-size:.85rem;color:var(--muted);margin-bottom:24px;padding-left:12px;border-left:3px solid var(--blue)}
+
+/* Cards */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-bottom:24px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;transition:border-color .2s,transform .2s;box-shadow:var(--shadow-sm)}
+.card:hover{border-color:var(--border2);transform:translateY(-2px)}
+.card-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.tag{font-family:"DM Mono",monospace;font-size:.78rem;font-weight:700;padding:3px 8px;border-radius:5px;white-space:nowrap;background:var(--blue);color:#fff}
+.tag.green{background:var(--green)}
+.tag.red{background:var(--red)}
+.tag.orange{background:var(--orange);color:#fff}
+.tag.purple{background:var(--purple);color:#fff}
+.tag.teal{background:var(--teal);color:#fff}
+.card-title{font-size:.85rem;font-weight:600}
+.card-desc{font-size:.78rem;color:var(--muted);line-height:1.55;margin-bottom:10px}
+.codeblock{background:#0d1117;border-radius:8px;padding:10px 14px;font-family:"DM Mono",monospace;font-size:.76rem;color:#e2e8f0;overflow-x:auto;white-space:pre;margin-top:6px}
+.codeblock .cm{color:#718096}.codeblock .kw{color:#f6ad55}.codeblock .vr{color:#b794f4}
+
+/* Table */
+.cmd-table{width:100%;border-collapse:collapse;margin-bottom:20px;font-size:.82rem}
+.cmd-table th{background:var(--surface2);color:var(--blue);font-family:"DM Mono",monospace;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;padding:8px 12px;text-align:left;border-bottom:1px solid var(--border)}
+.cmd-table td{padding:8px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+.cmd-table tr:last-child td{border-bottom:none}
+.cmd-table tr:hover td{background:rgba(37,99,235,.04)}
+.cmd-table td:first-child{font-family:"DM Mono",monospace;color:var(--blue);font-weight:600;white-space:nowrap}
+.cmd-table td:nth-child(2){color:var(--muted)}
+.cmd-table td code{font-family:"DM Mono",monospace;font-size:.78rem;background:var(--surface2);padding:1px 5px;border-radius:4px;color:var(--text)}
+
+/* Tip / Warn */
+.tip{background:var(--purple-bg);border:1px solid var(--purple-bd);border-radius:10px;padding:12px 16px;margin-bottom:18px;font-size:.82rem;line-height:1.6}
+.tip strong{color:var(--purple);display:block;margin-bottom:3px;font-size:.73rem;text-transform:uppercase;letter-spacing:.08em}
+.warn{background:var(--orange-bg);border:1px solid var(--orange-bd);border-radius:10px;padding:12px 16px;margin-bottom:18px;font-size:.82rem;line-height:1.6}
+.warn strong{color:var(--orange);display:block;margin-bottom:3px;font-size:.73rem;text-transform:uppercase;letter-spacing:.08em}
+
+/* Op grid */
+.op-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin-bottom:20px}
+.op-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 14px}
+.op-sym{font-family:"DM Mono",monospace;font-size:1.1rem;color:var(--orange);font-weight:700}
+.op-desc{font-size:.75rem;color:var(--muted);margin-top:4px}
+.op-ex{font-family:"DM Mono",monospace;font-size:.72rem;color:var(--blue);margin-top:6px;background:#0d1117;padding:3px 7px;border-radius:4px;display:inline-block}
+
+/* Steps */
+.steps{list-style:none;counter-reset:step;margin-bottom:20px}
+.steps li{counter-increment:step;display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);font-size:.82rem;align-items:flex-start}
+.steps li::before{content:counter(step,decimal-leading-zero);font-family:"DM Mono",monospace;font-size:.68rem;color:var(--blue);background:var(--blue-bg);border:1px solid var(--blue-bd);border-radius:4px;padding:2px 6px;min-width:2.2rem;text-align:center;flex-shrink:0;margin-top:2px}
+.steps li .sc{font-family:"DM Mono",monospace;color:var(--blue);font-size:.76rem;margin-top:3px;display:block}
+.steps li:last-child{border-bottom:none}
+
+/* Terminal block */
+.term-demo{background:#0d1117;border-radius:10px;overflow:hidden;margin-bottom:20px;border:1px solid var(--border)}
+.term-bar{background:#1c2333;padding:8px 14px;display:flex;align-items:center;gap:6px;border-bottom:1px solid #2d3748}
+.tdot{width:10px;height:10px;border-radius:50%}
+.tdot.r{background:#ff5f57}.tdot.y{background:#febc2e}.tdot.g{background:#28c840}
+.term-ttl{font-family:"DM Mono",monospace;font-size:.68rem;color:#718096;margin-left:6px}
+.term-body{padding:14px 18px;font-family:"DM Mono",monospace;font-size:.76rem;line-height:1.8}
+.t-p{color:#f6ad55}.t-c{color:#fff}.t-o{color:#94a3b8}.t-ok{color:#68d391}.t-err{color:#fc8181}
+.kw{color:#f6ad55}.cm{color:#718096}.vr{color:#b794f4}
+
+/* Kbd */
+kbd{display:inline-block;background:var(--surface2);border:1px solid var(--border2);border-radius:4px;padding:1px 6px;font-family:"DM Mono",monospace;font-size:.72rem;color:var(--orange)}
+
+/* Section subheader */
+.sub-h{font-size:.92rem;font-weight:700;color:var(--text);margin:20px 0 12px;padding-bottom:6px;border-bottom:1px solid var(--border);font-family:"DM Mono",monospace}
+
+/* ══════════════════════════════
+   QUIZ
+══════════════════════════════ */
+.progress-wrap{margin-bottom:24px}
+.progress-meta{display:flex;justify-content:space-between;margin-bottom:8px}
+.prog-lbl{font-family:"DM Mono",monospace;font-size:11px;color:var(--muted)}
+.prog-score{font-family:"DM Mono",monospace;font-size:11px;color:var(--blue);font-weight:500}
+.prog-bg{height:6px;background:var(--surface2);border-radius:100px;overflow:hidden}
+.prog-bar{height:100%;background:linear-gradient(90deg,#2563eb,#0891b2);border-radius:100px;transition:width .4s cubic-bezier(.4,0,.2,1)}
+
+.diff-badge{display:inline-flex;align-items:center;gap:5px;font-family:"DM Mono",monospace;font-size:10px;font-weight:500;padding:4px 10px;border-radius:20px;margin-bottom:14px;border:1px solid;text-transform:uppercase;letter-spacing:.5px}
+.d1{color:var(--green);background:var(--green-bg);border-color:var(--green-bd)}
+.d2{color:var(--blue);background:var(--blue-bg);border-color:var(--blue-bd)}
+.d3{color:var(--orange);background:var(--orange-bg);border-color:var(--orange-bd)}
+.d4{color:var(--red);background:var(--red-bg);border-color:var(--red-bd)}
+
+.q-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:16px;box-shadow:var(--shadow-sm)}
+.q-num{font-family:"DM Mono",monospace;font-size:11px;color:var(--dim);margin-bottom:10px}
+.q-text{font-size:1rem;font-weight:600;margin-bottom:10px;line-height:1.5}
+.q-hint{font-size:.78rem;color:var(--muted);margin-bottom:14px;font-style:italic}
+.term-box{background:#0d1117;border:1px solid var(--border);border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:10px;transition:border-color .2s}
+.term-box:focus-within{border-color:var(--blue)}
+.term-pr{color:#f6ad55;font-family:"DM Mono",monospace;font-size:.84rem;white-space:nowrap;font-weight:500}
+.term-in{flex:1;background:none;border:none;outline:none;font-family:"DM Mono",monospace;font-size:.84rem;color:#e2e8f0;caret-color:#63b3ed}
+.term-in::placeholder{color:#4a5568}
+.feedback{display:none;border-radius:10px;padding:11px 15px;font-size:.82rem;margin-top:12px;line-height:1.5;border:1px solid}
+.feedback.correct{background:var(--green-bg);border-color:var(--green-bd);color:var(--green)}
+.feedback.wrong{background:var(--red-bg);border-color:var(--red-bd);color:var(--red)}
+.feedback.show{display:block}
+.feedback strong{display:block;margin-bottom:3px}
+.feedback code{font-family:"DM Mono",monospace;font-size:.8rem;background:rgba(0,0,0,.07);padding:1px 5px;border-radius:4px}
+.btn-row{display:flex;gap:10px;margin-top:14px}
+.btn{flex:1;padding:11px;border-radius:10px;font-family:"Bricolage Grotesque",sans-serif;font-size:.88rem;font-weight:600;cursor:pointer;border:1px solid;transition:all .2s;text-align:center}
+.btn-p{background:var(--blue);border-color:var(--blue);color:#fff}
+.btn-p:hover{opacity:.9;transform:translateY(-1px)}
+.btn-s{background:var(--surface);border-color:var(--border2);color:var(--muted)}
+.btn-s:hover{color:var(--text)}
+
+/* Start / Result screens */
+#qz-start,#qz-result{text-align:center}
+.start-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:36px 28px;margin:0 0 24px;box-shadow:var(--shadow-sm)}
+.start-icon{font-size:2.5rem;display:block;margin-bottom:14px}
+.start-ttl{font-size:1.2rem;font-weight:700;margin-bottom:8px}
+.start-desc{font-size:.85rem;color:var(--muted);line-height:1.6;margin-bottom:20px}
+.start-stats{display:flex;gap:20px;justify-content:center;margin-bottom:20px;flex-wrap:wrap}
+.ss{text-align:center}
+.ss-val{font-size:1.4rem;font-weight:700;color:var(--blue)}
+.ss-lbl{font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-family:"DM Mono",monospace}
+.diff-legend{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:22px}
+.btn-start{width:100%;padding:13px;background:linear-gradient(135deg,#2563eb,#0891b2);color:#fff;border:none;border-radius:12px;font-family:"Bricolage Grotesque",sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s}
+.btn-start:hover{opacity:.9;transform:translateY(-2px)}
+
+.res-emoji{font-size:3.5rem;display:block;margin-bottom:14px}
+.res-score{font-size:2.8rem;font-weight:800;letter-spacing:-1px;margin-bottom:6px}
+.res-label{font-size:.88rem;color:var(--muted);margin-bottom:28px}
+.res-cards{display:flex;gap:10px;justify-content:center;margin-bottom:28px;flex-wrap:wrap}
+.res-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 18px;min-width:90px}
+.res-val{font-size:1.5rem;font-weight:700}
+.res-lbl{font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-family:"DM Mono",monospace}
+.rv-g{color:var(--green)}.rv-r{color:var(--red)}.rv-b{color:var(--blue)}
+.btn-restart{display:inline-flex;align-items:center;gap:8px;padding:13px 26px;background:var(--blue);color:#fff;border:none;border-radius:12px;font-family:"Bricolage Grotesque",sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;transition:all .2s}
+.btn-restart:hover{opacity:.9;transform:translateY(-2px)}
+
+@media(max-width:500px){.mode-bar{flex-direction:column;align-items:center}}
+</style>
 </head>
 <body>
 <button id="theme-toggle" onclick="toggleTheme()"><span class="t-icon">☀️</span><span class="t-label">Sombre</span></button>
 <a href="index.html" class="back-btn">← Hub</a>
 
 <div class="wrap">
-  <div class="quiz-header">
-    <span class="eyebrow">💾 Systèmes & OS</span>
-    <h1>Quiz <span class="grad-dos">DOS Windows</span></h1>
-    <p>Tape la bonne commande cmd.exe — 60 questions, difficulté croissante</p>
+  <div class="page-header">
+    <span class="eyebrow">💾 Systèmes & OS · T1012</span>
+    <h1><span class="grad-dos">DOS Windows</span> cmd.exe</h1>
+    <p>Référence complète · Labos 1, 2 & 5 — et quiz de 60 questions</p>
   </div>
 
-  <!-- START -->
-  <div id="screen-start">
-    <div class="start-card">
-      <span class="start-icon">🖥️</span>
-      <div class="start-title">Prêt à tester tes connaissances DOS ?</div>
-      <div class="start-desc">60 questions sur les commandes cmd.exe, du plus simple au plus complexe. Tape la commande exacte et appuie sur Entrée.</div>
-      <div class="start-stats">
-        <div class="start-stat"><div class="start-stat-val">60</div><div class="start-stat-lbl">Questions</div></div>
-        <div class="start-stat"><div class="start-stat-val">4</div><div class="start-stat-lbl">Niveaux</div></div>
-        <div class="start-stat"><div class="start-stat-val">∞</div><div class="start-stat-lbl">Tentatives</div></div>
-      </div>
-      <div class="diff-legend">
-        <span class="diff-badge diff-1">● Débutant (1–15)</span>
-        <span class="diff-badge diff-2">● Intermédiaire (16–35)</span>
-        <span class="diff-badge diff-3">● Avancé (36–50)</span>
-        <span class="diff-badge diff-4">● Expert (51–60)</span>
-      </div>
-      <button class="btn-start" onclick="startQuiz()">Commencer →</button>
-    </div>
+  <div class="mode-bar">
+    <button class="mode-btn active" id="btn-mode-synth" onclick="switchMode('synth')">📖 Synthèse</button>
+    <button class="mode-btn" id="btn-mode-quiz" onclick="switchMode('quiz')">🎯 Quiz (60 q.)</button>
   </div>
 
-  <!-- QUIZ -->
-  <div id="screen-quiz" style="display:none">
-    <div class="progress-wrap">
-      <div class="progress-meta">
-        <span class="progress-label" id="prog-label">Question 1 / 60</span>
-        <span class="progress-score" id="prog-score">Score : 0</span>
-      </div>
-      <div class="progress-bg"><div class="progress-bar" id="prog-bar" style="width:0%"></div></div>
+  <!-- ══════════ SYNTHÈSE ══════════ -->
+  <div id="mode-synth">
+    <div class="sub-tabs">
+      <a class="sub-tab active" onclick="showS('console',this)">🖥 Console</a>
+      <a class="sub-tab" onclick="showS('cmds',this)">⌨ Commandes</a>
+      <a class="sub-tab" onclick="showS('fichiers',this)">📁 Fichiers</a>
+      <a class="sub-tab" onclick="showS('reseau',this)">🌐 Réseau</a>
+      <a class="sub-tab" onclick="showS('batch',this)">⚙ Batch</a>
+      <a class="sub-tab" onclick="showS('labo5',this)">🔗 Labo 5</a>
     </div>
-    <span class="diff-badge diff-1" id="diff-badge">● Débutant</span>
-    <div class="q-card">
-      <div class="q-num" id="q-num">01 / 60</div>
-      <div class="q-text" id="q-text"></div>
-      <div class="q-hint" id="q-hint"></div>
-      <div class="terminal-box">
-        <span class="terminal-prompt" id="term-prompt">C:\&gt;</span>
-        <input class="terminal-input" id="term-input" type="text" placeholder="tape ta commande..." autocomplete="off" autocorrect="off" spellcheck="false" />
-      </div>
-      <div class="feedback" id="feedback"></div>
-      <div class="btn-row">
-        <button class="btn btn-primary" id="btn-check" onclick="checkAnswer()">Valider ↵</button>
-        <button class="btn btn-secondary" id="btn-skip" onclick="skipQuestion()">Passer →</button>
-      </div>
-    </div>
-  </div>
 
-  <!-- RESULT -->
-  <div id="screen-result">
-    <span class="result-emoji" id="res-emoji">🏆</span>
-    <div class="result-score" id="res-score"></div>
-    <div class="result-label" id="res-label"></div>
-    <div class="result-cards">
-      <div class="result-card rc-green"><div class="result-card-val" id="res-correct">0</div><div class="result-card-lbl">Correctes</div></div>
-      <div class="result-card rc-red"><div class="result-card-val" id="res-wrong">0</div><div class="result-card-lbl">Erreurs</div></div>
-      <div class="result-card rc-blue"><div class="result-card-val" id="res-skip">0</div><div class="result-card-lbl">Passées</div></div>
+    <!-- CONSOLE -->
+    <div class="s-section active" id="s-console">
+      <div class="s-title">La Console DOS</div>
+      <div class="s-desc">Démarrage, configuration et raccourcis de cmd.exe — Labo 1</div>
+
+      <div class="sub-h">// Ouvrir la console</div>
+      <div class="cards">
+        <div class="card"><div class="card-head"><span class="tag">Méthode 1</span><span class="card-title">Recherche Windows</span></div><div class="card-desc">Taper <strong>cmd</strong> dans la barre de recherche ou dans Exécuter</div><div class="codeblock">Win + R → cmd → Entrée</div></div>
+        <div class="card"><div class="card-head"><span class="tag">Méthode 2</span><span class="card-title">Explorateur</span></div><div class="card-desc">Dans la barre d'adresse de l'explorateur, taper <strong>cmd</strong></div><div class="codeblock">Barre adresse → cmd → Entrée</div></div>
+        <div class="card"><div class="card-head"><span class="tag orange">Admin</span><span class="card-title">Mode Administrateur</span></div><div class="card-desc">Clic droit sur cmd → <strong>Exécuter en tant qu'administrateur</strong></div><div class="codeblock">Recherche → cmd → Clic droit → "Exécuter en tant qu'admin"</div></div>
+      </div>
+
+      <div class="sub-h">// Propriétés de la console</div>
+      <div class="cards">
+        <div class="card"><div class="card-head"><span class="tag purple">Layout</span><span class="card-title">Taille de la fenêtre</span></div><div class="card-desc">Clic droit barre de titre → Propriétés → onglet <strong>Disposition</strong></div></div>
+        <div class="card"><div class="card-head"><span class="tag purple">Couleurs</span><span class="card-title">Fond / texte</span></div><div class="card-desc">Propriétés → onglet <strong>Couleurs</strong></div></div>
+        <div class="card"><div class="card-head"><span class="tag purple">Options</span><span class="card-title">Lignes mémorisées</span></div><div class="card-desc">Propriétés → onglet <strong>Options</strong> → Taille du tampon</div></div>
+      </div>
+
+      <div class="sub-h">// Raccourcis essentiels</div>
+      <div class="op-grid">
+        <div class="op-card"><div class="op-sym"><kbd>TAB</kbd></div><div class="op-desc">Autocomplétion fichiers/dossiers</div></div>
+        <div class="op-card"><div class="op-sym"><kbd>↑</kbd> / <kbd>↓</kbd></div><div class="op-desc">Historique des commandes</div></div>
+        <div class="op-card"><div class="op-sym"><kbd>Ctrl+C</kbd></div><div class="op-desc">Arrêter une commande en cours</div></div>
+        <div class="op-card"><div class="op-sym">Copier</div><div class="op-desc">Sélectionner + Entrée</div></div>
+        <div class="op-card"><div class="op-sym">Coller</div><div class="op-desc">Clic droit → Coller</div></div>
+        <div class="op-card"><div class="op-sym"><kbd>Pause</kbd></div><div class="op-desc">Suspendre l'affichage</div></div>
+      </div>
+      <div class="tip"><strong>💡 DOS</strong> signifie <strong>Disk Operating System</strong>. Dans Windows moderne, cmd.exe émule l'environnement DOS.</div>
     </div>
-    <button class="btn-restart" onclick="restartQuiz()">↺ Recommencer</button>
-  </div>
-</div>
+
+    <!-- COMMANDES -->
+    <div class="s-section" id="s-cmds">
+      <div class="s-title">Commandes essentielles</div>
+      <div class="s-desc">Navigation, affichage, disques — Labo 2</div>
+
+      <div class="sub-h">// Aide & système</div>
+      <table class="cmd-table">
+        <tr><th>Commande</th><th>Description</th><th>Exemple</th></tr>
+        <tr><td>HELP</td><td>Liste toutes les commandes DOS</td><td><code>help</code></td></tr>
+        <tr><td>HELP [cmd]</td><td>Aide sur une commande</td><td><code>help dir</code> / <code>dir /?</code></td></tr>
+        <tr><td>DATE</td><td>Afficher / modifier la date</td><td><code>date</code></td></tr>
+        <tr><td>TIME</td><td>Afficher / modifier l'heure</td><td><code>time</code></td></tr>
+        <tr><td>CLS</td><td>Effacer l'écran</td><td><code>cls</code></td></tr>
+        <tr><td>VER</td><td>Version de Windows</td><td><code>ver</code></td></tr>
+        <tr><td>EXIT</td><td>Fermer la console</td><td><code>exit</code></td></tr>
+        <tr><td>DOSKEY</td><td>Macros et historique</td><td><code>doskey</code></td></tr>
+      </table>
+
+      <div class="sub-h">// Navigation & Affichage</div>
+      <table class="cmd-table">
+        <tr><th>Commande</th><th>Description</th><th>Exemple</th></tr>
+        <tr><td>DIR</td><td>Lister le contenu d'un répertoire</td><td><code>dir</code> / <code>dir /w</code></td></tr>
+        <tr><td>CD</td><td>Changer de répertoire</td><td><code>cd dossier</code> / <code>cd ..</code></td></tr>
+        <tr><td>CD \</td><td>Aller à la racine</td><td><code>cd \</code></td></tr>
+        <tr><td>D:</td><td>Changer de disque</td><td><code>D:</code> puis Entrée</td></tr>
+        <tr><td>TREE</td><td>Arborescence du répertoire</td><td><code>tree</code> / <code>tree /f</code></td></tr>
+        <tr><td>TYPE</td><td>Afficher un fichier texte</td><td><code>type fichier.txt</code></td></tr>
+        <tr><td>MORE</td><td>Affichage page par page</td><td><code>type fich.txt | more</code></td></tr>
+      </table>
+
+      <div class="sub-h">// Disques & volumes</div>
+      <table class="cmd-table">
+        <tr><th>Commande</th><th>Description</th><th>Exemple</th></tr>
+        <tr><td>LABEL</td><td>Nom d'un disque</td><td><code>label C: MonDisque</code></td></tr>
+        <tr><td>VOL</td><td>Numéro de série du volume</td><td><code>vol C:</code></td></tr>
+        <tr><td>FORMAT</td><td>Formater un disque</td><td><code>format D:</code></td></tr>
+        <tr><td>CHKDSK</td><td>Vérifier un disque</td><td><code>chkdsk C:</code></td></tr>
+        <tr><td>SUBST</td><td>Lettre disque → chemin local</td><td><code>subst G: C:\MonDossier</code></td></tr>
+        <tr><td>NET USE</td><td>Lettre disque → chemin réseau</td><td><code>net use X: \\server\partage</code></td></tr>
+      </table>
+
+      <div class="sub-h">// Jokers (wildcards)</div>
+      <div class="cards">
+        <div class="card"><div class="card-head"><span class="tag orange">*</span><span class="card-title">Astérisque — plusieurs caractères</span></div><div class="card-desc">Remplace 0 ou plusieurs caractères</div><div class="codeblock">dir *.txt       <span class="cm">→ tous les .txt</span>
+del *.tmp       <span class="cm">→ supprimer tous les .tmp</span></div></div>
+        <div class="card"><div class="card-head"><span class="tag orange">?</span><span class="card-title">Point d'interrogation — 1 caractère</span></div><div class="card-desc">Remplace exactement un seul caractère</div><div class="codeblock">dir fichier?.txt  <span class="cm">→ fichier1.txt, fichierA.txt</span></div></div>
+      </div>
+    </div>
+
+    <!-- FICHIERS -->
+    <div class="s-section" id="s-fichiers">
+      <div class="s-title">Fichiers & Répertoires</div>
+      <div class="s-desc">Créer, copier, déplacer, supprimer</div>
+
+      <div class="sub-h">// Répertoires</div>
+      <div class="cards">
+        <div class="card"><div class="card-head"><span class="tag green">MD</span><span class="card-title">Make Directory</span></div><div class="card-desc">Créer un ou plusieurs dossiers. Alias : <code>MKDIR</code></div><div class="codeblock">md MonDossier
+mkdir C:\T1012\Labo2
+md ..\yolo\toto   <span class="cm">← crée les parents</span></div></div>
+        <div class="card"><div class="card-head"><span class="tag red">RD</span><span class="card-title">Remove Directory</span></div><div class="card-desc">Supprimer un répertoire. Alias : <code>RMDIR</code></div><div class="codeblock">rd MonDossier           <span class="cm">← vide seulement</span>
+rd MonDossier /S        <span class="cm">← avec contenu</span>
+rd MonDossier /S /Q     <span class="cm">← sans confirmation</span></div></div>
+        <div class="card"><div class="card-head"><span class="tag">CD</span><span class="card-title">Change Directory</span></div><div class="card-desc">Naviguer dans l'arborescence</div><div class="codeblock">cd NomDossier  <span class="cm">← descendre</span>
+cd ..          <span class="cm">← remonter</span>
+cd \           <span class="cm">← racine</span></div></div>
+      </div>
+
+      <div class="sub-h">// Fichiers</div>
+      <div class="cards">
+        <div class="card"><div class="card-head"><span class="tag green">COPY</span><span class="card-title">Copier</span></div><div class="card-desc">Copier un ou plusieurs fichiers</div><div class="codeblock">copy source.txt dest.txt
+copy *.txt D:\backup\</div></div>
+        <div class="card"><div class="card-head"><span class="tag orange">MOVE</span><span class="card-title">Déplacer / Renommer</span></div><div class="card-desc">Déplacer ou renommer un fichier</div><div class="codeblock">move fichier.txt D:\
+move ancien.txt nouveau.txt</div></div>
+        <div class="card"><div class="card-head"><span class="tag red">DEL</span><span class="card-title">Delete — Supprimer</span></div><div class="card-desc">Supprimer fichiers. Alias : <code>ERASE</code></div><div class="codeblock">del fichier.txt
+del *.tmp /Q   <span class="cm">← sans confirmation</span></div></div>
+        <div class="card"><div class="card-head"><span class="tag">REN</span><span class="card-title">Rename — Renommer</span></div><div class="card-desc">Renommer un fichier ou répertoire</div><div class="codeblock">ren vieux.txt nouveau.txt
+ren *.txt *.texte</div></div>
+        <div class="card"><div class="card-head"><span class="tag teal">XCOPY</span><span class="card-title">Copie avancée</span></div><div class="card-desc">Copier avec sous-dossiers</div><div class="codeblock">xcopy source dest /S /E /I</div></div>
+        <div class="card"><div class="card-head"><span class="tag">ATTRIB</span><span class="card-title">Attributs</span></div><div class="card-desc"><code>R</code>=lecture seule, <code>H</code>=caché, <code>A</code>=archive</div><div class="codeblock">attrib +R fichier.txt
+attrib -H fichier.txt</div></div>
+      </div>
+
+      <div class="sub-h">// Redirection & Opérateurs</div>
+      <div class="op-grid">
+        <div class="op-card"><div class="op-sym">&gt;</div><div class="op-desc">Rediriger vers un fichier (écrase)</div><div class="op-ex">dir > liste.txt</div></div>
+        <div class="op-card"><div class="op-sym">&gt;&gt;</div><div class="op-desc">Ajouter à la fin du fichier</div><div class="op-ex">dir >> liste.txt</div></div>
+        <div class="op-card"><div class="op-sym">|</div><div class="op-desc">Pipe — sortie vers une autre commande</div><div class="op-ex">dir | more</div></div>
+        <div class="op-card"><div class="op-sym">&amp;</div><div class="op-desc">Exécuter deux commandes</div><div class="op-ex">cls & dir</div></div>
+        <div class="op-card"><div class="op-sym">&amp;&amp;</div><div class="op-desc">2e commande si la 1re réussit</div><div class="op-ex">mkdir test && cd test</div></div>
+      </div>
+
+      <div class="term-demo">
+        <div class="term-bar"><div class="tdot r"></div><div class="tdot y"></div><div class="tdot g"></div><div class="term-ttl">Exemple — arborescence</div></div>
+        <div class="term-body">
+<span class="t-p">C:\></span> <span class="t-c">md T1012\Labo2\exercices</span>
+<span class="t-p">C:\></span> <span class="t-c">cd T1012\Labo2</span>
+<span class="t-p">C:\T1012\Labo2></span> <span class="t-c">tree > arborescence.txt</span>
+<span class="t-p">C:\T1012\Labo2></span> <span class="t-c">type arborescence.txt</span>
+<span class="t-o">C:.
+└───exercices</span></div>
+      </div>
+    </div>
+
+    <!-- RÉSEAU -->
+    <div class="s-section" id="s-reseau">
+      <div class="s-title">Commandes Réseau</div>
+      <div class="s-desc">PING, IPCONFIG, TRACERT, NET — Labo 2.G et 2.J</div>
+
+      <div class="sub-h">// PING</div>
+      <div class="codeblock" style="margin-bottom:18px">ping 192.168.1.1        <span class="cm">← par adresse IP</span>
+ping google.com         <span class="cm">← par nom de domaine</span>
+ping -t 192.168.1.1     <span class="cm">← en continu (Ctrl+C pour stopper)</span>
+ping -n 10 192.168.1.1  <span class="cm">← envoyer 10 paquets</span></div>
+
+      <div class="sub-h">// IPCONFIG</div>
+      <table class="cmd-table">
+        <tr><th>Commande</th><th>Description</th></tr>
+        <tr><td>ipconfig</td><td>Config réseau de base (IP, masque, passerelle)</td></tr>
+        <tr><td>ipconfig /all</td><td>Toutes les infos (MAC, DHCP, DNS…)</td></tr>
+        <tr><td>ipconfig /release</td><td>Libérer l'adresse IP DHCP</td></tr>
+        <tr><td>ipconfig /renew</td><td>Renouveler l'adresse IP DHCP</td></tr>
+        <tr><td>ipconfig /flushdns</td><td>Vider le cache DNS local</td></tr>
+      </table>
+
+      <div class="sub-h">// TRACERT</div>
+      <div class="codeblock" style="margin-bottom:18px">tracert google.com
+tracert 8.8.8.8</div>
+
+      <div class="sub-h">// NET — Réseau avancé</div>
+      <table class="cmd-table">
+        <tr><th>Commande</th><th>Description</th></tr>
+        <tr><td>net use</td><td>Connexions réseau actives</td></tr>
+        <tr><td>net use X: \\ip\partage</td><td>Connecter un lecteur réseau</td></tr>
+        <tr><td>net use X: /delete</td><td>Supprimer un lecteur réseau</td></tr>
+        <tr><td>net view</td><td>Machines visibles sur le réseau</td></tr>
+        <tr><td>net user</td><td>Comptes utilisateurs locaux</td></tr>
+        <tr><td>net share</td><td>Partages réseau de la machine</td></tr>
+      </table>
+
+      <div class="term-demo">
+        <div class="term-bar"><div class="tdot r"></div><div class="tdot y"></div><div class="tdot g"></div><div class="term-ttl">Exemple — lecteur réseau</div></div>
+        <div class="term-body">
+<span class="t-p">C:\></span> <span class="t-c">net use X: \\10.4.63.50\partage</span>
+<span class="t-ok">La commande s'est terminée correctement.</span>
+<span class="t-p">C:\></span> <span class="t-c">net use X: /delete</span>
+<span class="t-ok">X: supprimé avec succès.</span></div>
+      </div>
+    </div>
+
+    <!-- BATCH -->
+    <div class="s-section" id="s-batch">
+      <div class="s-title">Batch & Variables</div>
+      <div class="s-desc">Fichiers .bat — automatiser des séquences de commandes DOS</div>
+
+      <div class="tip"><strong>📄 Définition</strong>Un fichier <strong>.bat</strong> (ou <strong>.cmd</strong>) est un fichier texte contenant des commandes DOS exécutées automatiquement dans l'ordre.</div>
+
+      <div class="sub-h">// Instructions de base</div>
+      <div class="cards">
+        <div class="card"><div class="card-head"><span class="tag purple">@ECHO OFF</span><span class="card-title">Masquer les commandes</span></div><div class="card-desc">Mettre en première ligne pour ne pas afficher chaque commande</div><div class="codeblock"><span class="kw">@echo off</span>
+<span class="cm">REM les commandes s'exécutent sans s'afficher</span></div></div>
+        <div class="card"><div class="card-head"><span class="tag purple">REM</span><span class="card-title">Commentaires</span></div><div class="card-desc">Lignes non exécutées, pour documenter</div><div class="codeblock"><span class="cm">REM Auteur : Liam
+REM Date : 2025</span></div></div>
+        <div class="card"><div class="card-head"><span class="tag purple">ECHO</span><span class="card-title">Afficher un message</span></div><div class="card-desc"><code>echo.</code> pour une ligne vide</div><div class="codeblock"><span class="kw">echo</span> Bonjour !
+<span class="kw">echo</span>.           <span class="cm">← ligne vide</span></div></div>
+        <div class="card"><div class="card-head"><span class="tag purple">PAUSE</span><span class="card-title">Attendre une touche</span></div><div class="card-desc">Suspend l'exécution</div><div class="codeblock"><span class="kw">pause</span></div></div>
+        <div class="card"><div class="card-head"><span class="tag purple">COLOR</span><span class="card-title">Couleur de la console</span></div><div class="card-desc">2 chiffres hex — fond puis texte</div><div class="codeblock"><span class="kw">color</span> F0  <span class="cm">← fond blanc, texte noir</span>
+<span class="kw">color</span> 0A  <span class="cm">← fond noir, texte vert</span></div></div>
+        <div class="card"><div class="card-head"><span class="tag purple">PROMPT</span><span class="card-title">Invite de commande</span></div><div class="card-desc"><code>$D</code>=date, <code>$P</code>=chemin, <code>$G</code>= ></div><div class="codeblock"><span class="kw">prompt</span> $D $P$G</div></div>
+      </div>
+
+      <div class="sub-h">// Variables d'environnement</div>
+      <div class="codeblock" style="margin-bottom:18px"><span class="cm">REM Afficher toutes les variables :</span>
+<span class="kw">set</span>
+
+<span class="cm">REM Définir une variable :</span>
+<span class="kw">set</span> <span class="vr">MONVAR</span>=bonjour
+<span class="kw">echo</span> <span class="vr">%MONVAR%</span>
+
+<span class="cm">REM Variables prédéfinies :</span>
+<span class="kw">echo</span> <span class="vr">%USERPROFILE%</span>    <span class="cm">← C:\Users\Liam</span>
+<span class="kw">echo</span> <span class="vr">%USERNAME%</span>        <span class="cm">← Liam</span>
+<span class="kw">echo</span> <span class="vr">%COMPUTERNAME%</span>    <span class="cm">← nom du PC</span>
+<span class="kw">echo</span> <span class="vr">%PATH%</span>            <span class="cm">← chemins des exécutables</span>
+<span class="kw">echo</span> <span class="vr">%TEMP%</span>            <span class="cm">← dossier temporaire</span></div>
+
+      <div class="warn"><strong>⚠ PATH dans un batch</strong>La modification du PATH dans un batch n'est valide que pour la console en cours. Pour une modification permanente : Propriétés système → Variables d'environnement.</div>
+      <div class="codeblock"><span class="kw">set</span> <span class="vr">PATH</span>=<span class="vr">%PATH%</span>;<span class="vr">%HOMEDRIVE%%HOMEPATH%</span>\Mes documents\Mes Batch</div>
+    </div>
+
+    <!-- LABO 5 -->
+    <div class="s-section" id="s-labo5">
+      <div class="s-title">Labo 5 — VMware & Batch avancé</div>
+      <div class="s-desc">Partages réseau, lecteurs réseau, batch automatique au démarrage</div>
+
+      <div class="tip"><strong>💡 Prérequis</strong>Le labo 5 se fait dans une <strong>machine virtuelle VMware</strong>. Session administrateur, mot de passe <code>EphecEphec</code>. Créer un dossier <code>partage</code> dans Mes documents et le partager.</div>
+
+      <div class="sub-h">// 5.B.2 — Connecter deux lecteurs réseau</div>
+      <div class="term-demo">
+        <div class="term-bar"><div class="tdot r"></div><div class="tdot y"></div><div class="tdot g"></div><div class="term-ttl">connecter.bat</div></div>
+        <div class="term-body"><span class="kw">@echo off</span>
+<span class="cm">REM Connexion de deux lecteurs réseau</span>
+<span class="kw">net use</span> X: \\<span class="vr">ip1</span>\partage
+<span class="kw">net use</span> Y: \\<span class="vr">ip2</span>\partage
+<span class="kw">echo</span> Lecteurs X: et Y: connectés !
+<span class="kw">pause</span></div>
+      </div>
+
+      <div class="sub-h">// 5.B.3 — Déconnecter les lecteurs réseau</div>
+      <div class="term-demo">
+        <div class="term-bar"><div class="tdot r"></div><div class="tdot y"></div><div class="tdot g"></div><div class="term-ttl">deconnecter.bat</div></div>
+        <div class="term-body"><span class="kw">@echo off</span>
+<span class="kw">net use</span> X: /delete
+<span class="kw">net use</span> Y: /delete
+<span class="kw">echo</span> Lecteurs supprimés.
+<span class="kw">pause</span></div>
+      </div>
+
+      <div class="sub-h">// 5.D — Batch examen complet (15 étapes)</div>
+      <ul class="steps">
+        <li><span>Effacer la console</span><span class="sc">cls</span></li>
+        <li><span>Changer la couleur (fond blanc, texte noir)</span><span class="sc">color F0</span></li>
+        <li><span>Afficher les informations réseau</span><span class="sc">ipconfig /all</span></li>
+        <li><span>Changer le prompt (date + chemin)</span><span class="sc">prompt $D $P$G</span></li>
+        <li><span>Afficher le dossier de profil</span><span class="sc">echo Votre dossier : %USERPROFILE%</span></li>
+        <li><span>Créer un répertoire à la racine C:</span><span class="sc">md C:\T101 TechOrdi</span></li>
+        <li><span>Créer un disque de substitution B:</span><span class="sc">subst B: "C:\T101 TechOrdi"</span></li>
+        <li><span>Connecter le disque réseau T:</span><span class="sc">net use T: \\machin\partage\mes fichiers</span></li>
+        <li><span>Copier les .txt de T: vers B:</span><span class="sc">copy T:\*.txt B:\</span></li>
+        <li><span>Renommer les .txt en .texte</span><span class="sc">ren B:\*.txt *.texte</span></li>
+        <li><span>Créer l'arborescence T1012\TP05 en une fois</span><span class="sc">md B:\T1012 TechOrdi TP\TP05 Batch</span></li>
+        <li><span>Sauver l'arborescence de C:\Windows\Temp</span><span class="sc">tree C:\windows\temp > B:\arbreWindowsTemp.txt</span></li>
+        <li><span>Attendre une touche</span><span class="sc">pause</span></li>
+        <li><span>Afficher le fichier page par page</span><span class="sc">type B:\arbreWindowsTemp.txt | more</span></li>
+        <li><span>Afficher un message de fin</span><span class="sc">echo Au revoir</span></li>
+      </ul>
+
+      <div class="sub-h">// Démarrage automatique</div>
+      <div class="tip"><strong>🚀 Méthode</strong>Placer le fichier .bat dans : <code>C:\Documents and Settings\Administrateur\Menu Démarrer\Programmes\Démarrage</code></div>
+    </div>
+  </div><!-- /mode-synth -->
+
+  <!-- ══════════ QUIZ ══════════ -->
+  <div id="mode-quiz" style="display:none">
+    <!-- START -->
+    <div id="qz-start">
+      <div class="start-card">
+        <span class="start-icon">🖥️</span>
+        <div class="start-ttl">Prêt à tester tes connaissances DOS ?</div>
+        <div class="start-desc">60 questions sur cmd.exe, du plus simple au plus complexe. Tape la commande exacte et appuie sur Entrée.</div>
+        <div class="start-stats">
+          <div class="ss"><div class="ss-val">60</div><div class="ss-lbl">Questions</div></div>
+          <div class="ss"><div class="ss-val">4</div><div class="ss-lbl">Niveaux</div></div>
+          <div class="ss"><div class="ss-val">∞</div><div class="ss-lbl">Tentatives</div></div>
+        </div>
+        <div class="diff-legend">
+          <span class="diff-badge d1">● Débutant (1–15)</span>
+          <span class="diff-badge d2">● Intermédiaire (16–35)</span>
+          <span class="diff-badge d3">● Avancé (36–50)</span>
+          <span class="diff-badge d4">● Expert (51–60)</span>
+        </div>
+        <button class="btn-start" onclick="startQuiz()">Commencer →</button>
+      </div>
+    </div>
+
+    <!-- QUIZ -->
+    <div id="qz-play" style="display:none">
+      <div class="progress-wrap">
+        <div class="progress-meta">
+          <span class="prog-lbl" id="prog-lbl">Question 1 / 60</span>
+          <span class="prog-score" id="prog-score">Score : 0</span>
+        </div>
+        <div class="prog-bg"><div class="prog-bar" id="prog-bar" style="width:0%"></div></div>
+      </div>
+      <span class="diff-badge d1" id="diff-badge">● Débutant</span>
+      <div class="q-card">
+        <div class="q-num" id="q-num">01 / 60</div>
+        <div class="q-text" id="q-text"></div>
+        <div class="q-hint" id="q-hint"></div>
+        <div class="term-box">
+          <span class="term-pr" id="term-pr">C:\&gt;</span>
+          <input class="term-in" id="term-in" type="text" placeholder="tape ta commande..." autocomplete="off" autocorrect="off" spellcheck="false"/>
+        </div>
+        <div class="feedback" id="feedback"></div>
+        <div class="btn-row">
+          <button class="btn btn-p" id="btn-check" onclick="checkAnswer()">Valider ↵</button>
+          <button class="btn btn-s" id="btn-skip" onclick="skipQ()">Passer →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESULT -->
+    <div id="qz-result" style="display:none">
+      <span class="res-emoji" id="res-emoji">🏆</span>
+      <div class="res-score" id="res-score"></div>
+      <div class="res-label" id="res-label"></div>
+      <div class="res-cards">
+        <div class="res-card"><div class="res-val rv-g" id="res-ok">0</div><div class="res-lbl">Correctes</div></div>
+        <div class="res-card"><div class="res-val rv-r" id="res-err">0</div><div class="res-lbl">Erreurs</div></div>
+        <div class="res-card"><div class="res-val rv-b" id="res-skip">0</div><div class="res-lbl">Passées</div></div>
+      </div>
+      <button class="btn-restart" onclick="restartQuiz()">↺ Recommencer</button>
+    </div>
+  </div><!-- /mode-quiz -->
+</div><!-- /wrap -->
 
 <script>
+// ── Theme ──
 (function(){
   const s=localStorage.getItem('theme')||'light';
   document.documentElement.setAttribute('data-theme',s);
@@ -185,125 +579,121 @@ function toggleTheme(){
   document.querySelector('#theme-toggle .t-icon').textContent=n==='dark'?'🌙':'☀️';
 }
 
+// ── Mode switch ──
+function switchMode(m){
+  document.getElementById('mode-synth').style.display=m==='synth'?'block':'none';
+  document.getElementById('mode-quiz').style.display=m==='quiz'?'block':'none';
+  document.getElementById('btn-mode-synth').className='mode-btn'+(m==='synth'?' active':'');
+  document.getElementById('btn-mode-quiz').className='mode-btn'+(m==='quiz'?' active':'');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ── Synthèse sub-tabs ──
+function showS(id,el){
+  document.querySelectorAll('.s-section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.sub-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('s-'+id).classList.add('active');
+  el.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ── Questions DOS ──
 const Q=[
-  // NIVEAU 1 — Débutant
   {q:"Affiche le contenu du répertoire courant",hint:"La commande la plus basique pour lister les fichiers",a:["dir"],l:1},
   {q:"Efface l'écran du terminal",hint:"3 lettres, comme 'clear' sous Linux",a:["cls"],l:1},
   {q:"Affiche la version de Windows",hint:"3 lettres signifiant 'version'",a:["ver"],l:1},
   {q:"Ferme la fenêtre du terminal",hint:"Pour quitter proprement",a:["exit"],l:1},
-  {q:"Affiche la liste de toutes les commandes DOS",hint:"Un seul mot en anglais signifiant 'aide'",a:["help"],l:1},
+  {q:"Affiche la liste de toutes les commandes DOS",hint:"Un seul mot anglais : aide",a:["help"],l:1},
   {q:"Affiche la date actuelle",hint:"Le mot anglais pour 'date'",a:["date"],l:1},
   {q:"Affiche l'heure actuelle",hint:"Le mot anglais pour 'heure'",a:["time"],l:1},
   {q:"Remonte d'un niveau dans l'arborescence",hint:"cd suivi de deux points",a:["cd .."],l:1},
-  {q:"Va à la racine du disque courant",hint:"cd suivi du caractère antislash",a:["cd \\","cd/","cd\\"],l:1},
+  {q:"Va à la racine du disque courant",hint:"cd suivi d'un antislash",a:["cd \\","cd\\","cd/"],l:1},
   {q:"Affiche l'arborescence du répertoire courant",hint:"4 lettres, comme un arbre",a:["tree"],l:1},
-  {q:"Crée un nouveau dossier nommé 'Test'",hint:"MD ou MKDIR suivi du nom",a:["md Test","mkdir Test"],l:1},
-  {q:"Affiche le contenu du fichier notes.txt",hint:"Commande qui 'tape' le fichier à l'écran",a:["type notes.txt"],l:1},
-  {q:"Supprime le fichier temp.txt",hint:"DEL suivi du nom du fichier",a:["del temp.txt","erase temp.txt"],l:1},
+  {q:"Crée un dossier nommé 'Test'",hint:"MD ou MKDIR suivi du nom",a:["md Test","mkdir Test"],l:1},
+  {q:"Affiche le contenu du fichier notes.txt",hint:"Commande qui 'tape' le fichier",a:["type notes.txt"],l:1},
+  {q:"Supprime le fichier temp.txt",hint:"DEL suivi du nom",a:["del temp.txt","erase temp.txt"],l:1},
   {q:"Change de répertoire pour aller dans 'Documents'",hint:"CD suivi du nom du dossier",a:["cd Documents"],l:1},
-  {q:"Affiche le nom du volume et numéro de série du disque C:",hint:"VOL suivi de la lettre de disque",a:["vol C:","vol c:"],l:1},
-
-  // NIVEAU 2 — Intermédiaire
+  {q:"Affiche le nom et numéro de série du volume C:",hint:"VOL suivi de la lettre de disque",a:["vol C:","vol c:"],l:1},
   {q:"Liste les fichiers en format large (plusieurs colonnes)",hint:"DIR avec l'option /W",a:["dir /w","dir /W"],l:2},
-  {q:"Affiche l'aide détaillée sur la commande DIR",hint:"DIR avec l'option '/?'",a:["dir /?","help dir"],l:2},
+  {q:"Affiche l'aide détaillée sur la commande DIR",hint:"DIR avec l'option /?",a:["dir /?","help dir"],l:2},
   {q:"Copie fichier.txt vers D:\\",hint:"COPY source destination",a:["copy fichier.txt D:\\","copy fichier.txt d:\\"],l:2},
   {q:"Renomme ancien.txt en nouveau.txt",hint:"REN ancien nouveau",a:["ren ancien.txt nouveau.txt","rename ancien.txt nouveau.txt"],l:2},
   {q:"Déplace rapport.txt vers C:\\Backup\\",hint:"MOVE source destination",a:["move rapport.txt C:\\Backup\\","move rapport.txt c:\\backup\\"],l:2},
   {q:"Supprime le dossier vide MonDossier",hint:"RD ou RMDIR suivi du nom",a:["rd MonDossier","rmdir MonDossier"],l:2},
   {q:"Affiche tous les fichiers .txt du répertoire courant",hint:"DIR avec le joker astérisque",a:["dir *.txt"],l:2},
   {q:"Affiche l'arborescence avec les fichiers inclus",hint:"TREE avec l'option /F",a:["tree /f","tree /F"],l:2},
-  {q:"Affiche la configuration réseau de base (IP, masque, passerelle)",hint:"La commande réseau fondamentale sous Windows",a:["ipconfig"],l:2},
+  {q:"Affiche la configuration réseau de base",hint:"La commande réseau fondamentale sous Windows",a:["ipconfig"],l:2},
   {q:"Teste la connectivité réseau vers 8.8.8.8",hint:"La commande ICMP classique",a:["ping 8.8.8.8"],l:2},
   {q:"Affiche toutes les infos réseau (MAC, DHCP, DNS...)",hint:"IPCONFIG avec une option",a:["ipconfig /all"],l:2},
   {q:"Crée le dossier T1012 à la racine de C:",hint:"MD avec le chemin complet",a:["md C:\\T1012","mkdir C:\\T1012"],l:2},
   {q:"Affiche les connexions réseau actives",hint:"NET suivi du mot pour 'utiliser'",a:["net use"],l:2},
-  {q:"Affiche le contenu de notes.txt page par page",hint:"TYPE fichier puis pipe puis MORE",a:["type notes.txt | more"],l:2},
-  {q:"Copie tous les fichiers .txt vers D:\\Backup\\",hint:"COPY avec le joker astérisque",a:["copy *.txt D:\\Backup\\","copy *.txt d:\\backup\\"],l:2},
-  {q:"Change de disque pour passer sur D:",hint:"Juste la lettre suivie de deux-points et Entrée",a:["D:","d:"],l:2},
-  {q:"Supprime tous les fichiers .tmp sans demander confirmation",hint:"DEL *.tmp avec l'option silence /Q",a:["del *.tmp /q","del *.tmp /Q"],l:2},
-  {q:"Attribue la lettre G: au chemin C:\\MonDossier",hint:"La commande de substitution de lecteur",a:["subst G: C:\\MonDossier","subst g: c:\\MonDossier","subst G: c:\\MonDossier"],l:2},
-  {q:"Modifie l'invite pour afficher la date et le chemin courant",hint:"PROMPT $D $P$G",a:["prompt $D $P$G","prompt $d $p$g"],l:2},
-  {q:"Change la couleur : fond blanc (F), texte noir (0)",hint:"COLOR suivi du code à deux chiffres hex",a:["color F0","color f0"],l:2},
-  {q:"Compare deux fichiers texte : a.txt et b.txt",hint:"La commande de comparaison de fichiers",a:["fc a.txt b.txt","FC a.txt b.txt"],l:2},
-
-  // NIVEAU 3 — Avancé
-  {q:"Connecte le lecteur réseau X: au partage \\\\192.168.1.10\\partage",hint:"NET USE lettre: chemin_UNC",a:["net use X: \\\\192.168.1.10\\partage","net use x: \\\\192.168.1.10\\partage"],l:3},
+  {q:"Affiche notes.txt page par page",hint:"TYPE fichier pipe MORE",a:["type notes.txt | more"],l:2},
+  {q:"Copie tous les fichiers .txt vers D:\\Backup\\",hint:"COPY avec le joker *",a:["copy *.txt D:\\Backup\\","copy *.txt d:\\backup\\"],l:2},
+  {q:"Change de disque pour passer sur D:",hint:"Juste la lettre + deux-points + Entrée",a:["D:","d:"],l:2},
+  {q:"Supprime tous les fichiers .tmp sans confirmation",hint:"DEL *.tmp avec l'option /Q",a:["del *.tmp /q","del *.tmp /Q"],l:2},
+  {q:"Attribue la lettre G: au chemin C:\\MonDossier",hint:"La commande de substitution de lecteur",a:["subst G: C:\\MonDossier","subst g: c:\\MonDossier"],l:2},
+  {q:"Modifie l'invite pour afficher la date et le chemin",hint:"PROMPT $D $P$G",a:["prompt $D $P$G","prompt $d $p$g"],l:2},
+  {q:"Change couleur : fond blanc (F), texte noir (0)",hint:"COLOR suivi du code hex à 2 chiffres",a:["color F0","color f0"],l:2},
+  {q:"Connecte le lecteur X: au partage \\\\192.168.1.10\\partage",hint:"NET USE lettre: chemin_UNC",a:["net use X: \\\\192.168.1.10\\partage","net use x: \\\\192.168.1.10\\partage"],l:3},
   {q:"Déconnecte le lecteur réseau X:",hint:"NET USE avec /delete",a:["net use X: /delete","net use x: /delete"],l:3},
-  {q:"Copie le dossier Source et ses sous-dossiers vers D:\\Dest\\ (copie avancée)",hint:"XCOPY avec /S /E /I",a:["xcopy Source D:\\Dest\\ /S /E /I","xcopy source d:\\dest\\ /s /e /i","xcopy Source D:\\Dest\\ /s /e /i"],l:3},
+  {q:"Copie le dossier Source et ses sous-dossiers vers D:\\Dest\\",hint:"XCOPY avec /S /E /I",a:["xcopy Source D:\\Dest\\ /S /E /I","xcopy source d:\\dest\\ /s /e /i"],l:3},
   {q:"Affiche les machines et partages visibles sur le réseau",hint:"NET suivi de 'view'",a:["net view"],l:3},
   {q:"Rend le fichier secret.txt en lecture seule",hint:"ATTRIB +R fichier",a:["attrib +R secret.txt","attrib +r secret.txt"],l:3},
   {q:"Cache le fichier config.ini",hint:"ATTRIB +H fichier",a:["attrib +H config.ini","attrib +h config.ini"],l:3},
   {q:"Sauvegarde l'arborescence de C:\\Windows\\Temp dans arbre.txt",hint:"TREE chemin > fichier.txt",a:["tree C:\\Windows\\Temp > arbre.txt","tree c:\\windows\\temp > arbre.txt"],l:3},
   {q:"Affiche les utilisateurs locaux de la machine",hint:"NET USER sans argument",a:["net user"],l:3},
-  {q:"Libère l'adresse IP obtenue par DHCP",hint:"IPCONFIG avec /release",a:["ipconfig /release"],l:3},
-  {q:"Renouvelle l'adresse IP auprès du serveur DHCP",hint:"IPCONFIG avec /renew",a:["ipconfig /renew"],l:3},
+  {q:"Libère l'adresse IP DHCP",hint:"IPCONFIG avec /release",a:["ipconfig /release"],l:3},
+  {q:"Renouvelle l'adresse IP DHCP",hint:"IPCONFIG avec /renew",a:["ipconfig /renew"],l:3},
   {q:"Vide le cache DNS local",hint:"IPCONFIG avec /flushdns",a:["ipconfig /flushdns"],l:3},
-  {q:"Affiche la route des paquets vers google.com",hint:"Équivalent Windows de traceroute Linux",a:["tracert google.com"],l:3},
-  {q:"Supprime MonDossier et tout son contenu sans confirmation",hint:"RD avec /S (récursif) et /Q (silencieux)",a:["rd MonDossier /S /Q","rd MonDossier /s /q","rmdir MonDossier /S /Q"],l:3},
-  {q:"Vérifie l'état et les erreurs du disque C:",hint:"La commande de vérification de disque",a:["chkdsk C:","chkdsk c:"],l:3},
+  {q:"Affiche la route des paquets vers google.com",hint:"Équivalent Windows de traceroute",a:["tracert google.com"],l:3},
+  {q:"Supprime MonDossier et tout son contenu sans confirmation",hint:"RD avec /S et /Q",a:["rd MonDossier /S /Q","rd mondossier /s /q","rmdir MonDossier /S /Q"],l:3},
+  {q:"Vérifie l'état du disque C:",hint:"La commande de vérification de disque",a:["chkdsk C:","chkdsk c:"],l:3},
   {q:"Affiche les partages réseau de la machine locale",hint:"NET SHARE sans argument",a:["net share"],l:3},
-
-  // NIVEAU 4 — Expert
-  {q:"Première ligne d'un fichier batch pour masquer l'affichage des commandes",hint:"Arobase + ECHO + OFF",a:["@echo off","@ECHO OFF"],l:4},
-  {q:"Dans un batch, affiche une ligne vide",hint:"ECHO suivi d'un simple point (pas d'espace avant)",a:["echo.","ECHO."],l:4},
-  {q:"Ajoute C:\\MesBatch au PATH existant dans un batch",hint:"SET PATH=%PATH%; suivi du nouveau chemin",a:["set PATH=%PATH%;C:\\MesBatch","SET PATH=%PATH%;C:\\MesBatch"],l:4},
-  {q:"Affiche la valeur de la variable d'environnement USERPROFILE",hint:"ECHO avec la variable entre deux symboles %",a:["echo %USERPROFILE%","echo %userprofile%"],l:4},
-  {q:"Crée l'arborescence T1012\\Labo2\\exercices en une seule commande",hint:"MD avec tout le chemin imbriqué d'un coup",a:["md T1012\\Labo2\\exercices","mkdir T1012\\Labo2\\exercices"],l:4},
-  {q:"Redirige la sortie de DIR vers liste.txt (écrase le fichier)",hint:"Opérateur de redirection simple >",a:["dir > liste.txt"],l:4},
-  {q:"Ajoute la sortie de DIR à la fin de liste.txt sans écraser",hint:"Opérateur de redirection append >>",a:["dir >> liste.txt"],l:4},
-  {q:"Lance un ping continu vers 192.168.1.1",hint:"PING avec l'option -t (infini)",a:["ping -t 192.168.1.1","ping 192.168.1.1 -t"],l:4},
-  {q:"Dans un batch, définit la variable MONVAR à la valeur 'hello'",hint:"SET nom=valeur (sans espaces autour du =)",a:["set MONVAR=hello","set monvar=hello","SET MONVAR=hello"],l:4},
-  {q:"Copie uniquement les fichiers .txt de T: vers B: dans un batch",hint:"COPY avec wildcard : source\\*.txt destination",a:["copy T:\\*.txt B:\\","copy t:\\*.txt b:\\"],l:4},
+  {q:"Première ligne d'un batch pour masquer l'affichage",hint:"Arobase + ECHO + OFF",a:["@echo off","@ECHO OFF"],l:4},
+  {q:"Dans un batch, affiche une ligne vide",hint:"ECHO suivi d'un point (pas d'espace)",a:["echo.","ECHO."],l:4},
+  {q:"Ajoute C:\\MesBatch au PATH dans un batch",hint:"SET PATH=%PATH%; suivi du chemin",a:["set PATH=%PATH%;C:\\MesBatch","SET PATH=%PATH%;C:\\MesBatch"],l:4},
+  {q:"Affiche la valeur de la variable USERPROFILE",hint:"ECHO avec la variable entre % %",a:["echo %USERPROFILE%","echo %userprofile%"],l:4},
+  {q:"Crée l'arborescence T1012\\Labo2\\exercices en une commande",hint:"MD avec tout le chemin imbriqué",a:["md T1012\\Labo2\\exercices","mkdir T1012\\Labo2\\exercices"],l:4},
+  {q:"Redirige la sortie de DIR vers liste.txt (écrase)",hint:"Opérateur de redirection simple >",a:["dir > liste.txt"],l:4},
+  {q:"Ajoute la sortie de DIR à la fin de liste.txt",hint:"Opérateur append >>",a:["dir >> liste.txt"],l:4},
+  {q:"Lance un ping continu vers 192.168.1.1",hint:"PING avec l'option -t",a:["ping -t 192.168.1.1","ping 192.168.1.1 -t"],l:4},
+  {q:"Définit la variable MONVAR à 'hello' dans un batch",hint:"SET nom=valeur (sans espaces autour du =)",a:["set MONVAR=hello","set monvar=hello","SET MONVAR=hello"],l:4},
+  {q:"Copie les fichiers .txt de T: vers B: dans un batch",hint:"COPY avec wildcard source et destination",a:["copy T:\\*.txt B:\\","copy t:\\*.txt b:\\"],l:4},
 ];
 
-const DCFG={
-  1:{label:"● Débutant",cls:"diff-1",prompt:"C:\\>"},
-  2:{label:"● Intermédiaire",cls:"diff-2",prompt:"C:\\Users\\>"},
-  3:{label:"● Avancé",cls:"diff-3",prompt:"C:\\>"},
-  4:{label:"● Expert",cls:"diff-4",prompt:"C:\\>"},
-};
-
+const DCFG={1:{label:"● Débutant",cls:"d1"},2:{label:"● Intermédiaire",cls:"d2"},3:{label:"● Avancé",cls:"d3"},4:{label:"● Expert",cls:"d4"}};
 let cur=0,score=0,skipped=0,wrongs=0,answered=false;
 
 function startQuiz(){
-  document.getElementById('screen-start').style.display='none';
-  document.getElementById('screen-quiz').style.display='block';
+  document.getElementById('qz-start').style.display='none';
+  document.getElementById('qz-play').style.display='block';
   loadQ();
 }
-
 function loadQ(){
   const q=Q[cur],d=DCFG[q.l];
   answered=false;
   const pct=Math.round((cur/Q.length)*100);
   document.getElementById('prog-bar').style.width=pct+'%';
-  document.getElementById('prog-label').textContent='Question '+(cur+1)+' / '+Q.length;
+  document.getElementById('prog-lbl').textContent='Question '+(cur+1)+' / '+Q.length;
   document.getElementById('prog-score').textContent='Score : '+score;
-  const badge=document.getElementById('diff-badge');
-  badge.textContent=d.label;badge.className='diff-badge '+d.cls;
+  const b=document.getElementById('diff-badge');b.textContent=d.label;b.className='diff-badge '+d.cls;
   document.getElementById('q-num').textContent=String(cur+1).padStart(2,'0')+' / '+Q.length;
   document.getElementById('q-text').textContent=q.q;
   document.getElementById('q-hint').textContent='💡 '+q.hint;
-  document.getElementById('term-prompt').textContent=d.prompt;
-  const inp=document.getElementById('term-input');
-  inp.value='';inp.disabled=false;inp.focus();
-  const fb=document.getElementById('feedback');
-  fb.className='feedback';fb.innerHTML='';
+  const inp=document.getElementById('term-in');inp.value='';inp.disabled=false;inp.focus();
+  const fb=document.getElementById('feedback');fb.className='feedback';fb.innerHTML='';
   document.getElementById('btn-check').textContent='Valider ↵';
-  document.getElementById('btn-check').disabled=false;
   document.getElementById('btn-skip').style.display='';
-  document.getElementById('btn-skip').textContent='Passer →';
 }
-
 function checkAnswer(){
   if(answered){nextQ();return;}
-  const q=Q[cur];
-  const val=document.getElementById('term-input').value.trim().toLowerCase();
+  const q=Q[cur],val=document.getElementById('term-in').value.trim().toLowerCase();
   const correct=q.a.map(x=>x.toLowerCase());
   const fb=document.getElementById('feedback');
-  if(val==='')return;
+  if(!val)return;
   if(correct.includes(val)){
     score++;answered=true;
-    document.getElementById('term-input').disabled=true;
+    document.getElementById('term-in').disabled=true;
     fb.className='feedback correct show';
     fb.innerHTML='<strong>✅ Correct !</strong>Bonne réponse : <code>'+q.a[0]+'</code>';
     document.getElementById('btn-check').textContent='Suivant →';
@@ -312,52 +702,45 @@ function checkAnswer(){
   } else {
     wrongs++;
     fb.className='feedback wrong show';
-    fb.innerHTML='<strong>❌ Pas tout à fait...</strong>Indice : <code>'+q.hint+'</code>';
-    document.getElementById('term-input').value='';
-    document.getElementById('term-input').focus();
+    fb.innerHTML='<strong>❌ Pas tout à fait...</strong>Indice : '+q.hint;
+    document.getElementById('term-in').value='';document.getElementById('term-in').focus();
   }
 }
-
-function skipQuestion(){
+function skipQ(){
   if(answered){nextQ();return;}
   skipped++;answered=true;
-  document.getElementById('term-input').disabled=true;
-  const fb=document.getElementById('feedback');
-  fb.className='feedback wrong show';
-  fb.innerHTML='<strong>⏭ Passé</strong>La réponse était : <code>'+Q[cur].a[0]+'</code>';
+  document.getElementById('term-in').disabled=true;
+  document.getElementById('feedback').className='feedback wrong show';
+  document.getElementById('feedback').innerHTML='<strong>⏭ Passé</strong>La réponse était : <code>'+Q[cur].a[0]+'</code>';
   document.getElementById('btn-check').textContent='Suivant →';
   document.getElementById('btn-skip').style.display='none';
 }
-
 function nextQ(){
   cur++;
   if(cur>=Q.length){showResult();return;}
   loadQ();
 }
-
 function showResult(){
-  document.getElementById('screen-quiz').style.display='none';
-  document.getElementById('screen-result').style.display='block';
+  document.getElementById('qz-play').style.display='none';
+  document.getElementById('qz-result').style.display='block';
   const pct=Math.round((score/Q.length)*100);
   const emoji=pct>=90?'🏆':pct>=70?'🎯':pct>=50?'💪':'📚';
-  const label=pct>=90?'Excellent ! Tu maîtrises DOS comme un pro !':pct>=70?'Bien joué ! Encore un peu de pratique.':pct>=50?'Pas mal ! Revois les commandes avancées.':'Continue à t\'entraîner, tu vas y arriver !';
+  const label=pct>=90?'Excellent ! Tu maîtrises DOS comme un pro !':pct>=70?'Bien joué ! Encore un peu de pratique.':pct>=50?'Pas mal ! Revois les commandes avancées.':'Continue à t\'entraîner !';
   document.getElementById('res-emoji').textContent=emoji;
   document.getElementById('res-score').textContent=score+' / '+Q.length;
   document.getElementById('res-label').textContent=label;
-  document.getElementById('res-correct').textContent=score;
-  document.getElementById('res-wrong').textContent=wrongs;
+  document.getElementById('res-ok').textContent=score;
+  document.getElementById('res-err').textContent=wrongs;
   document.getElementById('res-skip').textContent=skipped;
 }
-
 function restartQuiz(){
   cur=0;score=0;skipped=0;wrongs=0;answered=false;
-  document.getElementById('screen-result').style.display='none';
-  document.getElementById('screen-quiz').style.display='block';
+  document.getElementById('qz-result').style.display='none';
+  document.getElementById('qz-play').style.display='block';
   loadQ();
 }
-
 document.addEventListener('keydown',function(e){
-  if(e.key==='Enter'&&document.getElementById('screen-quiz').style.display!=='none')checkAnswer();
+  if(e.key==='Enter'&&document.getElementById('qz-play').style.display!=='none')checkAnswer();
 });
 </script>
 </body>
